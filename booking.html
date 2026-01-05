@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add your hotel booking – StayHustler</title>
+    <meta name="description" content="Enter your hotel booking details so we can personalize your upgrade request.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Add your hotel booking – StayHustler">
+    <meta property="og:description" content="Enter your hotel booking details to get personalized upgrade advice.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stayhustler.com/booking.html">
+    <meta property="og:image" content="https://stayhustler.com/og-image.png">
+    <meta property="og:site_name" content="StayHustler">
+    
+    <style>
+        :root {
+            --color-bg: #faf9f7;
+            --color-bg-warm: #f5f3ef;
+            --color-text: #2d2a26;
+            --color-text-muted: #6b6560;
+            --color-accent: #c9a962;
+            --color-accent-hover: #b8963f;
+            --color-border: #e8e4de;
+            --color-white: #ffffff;
+            
+            --font-serif: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2.5rem;
+            --space-xl: 4rem;
+            
+            --max-width: 720px;
+            --radius: 6px;
+            --radius-lg: 10px;
+            --shadow-soft: 0 2px 16px rgba(45, 42, 38, 0.06);
+            --shadow-hover: 0 4px 24px rgba(45, 42, 38, 0.1);
+            --transition: 0.2s ease;
+        }
+        
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        
+        html {
+            height: 100%;
+        }
+        
+        body {
+            margin: 0;
+            min-height: 100%;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        h1, h2, h3 {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            line-height: 1.25;
+            margin: 0;
+        }
+        
+        p {
+            margin: 0;
+        }
+        
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        
+        /* Header */
+        .header {
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            letter-spacing: -0.01em;
+            color: var(--color-text);
+        }
+        
+        .back-link {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            transition: color var(--transition);
+        }
+        
+        .back-link:hover,
+        .back-link:focus {
+            color: var(--color-text);
+        }
+        
+        /* Main */
+        main {
+            padding: var(--space-lg) var(--space-md) var(--space-xl);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .page-header h1 {
+            font-size: clamp(1.75rem, 4vw, 2.25rem);
+            margin-bottom: var(--space-sm);
+            color: var(--color-text);
+        }
+        
+        .page-subheadline {
+            font-size: 1.05rem;
+            color: var(--color-text-muted);
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        
+        /* Form Sections */
+        .form-section {
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .form-section-title {
+            font-size: 1.1rem;
+            margin-bottom: var(--space-sm);
+            color: var(--color-text);
+        }
+        
+        .form-section-helper {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-md);
+        }
+        
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin: var(--space-md) 0;
+            color: var(--color-text-muted);
+            font-size: 0.85rem;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--color-border);
+        }
+        
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed var(--color-border);
+            border-radius: var(--radius);
+            padding: var(--space-lg) var(--space-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--color-accent);
+            background: var(--color-bg-warm);
+        }
+        
+        .upload-area:focus-within {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.2);
+        }
+        
+        .upload-input {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto var(--space-sm);
+            color: var(--color-accent);
+        }
+        
+        .upload-text {
+            font-size: 0.95rem;
+            color: var(--color-text);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .upload-hint {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+        }
+        
+        .upload-filename {
+            display: none;
+            margin-top: var(--space-sm);
+            font-size: 0.9rem;
+            color: var(--color-accent);
+        }
+        
+        .upload-filename.show {
+            display: block;
+        }
+        
+        /* Form Fields */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-md);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-md);
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .form-label .required {
+            color: var(--color-accent);
+            margin-left: 2px;
+        }
+        
+        .form-input,
+        .form-select {
+            padding: 0.875rem 1rem;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            background: var(--color-white);
+            color: var(--color-text);
+            transition: border-color var(--transition), box-shadow var(--transition);
+            width: 100%;
+        }
+        
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.15);
+        }
+        
+        .form-input::placeholder {
+            color: var(--color-text-muted);
+        }
+        
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b6560' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+        }
+        
+        /* Trust Note */
+        .trust-note {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin: var(--space-md) 0;
+        }
+        
+        /* CTA Button */
+        .cta-container {
+            margin-top: var(--space-lg);
+        }
+        
+        .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 1rem 1.75rem;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--color-white);
+            background: var(--color-text);
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #1a1816;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .btn-primary:focus {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Desktop Layout */
+        @media (min-width: 600px) {
+            .form-section {
+                padding: var(--space-lg);
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .btn-primary {
+                width: auto;
+                min-width: 200px;
+                margin: 0 auto;
+                display: block;
+            }
+            
+            .cta-container {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">StayHustler</a>
+            <a href="qualify.html" class="back-link">Back</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <header class="page-header">
+                <h1>Add your hotel booking</h1>
+                <p class="page-subheadline">We use this to tailor hotel-appropriate advice. We don't contact the hotel.</p>
+            </header>
+
+            <section class="form-section">
+                <h2 class="form-section-title">Upload your booking confirmation</h2>
+                <p class="form-section-helper">Email or PDF is fine.</p>
+                <div class="upload-area" id="upload-area">
+                    <input type="file" class="upload-input" id="file-input" accept=".pdf,.eml,.msg" aria-label="Upload booking confirmation">
+                    <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <p class="upload-text">Click to upload or drag and drop</p>
+                    <p class="upload-hint">PDF, .eml, or .msg</p>
+                    <p class="upload-filename" id="upload-filename"></p>
+                </div>
+            </section>
+
+            <div class="divider">or enter manually</div>
+
+            <form class="form-section" id="booking-form">
+                <h2 class="form-section-title">Booking details</h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="hotel-name" class="form-label">Hotel name <span class="required">*</span></label>
+                        <input type="text" id="hotel-name" class="form-input" placeholder="e.g., The Ritz-Carlton" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="city" class="form-label">City <span class="required">*</span></label>
+                        <input type="text" id="city" class="form-input" placeholder="e.g., Paris" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="check-in" class="form-label">Check-in date <span class="required">*</span></label>
+                            <input type="date" id="check-in" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="check-out" class="form-label">Check-out date <span class="required">*</span></label>
+                            <input type="date" id="check-out" class="form-input" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="room-type" class="form-label">Room type booked</label>
+                        <input type="text" id="room-type" class="form-input" placeholder="e.g., Deluxe King (optional)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="booking-channel" class="form-label">Booking channel <span class="required">*</span></label>
+                        <select id="booking-channel" class="form-select" required>
+                            <option value="">Select how you booked</option>
+                            <option value="direct">Direct with hotel</option>
+                            <option value="ota">Online travel agency (OTA)</option>
+                            <option value="corporate">Corporate / negotiated rate</option>
+                        </select>
+                    </div>
+                </div>
+
+                <p class="trust-note">Your booking details stay private and are used only to generate your request.</p>
+
+                <div class="cta-container">
+                    <button type="submit" class="btn-primary" id="submit-btn" disabled>Continue</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        const form = document.getElementById('booking-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const fileInput = document.getElementById('file-input');
+        const uploadFilename = document.getElementById('upload-filename');
+        
+        const requiredFields = [
+            document.getElementById('hotel-name'),
+            document.getElementById('city'),
+            document.getElementById('check-in'),
+            document.getElementById('check-out'),
+            document.getElementById('booking-channel')
+        ];
+
+        // Check form validity
+        function checkFormValidity() {
+            const allFilled = requiredFields.every(field => field.value.trim() !== '');
+            submitBtn.disabled = !allFilled;
+        }
+
+        // Listen to input changes
+        requiredFields.forEach(field => {
+            field.addEventListener('input', checkFormValidity);
+            field.addEventListener('change', checkFormValidity);
+        });
+
+        // File upload display
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                uploadFilename.textContent = e.target.files[0].name;
+                uploadFilename.classList.add('show');
+            } else {
+                uploadFilename.classList.remove('show');
+            }
+        });
+
+        // Form submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!submitBtn.disabled) {
+                window.location.href = 'context.html';
+            }
+        });
+    </script>
+</body>
+</html>
