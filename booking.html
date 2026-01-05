@@ -490,6 +490,16 @@
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             if (!submitBtn.disabled) {
+                // Store booking data to localStorage
+                const bookingData = {
+                    hotel: document.getElementById('hotel-name').value,
+                    city: document.getElementById('city').value,
+                    checkin: document.getElementById('check-in').value,
+                    checkout: document.getElementById('check-out').value,
+                    room: document.getElementById('room-type').value,
+                    channel: document.getElementById('booking-channel').value
+                };
+                localStorage.setItem('stayhustler_booking', JSON.stringify(bookingData));
                 window.location.href = 'context.html';
             }
         });
