@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick check – StayHustler</title>
+    <meta name="description" content="Let us know where you are in your booking journey so we can help you get the most from your hotel stay.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Quick check – StayHustler">
+    <meta property="og:description" content="Let us know where you are in your booking journey.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stayhustler.com/qualify.html">
+    <meta property="og:image" content="https://stayhustler.com/og-image.png">
+    <meta property="og:site_name" content="StayHustler">
+    
+    <style>
+        :root {
+            --color-bg: #faf9f7;
+            --color-bg-warm: #f5f3ef;
+            --color-text: #2d2a26;
+            --color-text-muted: #6b6560;
+            --color-accent: #c9a962;
+            --color-accent-hover: #b8963f;
+            --color-border: #e8e4de;
+            --color-white: #ffffff;
+            --color-success: #5c8a6b;
+            
+            --font-serif: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2.5rem;
+            --space-xl: 4rem;
+            
+            --max-width: 720px;
+            --radius: 6px;
+            --radius-lg: 10px;
+            --shadow-soft: 0 2px 16px rgba(45, 42, 38, 0.06);
+            --shadow-hover: 0 4px 24px rgba(45, 42, 38, 0.1);
+            --transition: 0.2s ease;
+        }
+        
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        
+        html {
+            height: 100%;
+        }
+        
+        body {
+            margin: 0;
+            min-height: 100%;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        h1, h2, h3 {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            line-height: 1.25;
+            margin: 0;
+        }
+        
+        p {
+            margin: 0;
+        }
+        
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        
+        /* Header */
+        .header {
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            letter-spacing: -0.01em;
+            color: var(--color-text);
+        }
+        
+        .back-link {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            transition: color var(--transition);
+        }
+        
+        .back-link:hover,
+        .back-link:focus {
+            color: var(--color-text);
+        }
+        
+        /* Main */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-lg) var(--space-md);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: var(--max-width);
+        }
+        
+        /* Question Section */
+        .question-section {
+            text-align: center;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .question-section h1 {
+            font-size: clamp(1.75rem, 4vw, 2.25rem);
+            margin-bottom: var(--space-sm);
+            color: var(--color-text);
+        }
+        
+        .question-prompt {
+            font-size: 1.1rem;
+            color: var(--color-text-muted);
+        }
+        
+        /* Choice Cards */
+        .choices {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        .choice-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--space-lg) var(--space-md);
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-family: inherit;
+            text-align: center;
+            transition: all var(--transition);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .choice-card:hover {
+            border-color: var(--color-accent);
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+        
+        .choice-card:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.25);
+        }
+        
+        .choice-card:focus-visible {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.25);
+        }
+        
+        .choice-title {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            color: var(--color-text);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .choice-helper {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+        }
+        
+        /* Soft Exit Panel */
+        .soft-exit {
+            display: none;
+            background: var(--color-bg-warm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+            animation: fadeSlideIn 0.3s ease;
+        }
+        
+        .soft-exit.visible {
+            display: block;
+        }
+        
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .soft-exit-title {
+            font-size: 1.35rem;
+            margin-bottom: var(--space-sm);
+            color: var(--color-text);
+        }
+        
+        .soft-exit-body {
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-md);
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .soft-exit-link {
+            display: inline-block;
+            font-size: 0.95rem;
+            color: var(--color-text-muted);
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 2px;
+            transition: all var(--transition);
+        }
+        
+        .soft-exit-link:hover,
+        .soft-exit-link:focus {
+            color: var(--color-text);
+            border-bottom-color: var(--color-text);
+        }
+        
+        /* Newsletter in Soft Exit */
+        .newsletter-panel {
+            margin-top: var(--space-lg);
+            padding-top: var(--space-lg);
+            border-top: 1px solid var(--color-border);
+        }
+        
+        .newsletter-label {
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            margin-bottom: var(--space-sm);
+            color: var(--color-text);
+        }
+        
+        .newsletter-form {
+            display: flex;
+            gap: var(--space-xs);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .newsletter-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            background: var(--color-white);
+            color: var(--color-text);
+            transition: border-color var(--transition);
+        }
+        
+        .newsletter-input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+        
+        .newsletter-input::placeholder {
+            color: var(--color-text-muted);
+        }
+        
+        .newsletter-btn {
+            padding: 0.75rem 1.25rem;
+            background: var(--color-text);
+            color: var(--color-white);
+            border: none;
+            border-radius: var(--radius);
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+        
+        .newsletter-btn:hover {
+            background: #1a1816;
+        }
+        
+        .newsletter-btn:focus {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+        
+        .newsletter-success {
+            display: none;
+            padding: var(--space-sm);
+            color: var(--color-success);
+            font-size: 0.95rem;
+        }
+        
+        .newsletter-success.show {
+            display: block;
+        }
+        
+        .newsletter-form.hidden {
+            display: none;
+        }
+        
+        /* Desktop Layout */
+        @media (min-width: 600px) {
+            .choices {
+                grid-template-columns: 1fr 1fr;
+                gap: var(--space-md);
+            }
+            
+            .choice-card {
+                padding: var(--space-xl) var(--space-lg);
+            }
+        }
+        
+        /* Mobile Adjustments */
+        @media (max-width: 480px) {
+            main {
+                align-items: flex-start;
+                padding-top: var(--space-xl);
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+            }
+            
+            .newsletter-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">StayHustler</a>
+            <a href="index.html" class="back-link">Back</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="question-section">
+                <h1>Quick check</h1>
+                <p class="question-prompt">Have you already booked your hotel?</p>
+            </section>
+
+            <div class="choices">
+                <button type="button" class="choice-card" id="choice-yes">
+                    <span class="choice-title">Yes, I've booked</span>
+                    <span class="choice-helper">Continue to personalize your request.</span>
+                </button>
+                <button type="button" class="choice-card" id="choice-no">
+                    <span class="choice-title">Not yet</span>
+                    <span class="choice-helper">Start here if you're still planning.</span>
+                </button>
+            </div>
+
+            <section class="soft-exit" id="soft-exit" aria-live="polite">
+                <h2 class="soft-exit-title">Best used after you book</h2>
+                <p class="soft-exit-body">This works best once your hotel is booked. Come back after booking to unlock upgrades and perks.</p>
+                <a href="index.html" class="soft-exit-link">Back to homepage</a>
+
+                <div class="newsletter-panel">
+                    <p class="newsletter-label">Get one insider tip per week</p>
+                    <form class="newsletter-form" id="newsletter-form">
+                        <input type="email" class="newsletter-input" placeholder="you@example.com" required aria-label="Email address">
+                        <button type="submit" class="newsletter-btn">Join</button>
+                    </form>
+                    <p class="newsletter-success" id="newsletter-success" role="status" aria-live="polite">You're on the list.</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // Choice handlers
+        const choiceYes = document.getElementById('choice-yes');
+        const choiceNo = document.getElementById('choice-no');
+        const softExit = document.getElementById('soft-exit');
+
+        choiceYes.addEventListener('click', () => {
+            window.location.href = 'booking.html';
+        });
+
+        choiceNo.addEventListener('click', () => {
+            softExit.classList.add('visible');
+            softExit.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+
+        // Newsletter form
+        const form = document.getElementById('newsletter-form');
+        const success = document.getElementById('newsletter-success');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            form.classList.add('hidden');
+            success.classList.add('show');
+        });
+    </script>
+</body>
+</html>
