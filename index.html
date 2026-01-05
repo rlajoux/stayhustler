@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StayHustler – Insider access to better hotel stays</title>
+    <meta name="description" content="We help travelers ask for upgrades and perks the way hotels actually expect. No integrations, no booking changes. Takes under 2 minutes.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="StayHustler – Insider access to better hotel stays">
+    <meta property="og:description" content="We help travelers ask for upgrades and perks the way hotels actually expect.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stayhustler.com">
+    <meta property="og:image" content="https://stayhustler.com/og-image.png">
+    <meta property="og:site_name" content="StayHustler">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <style>
+        :root {
+            --color-bg: #faf9f7;
+            --color-bg-warm: #f5f3ef;
+            --color-text: #2d2a26;
+            --color-text-muted: #6b6560;
+            --color-accent: #c9a962;
+            --color-accent-hover: #b8963f;
+            --color-border: #e8e4de;
+            --color-white: #ffffff;
+            
+            --font-serif: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2.5rem;
+            --space-xl: 4rem;
+            --space-2xl: 6rem;
+            
+            --max-width: 1140px;
+            --radius: 6px;
+            --shadow-soft: 0 2px 16px rgba(45, 42, 38, 0.06);
+            --shadow-hover: 0 4px 24px rgba(45, 42, 38, 0.1);
+            --transition: 0.2s ease;
+        }
+        
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            margin: 0;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            line-height: 1.25;
+            margin: 0;
+        }
+        
+        p {
+            margin: 0;
+        }
+        
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        
+        img {
+            max-width: 100%;
+            display: block;
+        }
+        
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+        
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(250, 249, 247, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid transparent;
+            transition: border-color var(--transition);
+        }
+        
+        .nav.scrolled {
+            border-bottom-color: var(--color-border);
+        }
+        
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        
+        .nav-logo {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            letter-spacing: -0.01em;
+            color: var(--color-text);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: var(--space-lg);
+        }
+        
+        .nav-link {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            transition: color var(--transition);
+        }
+        
+        .nav-link:hover,
+        .nav-link:focus {
+            color: var(--color-text);
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.875rem 1.75rem;
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: var(--radius);
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition);
+            text-decoration: none;
+        }
+        
+        .btn:focus {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+        
+        .btn-primary {
+            background: var(--color-text);
+            color: var(--color-white);
+        }
+        
+        .btn-primary:hover {
+            background: #1a1816;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-text-muted);
+            padding: 0.875rem 0;
+        }
+        
+        .btn-secondary:hover {
+            color: var(--color-text);
+        }
+        
+        .btn-accent {
+            background: var(--color-accent);
+            color: var(--color-white);
+        }
+        
+        .btn-accent:hover {
+            background: var(--color-accent-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        /* Hero */
+        .hero {
+            padding: calc(64px + var(--space-2xl)) 0 var(--space-xl);
+            min-height: 85vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .hero-content {
+            max-width: 680px;
+        }
+        
+        .hero h1 {
+            font-size: clamp(2.25rem, 5vw, 3.5rem);
+            letter-spacing: -0.02em;
+            margin-bottom: var(--space-md);
+            color: var(--color-text);
+        }
+        
+        .hero-subheadline {
+            font-size: 1.2rem;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-lg);
+            max-width: 540px;
+        }
+        
+        .hero-ctas {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+            flex-wrap: wrap;
+        }
+        
+        .trust-line {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+        }
+        
+        .hero-decoration {
+            position: absolute;
+            right: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(201, 169, 98, 0.08) 0%, rgba(201, 169, 98, 0.02) 100%);
+            pointer-events: none;
+        }
+        
+        .hero-decoration::before {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 15%;
+            width: 70%;
+            height: 70%;
+            border: 1px solid rgba(201, 169, 98, 0.15);
+            border-radius: 50%;
+        }
+        
+        /* Trusted By */
+        .trusted {
+            padding: var(--space-xl) 0;
+            border-top: 1px solid var(--color-border);
+        }
+        
+        .trusted-inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-lg);
+            flex-wrap: wrap;
+        }
+        
+        .trusted-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--color-text-muted);
+        }
+        
+        .trusted-logos {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .trusted-logo {
+            font-family: var(--font-serif);
+            font-size: 0.95rem;
+            color: var(--color-text-muted);
+            opacity: 0.7;
+        }
+        
+        /* Newsletter */
+        .newsletter {
+            padding: var(--space-xl) 0;
+            background: var(--color-bg-warm);
+        }
+        
+        .newsletter-inner {
+            max-width: 480px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .newsletter-label {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            margin-bottom: var(--space-sm);
+            color: var(--color-text);
+        }
+        
+        .newsletter-form {
+            display: flex;
+            gap: var(--space-xs);
+        }
+        
+        .newsletter-input {
+            flex: 1;
+            padding: 0.875rem 1rem;
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            background: var(--color-white);
+            color: var(--color-text);
+            transition: border-color var(--transition);
+        }
+        
+        .newsletter-input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+        
+        .newsletter-input::placeholder {
+            color: var(--color-text-muted);
+        }
+        
+        .newsletter-btn {
+            padding: 0.875rem 1.25rem;
+            background: var(--color-text);
+            color: var(--color-white);
+            border: none;
+            border-radius: var(--radius);
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+        
+        .newsletter-btn:hover {
+            background: #1a1816;
+        }
+        
+        .newsletter-btn:focus {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+        
+        .newsletter-success {
+            display: none;
+            padding: var(--space-sm);
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .newsletter-success.show {
+            display: block;
+        }
+        
+        .newsletter-form.hidden {
+            display: none;
+        }
+        
+        /* Sections */
+        section {
+            padding: var(--space-2xl) 0;
+        }
+        
+        .section-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto var(--space-xl);
+        }
+        
+        .section-title {
+            font-size: clamp(1.75rem, 3vw, 2.25rem);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .section-subtitle {
+            color: var(--color-text-muted);
+        }
+        
+        /* How It Works */
+        .how-it-works {
+            background: var(--color-white);
+        }
+        
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .step {
+            text-align: center;
+            padding: var(--space-lg);
+        }
+        
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border: 1px solid var(--color-border);
+            border-radius: 50%;
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            color: var(--color-accent);
+            margin-bottom: var(--space-md);
+        }
+        
+        .step-title {
+            font-size: 1.2rem;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .step-desc {
+            color: var(--color-text-muted);
+            font-size: 0.95rem;
+        }
+        
+        /* What You Get */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-md);
+        }
+        
+        .feature-card {
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: var(--space-lg);
+            transition: box-shadow var(--transition), transform var(--transition);
+        }
+        
+        .feature-card:hover {
+            box-shadow: var(--shadow-soft);
+            transform: translateY(-2px);
+        }
+        
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            margin-bottom: var(--space-md);
+            color: var(--color-accent);
+        }
+        
+        .feature-title {
+            font-size: 1.15rem;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .feature-desc {
+            color: var(--color-text-muted);
+            font-size: 0.95rem;
+        }
+        
+        /* Pricing */
+        .pricing {
+            background: var(--color-bg-warm);
+        }
+        
+        .pricing-card {
+            max-width: 400px;
+            margin: 0 auto;
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: var(--space-xl);
+            text-align: center;
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .pricing-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .pricing-price {
+            font-family: var(--font-serif);
+            font-size: 3.5rem;
+            color: var(--color-text);
+            margin-bottom: var(--space-md);
+        }
+        
+        .pricing-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 var(--space-lg);
+        }
+        
+        .pricing-list li {
+            padding: var(--space-xs) 0;
+            color: var(--color-text-muted);
+            font-size: 0.95rem;
+        }
+        
+        .pricing-list li::before {
+            content: '·';
+            margin-right: var(--space-xs);
+            color: var(--color-accent);
+        }
+        
+        .pricing-cta {
+            width: 100%;
+            margin-bottom: var(--space-md);
+        }
+        
+        .pricing-fine-print {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            line-height: 1.5;
+        }
+        
+        /* FAQ */
+        .faq {
+            background: var(--color-white);
+        }
+        
+        .faq-list {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .faq-item summary {
+            padding: var(--space-md) 0;
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: color var(--transition);
+        }
+        
+        .faq-item summary::-webkit-details-marker {
+            display: none;
+        }
+        
+        .faq-item summary::after {
+            content: '+';
+            font-family: var(--font-sans);
+            font-weight: 300;
+            font-size: 1.5rem;
+            color: var(--color-text-muted);
+            transition: transform var(--transition);
+        }
+        
+        .faq-item[open] summary::after {
+            transform: rotate(45deg);
+        }
+        
+        .faq-item summary:hover {
+            color: var(--color-accent);
+        }
+        
+        .faq-item summary:focus {
+            outline: none;
+            color: var(--color-accent);
+        }
+        
+        .faq-answer {
+            padding: 0 0 var(--space-md);
+            color: var(--color-text-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        /* Start Section */
+        .start {
+            background: var(--color-bg-warm);
+            text-align: center;
+        }
+        
+        .start-placeholder {
+            padding: var(--space-xl);
+            border: 2px dashed var(--color-border);
+            border-radius: var(--radius);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .start-placeholder p {
+            color: var(--color-text-muted);
+            font-size: 0.95rem;
+        }
+        
+        /* Footer */
+        .footer {
+            padding: var(--space-xl) 0;
+            border-top: 1px solid var(--color-border);
+        }
+        
+        .footer-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-md);
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: var(--space-lg);
+        }
+        
+        .footer-link {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            transition: color var(--transition);
+        }
+        
+        .footer-link:hover {
+            color: var(--color-text);
+        }
+        
+        .footer-disclaimer {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+        .footer-copyright {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: var(--space-md);
+            }
+            
+            .nav-link {
+                font-size: 0.85rem;
+            }
+            
+            .hero {
+                min-height: auto;
+                padding-top: calc(64px + var(--space-xl));
+                padding-bottom: var(--space-xl);
+            }
+            
+            .hero-decoration {
+                display: none;
+            }
+            
+            .hero-ctas {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+            }
+            
+            .newsletter-btn {
+                width: 100%;
+            }
+            
+            .trusted-inner {
+                flex-direction: column;
+                gap: var(--space-md);
+            }
+            
+            section {
+                padding: var(--space-xl) 0;
+            }
+            
+            .steps {
+                gap: var(--space-md);
+            }
+            
+            .step {
+                padding: var(--space-md);
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .pricing-card {
+                padding: var(--space-lg);
+            }
+            
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: var(--space-md);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            :root {
+                --space-md: 1.25rem;
+                --space-lg: 2rem;
+                --space-xl: 3rem;
+                --space-2xl: 4rem;
+            }
+            
+            .nav-links {
+                gap: var(--space-sm);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="nav" id="nav">
+        <div class="container">
+            <nav class="nav-inner">
+                <a href="#" class="nav-logo">StayHustler</a>
+                <div class="nav-links">
+                    <a href="#how-it-works" class="nav-link">How it works</a>
+                    <a href="#pricing" class="nav-link">Pricing</a>
+                    <a href="#faq" class="nav-link">FAQ</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Insider access to better hotel stays</h1>
+                    <p class="hero-subheadline">We help travelers ask for upgrades and perks the way hotels actually expect.</p>
+                    <div class="hero-ctas">
+                        <a href="#start" class="btn btn-primary">Improve my stay</a>
+                        <a href="#how-it-works" class="btn btn-secondary">See how it works</a>
+                    </div>
+                    <p class="trust-line">No hotel integrations. No booking changes. Takes under 2 minutes.</p>
+                </div>
+            </div>
+            <div class="hero-decoration" aria-hidden="true"></div>
+        </section>
+
+        <section class="trusted">
+            <div class="container">
+                <div class="trusted-inner">
+                    <span class="trusted-label">Trusted by</span>
+                    <div class="trusted-logos">
+                        <span class="trusted-logo">Boutique Hotels</span>
+                        <span class="trusted-logo">Frequent Travelers</span>
+                        <span class="trusted-logo">Hospitality Pros</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="newsletter">
+            <div class="container">
+                <div class="newsletter-inner">
+                    <p class="newsletter-label">Get one insider tip per week</p>
+                    <form class="newsletter-form" id="newsletter-form">
+                        <input type="email" class="newsletter-input" placeholder="you@example.com" required aria-label="Email address">
+                        <button type="submit" class="newsletter-btn">Join</button>
+                    </form>
+                    <p class="newsletter-success" id="newsletter-success">Thank you. Look for your first tip soon.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="how-it-works" id="how-it-works">
+            <div class="container">
+                <header class="section-header">
+                    <h2 class="section-title">How it works</h2>
+                    <p class="section-subtitle">Three simple steps to a better stay</p>
+                </header>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3 class="step-title">Add your booking</h3>
+                        <p class="step-desc">Share your confirmation details. We never contact your hotel or modify your reservation.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3 class="step-title">Answer a few questions</h3>
+                        <p class="step-desc">Tell us about your trip, preferences, and any special occasions worth mentioning.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h3 class="step-title">Send a hotel-ready request</h3>
+                        <p class="step-desc">Receive a polished, informed request written in hotel-native language.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <div class="container">
+                <header class="section-header">
+                    <h2 class="section-title">What you get</h2>
+                    <p class="section-subtitle">Everything you need to make an informed, polite request</p>
+                </header>
+                <div class="features-grid">
+                    <article class="feature-card">
+                        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <h3 class="feature-title">Custom upgrade / perk request</h3>
+                        <p class="feature-desc">A personalized message tailored to your booking, property type, and circumstances—written how hotels prefer to receive them.</p>
+                    </article>
+                    <article class="feature-card">
+                        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <h3 class="feature-title">Timing guidance</h3>
+                        <p class="feature-desc">Know when to send your request and when to follow up for the best chance of a positive response.</p>
+                    </article>
+                    <article class="feature-card">
+                        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <h3 class="feature-title">Polite fallback script</h3>
+                        <p class="feature-desc">If your initial request isn't possible, you'll have a gracious alternative ready—maintaining goodwill with the property.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="pricing" id="pricing">
+            <div class="container">
+                <header class="section-header">
+                    <h2 class="section-title">Simple pricing</h2>
+                    <p class="section-subtitle">One stay, one price. No recurring fees.</p>
+                </header>
+                <div class="pricing-card">
+                    <p class="pricing-label">Per stay</p>
+                    <p class="pricing-price">$7</p>
+                    <ul class="pricing-list">
+                        <li>One stay</li>
+                        <li>Instant delivery</li>
+                        <li>No subscription</li>
+                    </ul>
+                    <a href="#start" class="btn btn-accent pricing-cta">Improve my stay</a>
+                    <p class="pricing-fine-print">Upgrades depend on availability; this improves odds, not guarantees.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="faq" id="faq">
+            <div class="container">
+                <header class="section-header">
+                    <h2 class="section-title">Questions</h2>
+                </header>
+                <div class="faq-list">
+                    <details class="faq-item">
+                        <summary>Does this guarantee an upgrade?</summary>
+                        <p class="faq-answer">No. Upgrades are always at the hotel's discretion and depend on availability. What we provide is a well-crafted, appropriately timed request that improves your chances by speaking the hotel's language.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Will you contact the hotel for me?</summary>
+                        <p class="faq-answer">No. We prepare the request; you send it. This keeps you in control and ensures the communication comes directly from the guest—which hotels prefer.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Does this work for any hotel?</summary>
+                        <p class="faq-answer">Our guidance applies to most hotels, from boutique properties to large chains. The approach is based on common hospitality practices, though results vary by property and situation.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Is my booking information safe?</summary>
+                        <p class="faq-answer">Yes. We use your booking details only to personalize your request. We do not store payment information, contact hotels on your behalf, or share your data with third parties.</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <section class="start" id="start">
+            <div class="container">
+                <header class="section-header">
+                    <h2 class="section-title">Get started</h2>
+                </header>
+                <div class="start-placeholder">
+                    <p>Booking flow starts here (MVP placeholder)</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <nav class="footer-links">
+                    <a href="#" class="footer-link">Privacy</a>
+                    <a href="#" class="footer-link">Terms</a>
+                    <a href="#" class="footer-link">Contact</a>
+                </nav>
+                <p class="footer-disclaimer">StayHustler provides guidance based on common hotel practices; outcomes vary by property and availability.</p>
+                <p class="footer-copyright">&copy; 2026 StayHustler</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sticky nav scroll effect
+        const nav = document.getElementById('nav');
+        let lastScroll = 0;
+        
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+            lastScroll = currentScroll;
+        }, { passive: true });
+
+        // Newsletter form
+        const form = document.getElementById('newsletter-form');
+        const success = document.getElementById('newsletter-success');
+        
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            form.classList.add('hidden');
+            success.classList.add('show');
+        });
+    </script>
+</body>
+</html>
