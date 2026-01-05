@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick details – StayHustler</title>
+    <meta name="description" content="Answer a few quick questions to help us tailor your hotel upgrade request with the right timing and wording.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Quick details – StayHustler">
+    <meta property="og:description" content="Answer a few quick questions to personalize your hotel upgrade request.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stayhustler.com/context.html">
+    <meta property="og:image" content="https://stayhustler.com/og-image.png">
+    <meta property="og:site_name" content="StayHustler">
+    
+    <style>
+        :root {
+            --color-bg: #faf9f7;
+            --color-bg-warm: #f5f3ef;
+            --color-text: #2d2a26;
+            --color-text-muted: #6b6560;
+            --color-accent: #c9a962;
+            --color-accent-hover: #b8963f;
+            --color-border: #e8e4de;
+            --color-white: #ffffff;
+            
+            --font-serif: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2.5rem;
+            --space-xl: 4rem;
+            
+            --max-width: 720px;
+            --radius: 6px;
+            --radius-lg: 10px;
+            --shadow-soft: 0 2px 16px rgba(45, 42, 38, 0.06);
+            --shadow-hover: 0 4px 24px rgba(45, 42, 38, 0.1);
+            --transition: 0.2s ease;
+        }
+        
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        
+        html {
+            height: 100%;
+        }
+        
+        body {
+            margin: 0;
+            min-height: 100%;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        h1, h2, h3 {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            line-height: 1.25;
+            margin: 0;
+        }
+        
+        p {
+            margin: 0;
+        }
+        
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        
+        /* Header */
+        .header {
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            letter-spacing: -0.01em;
+            color: var(--color-text);
+        }
+        
+        .back-link {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            transition: color var(--transition);
+        }
+        
+        .back-link:hover,
+        .back-link:focus {
+            color: var(--color-text);
+        }
+        
+        /* Main */
+        main {
+            padding: var(--space-lg) var(--space-md) var(--space-xl);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .page-header h1 {
+            font-size: clamp(1.75rem, 4vw, 2.25rem);
+            margin-bottom: var(--space-sm);
+            color: var(--color-text);
+        }
+        
+        .page-subheadline {
+            font-size: 1.05rem;
+            color: var(--color-text-muted);
+            max-width: 480px;
+            margin: 0 auto var(--space-xs);
+        }
+        
+        .time-note {
+            font-size: 0.85rem;
+            color: var(--color-accent);
+        }
+        
+        /* Form */
+        .form-card {
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .form-section {
+            padding-bottom: var(--space-md);
+            margin-bottom: var(--space-md);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .form-section:last-of-type {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        /* Form Groups */
+        .form-group {
+            margin-bottom: var(--space-md);
+        }
+        
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .form-label .required {
+            color: var(--color-accent);
+            margin-left: 2px;
+        }
+        
+        .form-helper {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-top: var(--space-xs);
+        }
+        
+        /* Select */
+        .form-select {
+            width: 100%;
+            padding: 0.875rem 2.5rem 0.875rem 1rem;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            background-color: var(--color-white);
+            color: var(--color-text);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b6560' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            transition: border-color var(--transition), box-shadow var(--transition);
+            cursor: pointer;
+        }
+        
+        .form-select:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.15);
+        }
+        
+        /* Radio Groups */
+        fieldset {
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        legend {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: var(--space-sm);
+            padding: 0;
+        }
+        
+        legend .required {
+            color: var(--color-accent);
+            margin-left: 2px;
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+        
+        .radio-option {
+            position: relative;
+        }
+        
+        .radio-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .radio-label {
+            display: flex;
+            align-items: center;
+            padding: 0.875rem 1rem;
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-size: 0.95rem;
+        }
+        
+        .radio-label::before {
+            content: '';
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--color-border);
+            border-radius: 50%;
+            margin-right: var(--space-sm);
+            transition: all var(--transition);
+            flex-shrink: 0;
+        }
+        
+        .radio-option:hover .radio-label {
+            border-color: var(--color-accent);
+        }
+        
+        .radio-input:focus-visible + .radio-label {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.15);
+        }
+        
+        .radio-input:checked + .radio-label {
+            border-color: var(--color-accent);
+            background: rgba(201, 169, 98, 0.05);
+        }
+        
+        .radio-input:checked + .radio-label::before {
+            border-color: var(--color-accent);
+            background: var(--color-accent);
+            box-shadow: inset 0 0 0 3px var(--color-white);
+        }
+        
+        /* Conditional Fields */
+        .conditional-field {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.3s ease, opacity 0.2s ease, margin 0.3s ease;
+            margin-top: 0;
+        }
+        
+        .conditional-field.visible {
+            max-height: 150px;
+            opacity: 1;
+            margin-top: var(--space-sm);
+        }
+        
+        .conditional-field input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            background: var(--color-white);
+            color: var(--color-text);
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+        
+        .conditional-field input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.15);
+        }
+        
+        .conditional-field input::placeholder {
+            color: var(--color-text-muted);
+        }
+        
+        .conditional-note {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.3s ease, opacity 0.2s ease, margin 0.3s ease;
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-top: 0;
+        }
+        
+        .conditional-note.visible {
+            max-height: 50px;
+            opacity: 1;
+            margin-top: var(--space-sm);
+        }
+        
+        /* CTA */
+        .cta-section {
+            margin-top: var(--space-lg);
+            text-align: center;
+        }
+        
+        .btn-primary {
+            display: inline-block;
+            width: 100%;
+            padding: 1rem 1.75rem;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--color-white);
+            background: var(--color-text);
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #1a1816;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .btn-primary:focus {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .privacy-note {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            margin-top: var(--space-sm);
+        }
+        
+        /* Desktop */
+        @media (min-width: 600px) {
+            .form-card {
+                padding: var(--space-lg);
+            }
+            
+            .btn-primary {
+                width: auto;
+                min-width: 220px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">StayHustler</a>
+            <a href="booking.html" class="back-link">Back</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <header class="page-header">
+                <h1>A few quick details</h1>
+                <p class="page-subheadline">These help us tailor hotel-native wording and the best timing to ask.</p>
+                <p class="time-note">Takes about 30 seconds.</p>
+            </header>
+
+            <form class="form-card" id="context-form">
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="length-of-stay" class="form-label">Length of stay <span class="required">*</span></label>
+                        <select id="length-of-stay" class="form-select" required>
+                            <option value="">Select</option>
+                            <option value="1">1 night</option>
+                            <option value="2">2 nights</option>
+                            <option value="3-4">3–4 nights</option>
+                            <option value="5+">5+ nights</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="arrival-day" class="form-label">Arrival day <span class="required">*</span></label>
+                        <select id="arrival-day" class="form-select" required>
+                            <option value="">Select</option>
+                            <option value="monday">Monday</option>
+                            <option value="tuesday">Tuesday</option>
+                            <option value="wednesday">Wednesday</option>
+                            <option value="thursday">Thursday</option>
+                            <option value="friday">Friday</option>
+                            <option value="saturday">Saturday</option>
+                            <option value="sunday">Sunday</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="checkin-time" class="form-label">Check-in time preference <span class="required">*</span></label>
+                        <select id="checkin-time" class="form-select" required>
+                            <option value="">Select</option>
+                            <option value="morning">Morning (before 12pm)</option>
+                            <option value="afternoon">Afternoon (12–4pm)</option>
+                            <option value="evening">Evening (after 4pm)</option>
+                        </select>
+                        <p class="form-helper">Timing affects upgrade availability.</p>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="loyalty-status" class="form-label">Loyalty status</label>
+                        <select id="loyalty-status" class="form-select">
+                            <option value="">Select (optional)</option>
+                            <option value="none">None</option>
+                            <option value="member">Member (no tier)</option>
+                            <option value="silver">Silver / mid-tier</option>
+                            <option value="gold">Gold / top-tier</option>
+                        </select>
+                        <p class="form-helper">If you're unsure, choose 'Member' or 'None'.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="occasion" class="form-label">Occasion</label>
+                        <select id="occasion" class="form-select">
+                            <option value="">Select (optional)</option>
+                            <option value="none">None</option>
+                            <option value="birthday">Birthday</option>
+                            <option value="anniversary">Anniversary</option>
+                            <option value="honeymoon">Honeymoon</option>
+                            <option value="first-visit">First visit</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <fieldset class="form-group">
+                        <legend>If an upgrade is possible, are you flexible on room type? <span class="required">*</span></legend>
+                        <div class="radio-group" id="flexibility-group">
+                            <div class="radio-option">
+                                <input type="radio" id="flex-yes" name="flexibility" value="yes" class="radio-input" required>
+                                <label for="flex-yes" class="radio-label">Yes, any better room is fine</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="flex-specific" name="flexibility" value="specific" class="radio-input">
+                                <label for="flex-specific" class="radio-label">Only if it's a specific type (I'll note it)</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="flex-no" name="flexibility" value="no" class="radio-input">
+                                <label for="flex-no" class="radio-label">No, I prefer to keep my booked room</label>
+                            </div>
+                        </div>
+                        <div class="conditional-field" id="preferred-room-field">
+                            <label for="preferred-room" class="form-label" style="font-size: 0.85rem; margin-bottom: var(--space-xs);">Preferred room type (optional)</label>
+                            <input type="text" id="preferred-room" placeholder="e.g., high floor, suite, ocean view" tabindex="-1">
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="form-section">
+                    <fieldset class="form-group">
+                        <legend>How do you prefer to ask? <span class="required">*</span></legend>
+                        <div class="radio-group" id="ask-preference-group">
+                            <div class="radio-option">
+                                <input type="radio" id="ask-email" name="ask-preference" value="email" class="radio-input" required>
+                                <label for="ask-email" class="radio-label">Email before arrival</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="ask-inperson" name="ask-preference" value="inperson" class="radio-input">
+                                <label for="ask-inperson" class="radio-label">In person at check-in</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="ask-both" name="ask-preference" value="both" class="radio-input">
+                                <label for="ask-both" class="radio-label">Both (recommended)</label>
+                            </div>
+                        </div>
+                        <p class="conditional-note" id="email-note">We'll generate an email you can copy and send.</p>
+                    </fieldset>
+                </div>
+
+                <div class="cta-section">
+                    <button type="submit" class="btn-primary" id="submit-btn" disabled>See my chances</button>
+                    <p class="privacy-note">Stored locally in your browser for this flow. No hotel is contacted.</p>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <div aria-live="polite" id="aria-live" style="position: absolute; left: -9999px;"></div>
+
+    <script>
+        const form = document.getElementById('context-form');
+        const submitBtn = document.getElementById('submit-btn');
+        
+        // Required fields
+        const lengthOfStay = document.getElementById('length-of-stay');
+        const arrivalDay = document.getElementById('arrival-day');
+        const checkinTime = document.getElementById('checkin-time');
+        const flexibilityInputs = document.querySelectorAll('input[name="flexibility"]');
+        const askPreferenceInputs = document.querySelectorAll('input[name="ask-preference"]');
+        
+        // Conditional elements
+        const preferredRoomField = document.getElementById('preferred-room-field');
+        const preferredRoomInput = document.getElementById('preferred-room');
+        const emailNote = document.getElementById('email-note');
+        
+        // Check form validity
+        function checkFormValidity() {
+            const hasLengthOfStay = lengthOfStay.value !== '';
+            const hasArrivalDay = arrivalDay.value !== '';
+            const hasCheckinTime = checkinTime.value !== '';
+            const hasFlexibility = Array.from(flexibilityInputs).some(input => input.checked);
+            const hasAskPreference = Array.from(askPreferenceInputs).some(input => input.checked);
+            
+            const isValid = hasLengthOfStay && hasArrivalDay && hasCheckinTime && hasFlexibility && hasAskPreference;
+            submitBtn.disabled = !isValid;
+        }
+        
+        // Event listeners for selects
+        [lengthOfStay, arrivalDay, checkinTime].forEach(select => {
+            select.addEventListener('change', checkFormValidity);
+        });
+        
+        // Flexibility radio handling
+        flexibilityInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                checkFormValidity();
+                
+                if (input.value === 'specific' && input.checked) {
+                    preferredRoomField.classList.add('visible');
+                    preferredRoomInput.tabIndex = 0;
+                } else if (input.checked) {
+                    preferredRoomField.classList.remove('visible');
+                    preferredRoomInput.tabIndex = -1;
+                }
+            });
+        });
+        
+        // Ask preference radio handling
+        askPreferenceInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                checkFormValidity();
+                
+                if ((input.value === 'email' || input.value === 'both') && input.checked) {
+                    emailNote.classList.add('visible');
+                } else if (input.checked) {
+                    emailNote.classList.remove('visible');
+                }
+            });
+        });
+        
+        // Form submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            if (submitBtn.disabled) return;
+            
+            // Gather form data
+            const contextData = {
+                lengthOfStay: lengthOfStay.value,
+                arrivalDay: arrivalDay.value,
+                checkinTime: checkinTime.value,
+                loyaltyStatus: document.getElementById('loyalty-status').value,
+                occasion: document.getElementById('occasion').value,
+                flexibility: document.querySelector('input[name="flexibility"]:checked')?.value || '',
+                preferredRoom: preferredRoomInput.value,
+                askPreference: document.querySelector('input[name="ask-preference"]:checked')?.value || ''
+            };
+            
+            // Store to localStorage
+            localStorage.setItem('stayhustler_context', JSON.stringify(contextData));
+            
+            // Navigate to preview
+            window.location.href = 'preview.html';
+        });
+    </script>
+</body>
+</html>
