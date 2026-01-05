@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout – StayHustler</title>
+    <meta name="description" content="Complete your purchase to unlock your personalized hotel upgrade request and timing guidance.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Checkout – StayHustler">
+    <meta property="og:description" content="Unlock your personalized hotel upgrade request.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stayhustler.com/payment.html">
+    <meta property="og:image" content="https://stayhustler.com/og-image.png">
+    <meta property="og:site_name" content="StayHustler">
+    
+    <style>
+        :root {
+            --color-bg: #faf9f7;
+            --color-bg-warm: #f5f3ef;
+            --color-text: #2d2a26;
+            --color-text-muted: #6b6560;
+            --color-accent: #c9a962;
+            --color-accent-hover: #b8963f;
+            --color-border: #e8e4de;
+            --color-white: #ffffff;
+            --color-error: #c45c5c;
+            
+            --font-serif: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2.5rem;
+            --space-xl: 4rem;
+            
+            --max-width: 720px;
+            --radius: 6px;
+            --radius-lg: 10px;
+            --shadow-soft: 0 2px 16px rgba(45, 42, 38, 0.06);
+            --shadow-hover: 0 4px 24px rgba(45, 42, 38, 0.1);
+            --transition: 0.2s ease;
+        }
+        
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        
+        html {
+            height: 100%;
+        }
+        
+        body {
+            margin: 0;
+            min-height: 100%;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        h1, h2, h3 {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            line-height: 1.25;
+            margin: 0;
+        }
+        
+        p {
+            margin: 0;
+        }
+        
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        
+        /* Header */
+        .header {
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            letter-spacing: -0.01em;
+            color: var(--color-text);
+        }
+        
+        .back-link {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            transition: color var(--transition);
+        }
+        
+        .back-link:hover,
+        .back-link:focus {
+            color: var(--color-text);
+        }
+        
+        /* Main */
+        main {
+            padding: var(--space-lg) var(--space-md) var(--space-xl);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        
+        /* Page Header */
+        .page-header {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .page-header h1 {
+            font-size: clamp(1.75rem, 4vw, 2.25rem);
+            color: var(--color-text);
+        }
+        
+        /* Layout */
+        .checkout-layout {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+        
+        /* Order Summary Card */
+        .order-summary {
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            box-shadow: var(--shadow-soft);
+            order: -1;
+        }
+        
+        .order-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .order-price {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            color: var(--color-text);
+            margin-bottom: var(--space-md);
+        }
+        
+        .order-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            border-top: 1px solid var(--color-border);
+            padding-top: var(--space-md);
+        }
+        
+        .order-list li {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) 0;
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+        }
+        
+        .order-list li svg {
+            width: 16px;
+            height: 16px;
+            color: var(--color-accent);
+            flex-shrink: 0;
+        }
+        
+        /* Payment Section */
+        .payment-section {
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            margin-bottom: var(--space-md);
+            color: var(--color-text);
+        }
+        
+        /* Payment Methods */
+        fieldset {
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        legend {
+            font-size: 1.1rem;
+            font-family: var(--font-serif);
+            font-weight: 400;
+            color: var(--color-text);
+            margin-bottom: var(--space-md);
+            padding: 0;
+        }
+        
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+            margin-bottom: var(--space-md);
+        }
+        
+        .payment-option {
+            position: relative;
+        }
+        
+        .payment-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .payment-label {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: 1rem;
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .payment-label::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--color-border);
+            border-radius: 50%;
+            flex-shrink: 0;
+            transition: all var(--transition);
+        }
+        
+        .payment-option:hover .payment-label {
+            border-color: var(--color-accent);
+        }
+        
+        .payment-input:focus-visible + .payment-label {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.2);
+        }
+        
+        .payment-input:checked + .payment-label {
+            border-color: var(--color-accent);
+            background: rgba(201, 169, 98, 0.05);
+        }
+        
+        .payment-input:checked + .payment-label::before {
+            border-color: var(--color-accent);
+            background: var(--color-accent);
+            box-shadow: inset 0 0 0 4px var(--color-white);
+        }
+        
+        .payment-icon {
+            width: 32px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-muted);
+        }
+        
+        .payment-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .payment-name {
+            font-size: 0.95rem;
+            color: var(--color-text);
+        }
+        
+        /* Trust Note */
+        .trust-note {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            background: var(--color-bg-warm);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius);
+            margin-bottom: var(--space-md);
+            text-align: center;
+        }
+        
+        /* Validation */
+        .validation-message {
+            display: none;
+            font-size: 0.85rem;
+            color: var(--color-error);
+            margin-bottom: var(--space-sm);
+            padding: var(--space-xs) var(--space-sm);
+            background: rgba(196, 92, 92, 0.08);
+            border-radius: var(--radius);
+        }
+        
+        .validation-message.visible {
+            display: block;
+        }
+        
+        /* CTA */
+        .cta-section {
+            margin-top: var(--space-md);
+        }
+        
+        .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 1rem 1.75rem;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--color-white);
+            background: var(--color-text);
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #1a1816;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .btn-primary:focus {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Why We Charge */
+        .why-link {
+            display: inline-block;
+            margin-top: var(--space-sm);
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            border-bottom: 1px solid var(--color-border);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .why-link:hover,
+        .why-link:focus {
+            color: var(--color-text);
+            border-color: var(--color-text);
+        }
+        
+        .why-panel {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.3s ease, opacity 0.2s ease, margin 0.3s ease;
+        }
+        
+        .why-panel.visible {
+            max-height: 150px;
+            opacity: 1;
+            margin-top: var(--space-sm);
+        }
+        
+        .why-panel-inner {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            background: var(--color-bg-warm);
+            padding: var(--space-sm);
+            border-radius: var(--radius);
+            line-height: 1.6;
+        }
+        
+        /* Fine Print */
+        .fine-print {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            margin-top: var(--space-lg);
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--color-border);
+        }
+        
+        /* Desktop Layout */
+        @media (min-width: 640px) {
+            .checkout-layout {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+            
+            .payment-section {
+                flex: 1;
+                order: 0;
+            }
+            
+            .order-summary {
+                width: 280px;
+                flex-shrink: 0;
+                order: 0;
+                position: sticky;
+                top: var(--space-md);
+            }
+            
+            .payment-section {
+                padding: var(--space-lg);
+            }
+            
+            .order-summary {
+                padding: var(--space-lg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">StayHustler</a>
+            <a href="preview.html" class="back-link">Back</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <header class="page-header">
+                <h1>Checkout</h1>
+            </header>
+
+            <div class="checkout-layout">
+                <section class="payment-section">
+                    <form id="payment-form">
+                        <fieldset>
+                            <legend>Choose a payment method</legend>
+                            
+                            <div class="payment-methods" role="radiogroup">
+                                <div class="payment-option">
+                                    <input type="radio" id="method-card" name="payment-method" value="card" class="payment-input">
+                                    <label for="method-card" class="payment-label">
+                                        <span class="payment-icon">
+                                            <svg viewBox="0 0 32 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                <rect x="1" y="1" width="30" height="18" rx="2"/>
+                                                <line x1="1" y1="7" x2="31" y2="7"/>
+                                                <line x1="6" y1="13" x2="14" y2="13"/>
+                                            </svg>
+                                        </span>
+                                        <span class="payment-name">Card</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="payment-option">
+                                    <input type="radio" id="method-apple" name="payment-method" value="apple-pay" class="payment-input">
+                                    <label for="method-apple" class="payment-label">
+                                        <span class="payment-icon">
+                                            <svg viewBox="0 0 32 20" fill="currentColor">
+                                                <path d="M8.5 5.2c-.5.6-1.3 1.1-2.1 1-.1-.8.3-1.7.8-2.2.5-.6 1.4-1 2-1.1.1.9-.2 1.7-.7 2.3zm.7 1.2c-1.2-.1-2.2.7-2.7.7-.6 0-1.4-.6-2.4-.6-1.2 0-2.3.7-3 1.8-1.3 2.2-.3 5.5.9 7.3.6.9 1.3 1.9 2.3 1.8 1-.1 1.3-.6 2.4-.6s1.5.6 2.5.6c1 0 1.6-.9 2.2-1.8.7-1 1-2 1-2.1-.1 0-1.9-.7-1.9-2.9 0-1.8 1.5-2.7 1.6-2.8-.9-1.3-2.3-1.4-2.7-1.4h-.2z"/>
+                                            </svg>
+                                        </span>
+                                        <span class="payment-name">Apple Pay</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="payment-option">
+                                    <input type="radio" id="method-google" name="payment-method" value="google-pay" class="payment-input">
+                                    <label for="method-google" class="payment-label">
+                                        <span class="payment-icon">
+                                            <svg viewBox="0 0 32 20" fill="currentColor">
+                                                <path d="M16 8.5v3.2h4.5c-.2 1-1.2 3-4.5 3-2.7 0-4.9-2.2-4.9-5s2.2-5 4.9-5c1.5 0 2.6.7 3.1 1.2l2.1-2C19.7 2.5 18 1.7 16 1.7c-4.6 0-8.3 3.7-8.3 8.3s3.7 8.3 8.3 8.3c4.8 0 8-3.4 8-8.1 0-.5-.1-1-.1-1.4H16v-.3z"/>
+                                            </svg>
+                                        </span>
+                                        <span class="payment-name">Google Pay</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </fieldset>
+                        
+                        <p class="trust-note">MVP demo: payment is simulated on this page.</p>
+                        
+                        <div class="validation-message" id="validation-message" role="alert" aria-live="polite">
+                            Please select a payment method to continue.
+                        </div>
+                        
+                        <div class="cta-section">
+                            <button type="submit" class="btn-primary" id="pay-btn" disabled>Pay & unlock</button>
+                            
+                            <button type="button" class="why-link" id="why-toggle" aria-expanded="false">Why we charge</button>
+                            
+                            <div class="why-panel" id="why-panel">
+                                <div class="why-panel-inner">
+                                    We keep this independent and ad-free. The fee supports high-quality guidance and continuous improvement.
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                <aside class="order-summary">
+                    <p class="order-title">Per stay</p>
+                    <p class="order-price">$7</p>
+                    <ul class="order-list">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Instant delivery
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            No subscription
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Includes: request + timing + fallback script
+                        </li>
+                    </ul>
+                </aside>
+            </div>
+
+            <p class="fine-print">Upgrades depend on availability; this improves odds, not guarantees.</p>
+        </div>
+    </main>
+
+    <div aria-live="polite" id="aria-live" style="position: absolute; left: -9999px;"></div>
+
+    <script>
+        const form = document.getElementById('payment-form');
+        const payBtn = document.getElementById('pay-btn');
+        const validationMessage = document.getElementById('validation-message');
+        const whyToggle = document.getElementById('why-toggle');
+        const whyPanel = document.getElementById('why-panel');
+        const paymentInputs = document.querySelectorAll('input[name="payment-method"]');
+        
+        let selectedMethod = null;
+
+        // Enable/disable button based on selection
+        paymentInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                if (input.checked) {
+                    selectedMethod = input.value;
+                    payBtn.disabled = false;
+                    validationMessage.classList.remove('visible');
+                }
+            });
+        });
+
+        // Form submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            if (!selectedMethod) {
+                validationMessage.classList.add('visible');
+                return;
+            }
+            
+            // Simulate successful payment
+            localStorage.setItem('stayhustler_paid', 'true');
+            localStorage.setItem('stayhustler_order', JSON.stringify({
+                price: 7,
+                currency: 'USD',
+                ts: Date.now(),
+                method: selectedMethod
+            }));
+            
+            // Navigate to results
+            window.location.href = 'results.html';
+        });
+
+        // Why we charge toggle
+        whyToggle.addEventListener('click', () => {
+            const isExpanded = whyPanel.classList.contains('visible');
+            whyPanel.classList.toggle('visible');
+            whyToggle.setAttribute('aria-expanded', !isExpanded);
+        });
+    </script>
+</body>
+</html>
