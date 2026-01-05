@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post-stay feedback – StayHustler</title>
+    <meta name="description" content="Share your hotel stay outcome to help us improve future upgrade guidance.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Post-stay feedback – StayHustler">
+    <meta property="og:description" content="Share your hotel stay outcome.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stayhustler.com/feedback.html">
+    <meta property="og:image" content="https://stayhustler.com/og-image.png">
+    <meta property="og:site_name" content="StayHustler">
+    
+    <style>
+        :root {
+            --color-bg: #faf9f7;
+            --color-bg-warm: #f5f3ef;
+            --color-text: #2d2a26;
+            --color-text-muted: #6b6560;
+            --color-accent: #c9a962;
+            --color-accent-hover: #b8963f;
+            --color-border: #e8e4de;
+            --color-white: #ffffff;
+            --color-success: #7a9a6d;
+            
+            --font-serif: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2.5rem;
+            --space-xl: 4rem;
+            
+            --max-width: 720px;
+            --radius: 6px;
+            --radius-lg: 10px;
+            --shadow-soft: 0 2px 16px rgba(45, 42, 38, 0.06);
+            --shadow-hover: 0 4px 24px rgba(45, 42, 38, 0.1);
+            --transition: 0.2s ease;
+        }
+        
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        
+        html {
+            height: 100%;
+        }
+        
+        body {
+            margin: 0;
+            min-height: 100%;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        h1, h2, h3 {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            line-height: 1.25;
+            margin: 0;
+        }
+        
+        p {
+            margin: 0;
+        }
+        
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        
+        /* Header */
+        .header {
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            letter-spacing: -0.01em;
+            color: var(--color-text);
+        }
+        
+        .home-link {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            transition: color var(--transition);
+        }
+        
+        .home-link:hover,
+        .home-link:focus {
+            color: var(--color-text);
+        }
+        
+        /* Main */
+        main {
+            padding: var(--space-lg) var(--space-md) var(--space-xl);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .page-header h1 {
+            font-size: clamp(1.75rem, 4vw, 2.25rem);
+            margin-bottom: var(--space-sm);
+            color: var(--color-text);
+        }
+        
+        .page-subheadline {
+            font-size: 1.05rem;
+            color: var(--color-text-muted);
+        }
+        
+        /* Form */
+        .feedback-form {
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        /* Question */
+        .question-label {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            margin-bottom: var(--space-md);
+            color: var(--color-text);
+            display: block;
+        }
+        
+        /* Choice Cards */
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .choice-option {
+            position: relative;
+        }
+        
+        .choice-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .choice-label {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-md);
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .choice-label::before {
+            content: '';
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--color-border);
+            border-radius: 50%;
+            flex-shrink: 0;
+            transition: all var(--transition);
+        }
+        
+        .choice-option:hover .choice-label {
+            border-color: var(--color-accent);
+        }
+        
+        .choice-input:focus-visible + .choice-label {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.2);
+        }
+        
+        .choice-input:checked + .choice-label {
+            border-color: var(--color-accent);
+            background: rgba(201, 169, 98, 0.05);
+        }
+        
+        .choice-input:checked + .choice-label::before {
+            border-color: var(--color-accent);
+            background: var(--color-accent);
+            box-shadow: inset 0 0 0 4px var(--color-white);
+        }
+        
+        .choice-content {
+            flex: 1;
+        }
+        
+        .choice-title {
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: 2px;
+        }
+        
+        .choice-helper {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+        }
+        
+        /* Comment Section */
+        .comment-section {
+            margin-bottom: var(--space-lg);
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--color-border);
+        }
+        
+        .comment-label {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: var(--space-xs);
+            display: block;
+        }
+        
+        .comment-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: var(--space-sm);
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--color-text);
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            resize: vertical;
+            transition: border-color var(--transition);
+        }
+        
+        .comment-textarea:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+        
+        .comment-textarea::placeholder {
+            color: var(--color-text-muted);
+        }
+        
+        .char-count {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            text-align: right;
+            margin-top: var(--space-xs);
+        }
+        
+        /* CTA */
+        .cta-section {
+            text-align: center;
+        }
+        
+        .btn-primary {
+            display: inline-block;
+            width: 100%;
+            max-width: 280px;
+            padding: 1rem 1.75rem;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--color-white);
+            background: var(--color-text);
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #1a1816;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .btn-primary:focus {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Privacy Note */
+        .privacy-note {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            margin-top: var(--space-md);
+        }
+        
+        /* Desktop */
+        @media (min-width: 600px) {
+            .feedback-form {
+                padding: var(--space-lg);
+            }
+            
+            .choices {
+                flex-direction: row;
+            }
+            
+            .choice-option {
+                flex: 1;
+            }
+            
+            .choice-label {
+                flex-direction: column;
+                text-align: center;
+                padding: var(--space-lg) var(--space-md);
+            }
+            
+            .choice-label::before {
+                margin-bottom: var(--space-sm);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">StayHustler</a>
+            <a href="index.html" class="home-link">Back to homepage</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <header class="page-header">
+                <h1>Quick question about your hotel stay</h1>
+                <p class="page-subheadline">Your answer helps improve future guidance.</p>
+            </header>
+
+            <form class="feedback-form" id="feedback-form">
+                <fieldset style="border: none; padding: 0; margin: 0;">
+                    <legend class="question-label">Did you receive an upgrade or perk?</legend>
+                    
+                    <div class="choices" role="radiogroup">
+                        <div class="choice-option">
+                            <input type="radio" id="outcome-upgrade" name="outcome" value="upgrade" class="choice-input" required>
+                            <label for="outcome-upgrade" class="choice-label">
+                                <div class="choice-content">
+                                    <p class="choice-title">Yes — upgrade</p>
+                                    <p class="choice-helper">Room category improved.</p>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <div class="choice-option">
+                            <input type="radio" id="outcome-perk" name="outcome" value="perk" class="choice-input">
+                            <label for="outcome-perk" class="choice-label">
+                                <div class="choice-content">
+                                    <p class="choice-title">Yes — perk</p>
+                                    <p class="choice-helper">Breakfast, late checkout, credit, etc.</p>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <div class="choice-option">
+                            <input type="radio" id="outcome-no" name="outcome" value="no" class="choice-input">
+                            <label for="outcome-no" class="choice-label">
+                                <div class="choice-content">
+                                    <p class="choice-title">No</p>
+                                    <p class="choice-helper">No change this time.</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="comment-section">
+                    <label for="comment" class="comment-label">Anything you want to share? (optional)</label>
+                    <textarea id="comment" class="comment-textarea" maxlength="300" placeholder="Timing, hotel response, what you asked for…"></textarea>
+                    <p class="char-count"><span id="char-count">0</span>/300</p>
+                </div>
+
+                <div class="cta-section">
+                    <button type="submit" class="btn-primary" id="submit-btn" disabled>Submit</button>
+                </div>
+            </form>
+
+            <p class="privacy-note">Stored locally in your browser. No personal data required.</p>
+        </div>
+    </main>
+
+    <div aria-live="polite" id="aria-live" style="position: absolute; left: -9999px;"></div>
+
+    <script>
+        const form = document.getElementById('feedback-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const commentTextarea = document.getElementById('comment');
+        const charCount = document.getElementById('char-count');
+        const outcomeInputs = document.querySelectorAll('input[name="outcome"]');
+
+        // Enable submit when option selected
+        outcomeInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                submitBtn.disabled = false;
+            });
+        });
+
+        // Character count
+        commentTextarea.addEventListener('input', () => {
+            charCount.textContent = commentTextarea.value.length;
+        });
+
+        // Form submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const selectedOutcome = document.querySelector('input[name="outcome"]:checked');
+            if (!selectedOutcome) return;
+            
+            const feedbackData = {
+                outcome: selectedOutcome.value,
+                comment: commentTextarea.value.trim(),
+                ts: Date.now()
+            };
+            
+            localStorage.setItem('stayhustler_feedback', JSON.stringify(feedbackData));
+            
+            window.location.href = 'reengage.html?outcome=' + encodeURIComponent(selectedOutcome.value);
+        });
+    </script>
+</body>
+</html>
