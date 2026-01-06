@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
+const crypto = require('crypto');
 require('dotenv').config();
 
 const app = express();
@@ -46,6 +47,29 @@ if (process.env.DATABASE_URL) {
     initDb();
 } else {
     console.warn('[DB] DATABASE_URL not set - subscriber features disabled');
+}
+
+// ============================================================
+// UNSUBSCRIBE TOKEN HELPERS
+// ============================================================
+// Sign and verify email for one-click unsubscribe links.
+// Token = HMAC-SHA256(email, UNSUBSCRIBE_SECRET)
+// ============================================================
+
+const UNSUBSCRIBE_SECRET = process.env.UNSUBSCRIBE_SECRET || 'change-me-in-production';
+
+// Generate unsubscribe token for an email
+function signEmail(email) {
+    const hmac = crypto.createHmac('sha256', UNSUBSCRIBE_SECRET);
+    hmac.update(email.toLowerCase().trim());
+    return hmac.digest('hex');
+}
+
+// Verify unsubscribe token (constant-time comparison)
+function verifyEmailToken(email, token) {
+    const expected = signEmail(email);
+    if (!token || token.length !== expected.length) return false;
+    return crypto.timingSafeEqual(Buffer.from(token, 'hex'), Buffer.from(expected, 'hex'));
 }
 
 // CORS configuration
@@ -729,6 +753,154 @@ app.get('/api/subscribers/count', async (req, res) => {
     } catch (err) {
         console.error('[SubscriberCount] Error:', err.message);
         res.json({ count: 0 });
+    }
+});
+
+// GET /api/subscribers/status - Get status breakdown
+app.get('/api/subscribers/status', async (req, res) => {
+    try {
+        if (!pool) {
+            return res.json({ subscribed: 0, unsubscribed: 0 });
+        }
+
+        const result = await pool.query(`
+            SELECT 
+                SUM(CASE WHEN status = 'subscribed' THEN 1 ELSE 0 END)::int as subscribed,
+                SUM(CASE WHEN status = 'unsubscribed' THEN 1 ELSE 0 END)::int as unsubscribed
+            FROM newsletter_subscribers
+        `);
+        res.json({
+            subscribed: result.rows[0].subscribed || 0,
+            unsubscribed: result.rows[0].unsubscribed || 0
+        });
+
+    } catch (err) {
+        console.error('[SubscriberStatus] Error:', err.message);
+        res.json({ subscribed: 0, unsubscribed: 0 });
+    }
+});
+
+// GET /unsubscribe - One-click unsubscribe endpoint
+app.get('/unsubscribe', async (req, res) => {
+    try {
+        const { email, token } = req.query;
+
+        // Validate parameters
+        if (!email || !token) {
+            return res.status(400).send(`
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Invalid Link</title>
+                    <style>
+                        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+                               max-width: 600px; margin: 50px auto; padding: 20px; text-align: center; }
+                        h1 { color: #c55; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Invalid Unsubscribe Link</h1>
+                    <p>This link is missing required parameters.</p>
+                </body>
+                </html>
+            `);
+        }
+
+        const cleanEmail = email.trim().toLowerCase();
+
+        // Verify token
+        if (!verifyEmailToken(cleanEmail, token)) {
+            console.log(`[Unsubscribe] Invalid token for ${cleanEmail}`);
+            return res.status(400).send(`
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Invalid Link</title>
+                    <style>
+                        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+                               max-width: 600px; margin: 50px auto; padding: 20px; text-align: center; }
+                        h1 { color: #c55; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Invalid Unsubscribe Link</h1>
+                    <p>This unsubscribe link is invalid or has expired.</p>
+                </body>
+                </html>
+            `);
+        }
+
+        // Check if DB is available
+        if (!pool) {
+            return res.status(500).send(`
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Error</title>
+                </head>
+                <body>
+                    <h1>Service Unavailable</h1>
+                    <p>Please try again later.</p>
+                </body>
+                </html>
+            `);
+        }
+
+        // Update subscriber status
+        await pool.query(`
+            UPDATE newsletter_subscribers
+            SET status = 'unsubscribed', unsubscribed_at = now()
+            WHERE email = $1
+        `, [cleanEmail]);
+
+        console.log(`[Unsubscribe] Success: ${cleanEmail}`);
+
+        // Return success page
+        res.send(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Unsubscribed</title>
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+                           max-width: 600px; margin: 50px auto; padding: 20px; text-align: center; 
+                           color: #2d2a26; }
+                    h1 { color: #5a8a4a; }
+                    p { line-height: 1.6; color: #6b6560; }
+                </style>
+            </head>
+            <body>
+                <h1>You have been unsubscribed</h1>
+                <p>You will no longer receive weekly tips from StayHustler.</p>
+                <p>If this was a mistake, you can subscribe again at <a href="https://stayhustler.com">stayhustler.com</a>.</p>
+            </body>
+            </html>
+        `);
+
+    } catch (err) {
+        console.error('[Unsubscribe] Error:', err.message);
+        res.status(500).send(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Error</title>
+            </head>
+            <body>
+                <h1>An error occurred</h1>
+                <p>Please try again later.</p>
+            </body>
+            </html>
+        `);
     }
 });
 
