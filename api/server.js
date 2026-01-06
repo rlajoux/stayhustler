@@ -703,7 +703,7 @@ app.post('/api/subscribe', async (req, res) => {
         res.json({ ok: true });
 
     } catch (err) {
-        console.error('[Subscribe] Error:', err.message);
+        console.error('[Subscribe] Error:', err.message, err.stack);
         res.status(500).json({ error: 'Subscription failed.' });
     }
 });
