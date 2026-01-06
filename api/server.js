@@ -36,6 +36,74 @@ app.use(cors({
 
 app.use(express.json());
 
+// ============================================================
+// RATE LIMITING
+// ============================================================
+// In-memory rate limiter to protect Gemini API usage.
+// Limit: 10 requests per 10 minutes per IP.
+// Only applied to POST /api/generate-request.
+// ============================================================
+
+const RATE_LIMIT_MAX = 10;              // Max requests per window
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;  // 10 minutes in ms
+const rateLimitStore = new Map();       // IP -> { count, windowStart }
+
+// Get client IP from request (handles proxies)
+function getClientIp(req) {
+    const forwarded = req.headers['x-forwarded-for'];
+    if (forwarded) {
+        // x-forwarded-for can be comma-separated; take first IP
+        return forwarded.split(',')[0].trim();
+    }
+    return req.socket?.remoteAddress || 'unknown';
+}
+
+// Rate limit middleware
+function rateLimit(req, res, next) {
+    const ip = getClientIp(req);
+    const now = Date.now();
+    
+    // Get or create entry for this IP
+    let entry = rateLimitStore.get(ip);
+    
+    if (!entry) {
+        // First request from this IP
+        entry = { count: 0, windowStart: now };
+        rateLimitStore.set(ip, entry);
+    }
+    
+    // Check if window has expired; if so, reset
+    if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+        entry.count = 0;
+        entry.windowStart = now;
+    }
+    
+    // Increment count
+    entry.count++;
+    
+    // Check if over limit
+    if (entry.count > RATE_LIMIT_MAX) {
+        console.log('[RateLimit] rate_limited', { ip, count: entry.count });
+        return res.status(429).json({
+            error: 'Rate limit exceeded. Please try again in a few minutes.'
+        });
+    }
+    
+    // Allowed - proceed
+    next();
+}
+
+// Periodic cleanup of stale entries (every 10 minutes)
+// Prevents memory leak from accumulated IPs
+setInterval(() => {
+    const now = Date.now();
+    for (const [ip, entry] of rateLimitStore.entries()) {
+        if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+            rateLimitStore.delete(ip);
+        }
+    }
+}, RATE_LIMIT_WINDOW_MS);
+
 // Validation helper
 function validateRequest(body) {
     const errors = [];
@@ -463,8 +531,8 @@ async function callGemini(prompt) {
     }
 }
 
-// API endpoint
-app.post('/api/generate-request', async (req, res) => {
+// API endpoint (rate limited)
+app.post('/api/generate-request', rateLimit, async (req, res) => {
     try {
         // Validate request
         const errors = validateRequest(req.body);
