@@ -514,9 +514,14 @@
                     <h2 class="card-title">Email request</h2>
                 </div>
                 
+                <p class="timing-line"><strong>Subject:</strong> <span id="email-subject">Upcoming stay inquiry</span></p>
                 <p class="timing-line"><strong>When to send:</strong> 24–36 hours before arrival</p>
                 
-                <textarea class="request-textarea" id="email-request" readonly>Hello,
+                <div id="loading-indicator" style="text-align: center; padding: var(--space-lg); color: var(--color-text-muted);">
+                    Generating your personalized request...
+                </div>
+                
+                <textarea class="request-textarea" id="email-request" readonly style="display: none;">Hello,
 
 I'm very much looking forward to my upcoming stay at your property. If any premium rooms or suites are forecasted to remain available around my arrival, I would be grateful to be considered for an upgrade.
 
@@ -524,6 +529,10 @@ I understand availability drives these decisions and appreciate any consideratio
 
 Warm regards,
 [Your name]</textarea>
+                
+                <p id="fallback-notice" style="display: none; font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: var(--space-sm); font-style: italic;">
+                    Couldn't generate a custom request—showing a default template.
+                </p>
                 
                 <div class="button-row">
                     <button type="button" class="btn btn-primary" id="copy-email-btn">
@@ -555,7 +564,7 @@ Warm regards,
                     <h2 class="card-title">When to ask</h2>
                 </div>
                 
-                <ul class="timing-list">
+                <ul class="timing-list" id="timing-list">
                     <li>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="20 6 9 17 4 12"></polyline>
@@ -698,6 +707,116 @@ Warm regards,
         downloadBtn.addEventListener('click', (e) => {
             // Do nothing - tooltip shows "Coming soon"
         });
+
+        // API Integration - Railway backend
+        const API_BASE = "https://stayhustler-production.up.railway.app";
+
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const fallbackNotice = document.getElementById('fallback-notice');
+        const emailSubject = document.getElementById('email-subject');
+        const timingList = document.getElementById('timing-list');
+        const scriptBlock = document.querySelector('.script-block');
+
+        // Default fallback content
+        const defaultContent = {
+            email_subject: 'Upcoming stay inquiry',
+            email_body: `Hello,
+
+I'm very much looking forward to my upcoming stay at your property. If any premium rooms or suites are forecasted to remain available around my arrival, I would be grateful to be considered for an upgrade.
+
+I understand availability drives these decisions and appreciate any consideration.
+
+Warm regards,
+[Your Name]`,
+            timing_guidance: [
+                '<strong>Email:</strong> 24-36 hours before arrival',
+                '<strong>In person:</strong> At check-in, before ID is handed over',
+                'Be polite, specific, and flexible'
+            ],
+            fallback_script: 'If any upgraded rooms are expected to remain available this evening, I\'d be grateful to be considered.'
+        };
+
+        // Render timing guidance list
+        function renderTimingList(timingItems) {
+            const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>`;
+            
+            timingList.innerHTML = timingItems.map(item => `
+                <li>
+                    ${checkIcon}
+                    <span>${item}</span>
+                </li>
+            `).join('');
+        }
+
+        // Apply content to DOM
+        function applyContent(data) {
+            emailSubject.textContent = data.email_subject;
+            emailTextarea.value = data.email_body;
+            emailTextarea.style.display = 'block';
+            
+            // Handle timing guidance
+            const timingItems = Array.isArray(data.timing_guidance) 
+                ? data.timing_guidance 
+                : defaultContent.timing_guidance;
+            renderTimingList(timingItems);
+            
+            // Update fallback script
+            scriptBlock.textContent = data.fallback_script || defaultContent.fallback_script;
+            
+            loadingIndicator.style.display = 'none';
+        }
+
+        // Show fallback content with notice
+        function showFallback() {
+            fallbackNotice.style.display = 'block';
+            applyContent(defaultContent);
+        }
+
+        // Generate request from API
+        async function generateRequest() {
+            // Parse stored data
+            const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
+            const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
+
+            // Check if we have minimum required data
+            if (!booking.hotel || !context.arrivalDay) {
+                console.warn('Missing booking or context data, using fallback');
+                showFallback();
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/generate-request`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ booking, context })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // Validate response has required fields
+                if (!data.email_subject || !data.email_body) {
+                    throw new Error('Invalid API response');
+                }
+
+                applyContent(data);
+
+            } catch (error) {
+                console.error('Failed to generate request:', error);
+                showFallback();
+            }
+        }
+
+        // Initialize on page load
+        generateRequest();
     </script>
 </body>
 </html>
