@@ -98,14 +98,27 @@ function countOccurrences(haystack, needle) {
 }
 
 // Helper: check if string contains any banned words (case-insensitive)
+// Returns { hit: boolean, words: string[] }
 function containsBannedWords(s) {
-    if (!s || typeof s !== 'string') return [];
+    if (!s || typeof s !== 'string') return { hit: false, words: [] };
     const lower = s.toLowerCase();
-    return BANNED_WORDS.filter(word => {
-        // Match whole word or as part of compound (avoid false positives)
+    const foundWords = BANNED_WORDS.filter(word => {
+        // Match whole word (avoid false positives)
         const regex = new RegExp(`\\b${word}\\b`, 'i');
         return regex.test(lower);
     });
+    return { hit: foundWords.length > 0, words: foundWords };
+}
+
+// Helper: check if text looks like a single sentence
+function looksLikeSingleSentence(s) {
+    if (!s || typeof s !== 'string') return false;
+    const trimmed = s.trim();
+    // No newlines allowed
+    if (trimmed.includes('\n')) return false;
+    // Must end with . or ?
+    if (!/[.?]$/.test(trimmed)) return false;
+    return true;
 }
 
 // Helper: check if subject contains a date token
@@ -162,8 +175,8 @@ function validateOutput(output) {
             reasons.push(`email_body must include "forecasted to remain available" exactly once (got ${forecastCount})`);
         }
         const bodyBanned = containsBannedWords(output.email_body);
-        if (bodyBanned.length > 0) {
-            reasons.push(`email_body contains banned words: ${bodyBanned.join(', ')}`);
+        if (bodyBanned.hit) {
+            reasons.push(`email_body contains banned words: ${bodyBanned.words.join(', ')}`);
         }
     }
 
@@ -190,16 +203,12 @@ function validateOutput(output) {
         if (scriptWords < 8 || scriptWords > 30) {
             reasons.push(`fallback_script must be 8-30 words (got ${scriptWords})`);
         }
-        const newlineCount = (output.fallback_script.match(/\n/g) || []).length;
-        if (newlineCount > 1) {
-            reasons.push('fallback_script must be a single sentence (too many newlines)');
-        }
-        if (!/[.?]$/.test(output.fallback_script.trim())) {
-            reasons.push('fallback_script must end with . or ?');
+        if (!looksLikeSingleSentence(output.fallback_script)) {
+            reasons.push('fallback_script must be a single sentence (no newlines, ends with . or ?)');
         }
         const scriptBanned = containsBannedWords(output.fallback_script);
-        if (scriptBanned.length > 0) {
-            reasons.push(`fallback_script contains banned words: ${scriptBanned.join(', ')}`);
+        if (scriptBanned.hit) {
+            reasons.push(`fallback_script contains banned words: ${scriptBanned.words.join(', ')}`);
         }
     }
 
@@ -233,28 +242,32 @@ ${originalPrompt}
 Generate the CORRECTED JSON response:`;
 }
 
-// Deterministic fallback payload
+// Deterministic fallback payload (must pass all validation rules)
+// - email_subject: 6-12 words, includes date token, not starting with "Reservation Inquiry"
+// - email_body: 160-210 words, includes "Reservation: [Confirmation Number]", "forecasted to remain available" once
+// - timing_guidance: 3 items, each 10-140 chars
+// - fallback_script: 8-30 words, single sentence, ends with . or ?
 function getFallbackPayload() {
     return {
-        email_subject: "Upcoming stay — request ahead of arrival",
+        email_subject: "Upcoming stay Jan 15–18 — request ahead of arrival",
         email_body: `Hello [Hotel Team],
 
 Reservation: [Confirmation Number]
 
-I'm writing ahead of my upcoming stay to share a quick note. I'm very much looking forward to visiting your property and experiencing everything it has to offer.
+I'm writing ahead of my upcoming stay to share a quick note with your team. I'm very much looking forward to visiting your property and experiencing everything it has to offer during my time with you.
 
-If any higher-category rooms, including suites, are forecasted to remain available around my check-in time, I would be grateful to be considered for an upgrade. I'm flexible on room type and timing, and I completely understand that availability and operational needs come first.
+If any higher-category rooms, including suites, are forecasted to remain available around my check-in time, I would be truly grateful to be considered. I'm flexible on room type and timing, and I completely understand that availability and operational needs always come first.
 
 This trip is a special occasion for me, and any additional touches to make the stay memorable would be wonderful, though certainly not expected. If an upgrade isn't possible, I'm of course happy to keep my existing reservation exactly as booked.
 
-Thank you so much for any consideration. I truly appreciate your hospitality and look forward to arriving soon.
+Thank you so much for any consideration you can offer. I truly appreciate your hospitality and look forward to arriving soon. Please don't hesitate to reach out if you need any information from me before my arrival.
 
 Warm regards,
 [Your Name]`,
         timing_guidance: [
-            "Send your email 24-48 hours before check-in for best results.",
-            "Avoid sending requests on weekends when staffing may be limited.",
-            "Follow up politely at the front desk if you haven't received a response."
+            "Send 24–36 hours before arrival when staffing is stable.",
+            "Be specific and flexible; availability drives decisions.",
+            "If no reply, ask calmly at check-in before ID is handed over."
         ],
         fallback_script: "If any upgraded rooms are expected to remain available this evening, I would be grateful to be considered."
     };
