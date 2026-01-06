@@ -93,7 +93,7 @@ function sanitizeInput(body) {
 function buildPrompt(data) {
     const { booking, context } = data;
     
-    return `You are an expert in hotel guest relations. Generate a polite, professional, and SPECIFIC hotel upgrade/perk request email.
+    return `You are an expert in hotel guest relations. Generate a polite, professional, and SPECIFIC hotel upgrade request email.
 
 INPUT DATA:
 - Hotel: ${booking.hotel}
@@ -111,10 +111,28 @@ INPUT DATA:
 - Preferred room type (if specific): ${context.preferredRoomType || 'N/A'}
 - How guest prefers to ask: ${context.askPreference}
 
-STRICT EMAIL REQUIREMENTS:
-1. Length: The email_body MUST be 140-220 words. Not shorter, not longer.
+===== SUBJECT LINE RULES =====
+- email_subject MUST be 6–12 words.
+- MUST include the stay dates in short format (e.g., "Jan 15–18").
+- MUST NOT start with "Reservation Inquiry" or sound overly formal.
+- Good examples to emulate (do not copy verbatim):
+  "Upcoming stay Jan 15–18 — flexibility if available"
+  "Arrival Jan 15–18 — request ahead of check-in"
+  "Quick note ahead of Jan 15–18 stay"
 
-2. Specificity: The email MUST reference at least TWO of the following details from the input (if available):
+===== EMAIL BODY RULES =====
+1. Length: email_body MUST be 160–210 words. Not shorter, not longer.
+
+2. Reservation Line: Near the top of the email (after greeting), include exactly:
+   "Reservation: [Confirmation Number]"
+   Keep this placeholder exactly as shown.
+
+3. The Ask: Make ONE clear, specific-but-flexible request:
+   - Request consideration for "any higher-category room" (optionally add "including suites if appropriate")
+   - Do NOT use vague language like "upgrade or perks"
+   - Use the phrase "forecasted to remain available" exactly ONCE in the email
+
+4. Specificity: Reference at least TWO of these details from input (if available):
    - Arrival day or check-in date
    - Length of stay
    - Booking channel
@@ -122,47 +140,51 @@ STRICT EMAIL REQUIREMENTS:
    - Occasion (if any)
    - Flexibility preferences (room type or timing)
 
-3. The Ask: Include ONE specific-but-flexible upgrade request. Either:
-   - Name a higher category (e.g., "a Junior Suite or Club-level room"), OR
-   - Use "any higher-category room or suite that might remain available"
+5. Flexibility Signal: If flexibility info is provided, mention it (e.g., "I'm flexible on room type and check-in timing").
 
-4. Operational Courtesy: Include ONE signal that shows hotel-operations awareness:
-   - E.g., "I'm flexible on room type and timing" or "I understand availability and demand drive these decisions"
+6. Operational Courtesy: Include ONE signal showing hotel-operations awareness:
+   - E.g., "I understand availability and demand come first"
 
-5. Soft Close: End with acknowledgment that they're happy to keep their existing booking if an upgrade isn't possible.
+7. Soft Close: End with acknowledgment that they're happy to keep their existing booking if not possible.
 
-6. Tone: Warm, gracious, never entitled or pressuring. Read like a seasoned traveler, not someone gaming the system.
+8. Tone: Warm, gracious, never entitled or pressuring. Sound like a seasoned traveler, not someone gaming the system.
 
-BANNED PHRASES (never use these words):
-"free", "guarantee", "hack", "trick", "owed", "must", "demand", "entitled", "deserve"
+===== BANNED PHRASES =====
+Never use: "free", "guarantee", "hack", "trick", "owed", "must", "demand", "entitled", "deserve", "upgrade or perks"
 
-ADDITIONAL RULES:
+===== ADDITIONAL RULES =====
 - Do NOT mention "AI", "Gemini", or "StayHustler"
 - Do NOT claim to contact the hotel on behalf of the guest
 - Use [Your Name] as the signature placeholder
 - If an occasion is mentioned (birthday, anniversary, honeymoon), weave it in naturally
 - If loyalty status exists, mention membership subtly (not as leverage)
 
-GOLD STANDARD EXAMPLE (emulate this tone and structure, do NOT copy verbatim):
----
+===== GOLD STANDARD EXAMPLE (emulate tone and structure, do NOT copy verbatim) =====
+Subject: Upcoming stay Jan 15–17 — quick note ahead of arrival
+
 Hello [Hotel Team],
 
-I'm looking forward to my upcoming stay arriving Thursday for two nights. I booked a Deluxe King and wanted to share a quick note ahead of arrival.
+Reservation: [Confirmation Number]
 
-If any higher-category rooms are forecasted to remain available around check-in, I'd be grateful to be considered. I'm flexible on room type and timing and completely understand that availability and demand come first.
+I'm looking forward to my upcoming stay arriving Thursday, January 15th for two nights. I booked a Deluxe King directly with the hotel and wanted to reach out ahead of arrival.
 
-This is my first stay with you and I'm excited to experience the property. If it's not possible, I'm of course happy to keep my existing reservation.
+If any higher-category rooms, including suites, are forecasted to remain available around my check-in time, I'd be grateful to be considered. I'm flexible on room type and timing and completely understand that availability and demand come first.
+
+This trip is to celebrate our anniversary, so any additional touches would be wonderful but certainly not expected. If it's not possible, I'm of course happy to keep my existing reservation as booked.
+
+Thank you for any consideration. I'm excited to experience the property.
 
 Warm regards,
 [Your Name]
 ---
 
-OUTPUT FORMAT (respond with STRICT JSON only, no markdown, no code blocks, no commentary):
+===== OUTPUT FORMAT =====
+Respond with STRICT JSON only. No markdown, no code blocks, no commentary.
 {
-  "email_subject": "Brief, professional subject line (not generic)",
-  "email_body": "The full email text (140-220 words) with proper greeting and closing. Use [Your Name] for signature.",
+  "email_subject": "6-12 word subject including dates (e.g., Jan 15–18), not starting with Reservation Inquiry",
+  "email_body": "Full email text (160-210 words). Must include 'Reservation: [Confirmation Number]' near top and 'forecasted to remain available' exactly once. Use [Your Name] for signature.",
   "timing_guidance": ["First timing tip", "Second timing tip", "Third timing tip"],
-  "fallback_script": "A brief, polite script (1-2 sentences) for asking at the front desk in person"
+  "fallback_script": "One sentence for asking at the front desk in person"
 }
 
 Generate the JSON response:`;
