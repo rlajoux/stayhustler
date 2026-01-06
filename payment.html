@@ -573,7 +573,7 @@
         });
 
         // Form submission
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             if (!selectedMethod) {
@@ -583,14 +583,41 @@
             
             // Simulate successful payment
             localStorage.setItem('stayhustler_paid', 'true');
-            localStorage.setItem('stayhustler_order', JSON.stringify({
+            const order = {
                 price: 7,
                 currency: 'USD',
                 ts: Date.now(),
                 method: selectedMethod
-            }));
+            };
+            localStorage.setItem('stayhustler_order', JSON.stringify(order));
             
-            // Navigate to results
+            // Try to deliver via email (non-blocking)
+            const email = localStorage.getItem('stayhustler_email');
+            if (email) {
+                try {
+                    const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
+                    const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
+                    
+                    // POST to delivery endpoint (don't block navigation on failure)
+                    fetch('https://stayhustler-production.up.railway.app/api/deliver-request', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, booking, context, order })
+                    }).then(response => {
+                        if (response.ok) {
+                            console.log('[Delivery] Email delivery initiated');
+                        } else {
+                            console.log('[Delivery] Email delivery failed, will show on results page');
+                        }
+                    }).catch(err => {
+                        console.log('[Delivery] Network error, will show on results page');
+                    });
+                } catch (err) {
+                    console.log('[Delivery] Error preparing delivery:', err);
+                }
+            }
+            
+            // Navigate to results immediately (don't wait for email)
             window.location.href = 'results.html';
         });
 

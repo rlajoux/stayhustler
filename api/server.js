@@ -23,10 +23,10 @@ if (process.env.DATABASE_URL) {
         ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
     });
 
-    // Create table on startup if it doesn't exist
+    // Create tables on startup if they don't exist
     const initDb = async () => {
         try {
-            // Use SERIAL id instead of UUID to avoid extension issues
+            // Newsletter subscribers table
             await pool.query(`
                 CREATE TABLE IF NOT EXISTS newsletter_subscribers (
                     id SERIAL PRIMARY KEY,
@@ -40,8 +40,23 @@ if (process.env.DATABASE_URL) {
                 )
             `);
             console.log('[DB] newsletter_subscribers table ready');
+
+            // Request deliveries table
+            await pool.query(`
+                CREATE TABLE IF NOT EXISTS request_deliveries (
+                    id SERIAL PRIMARY KEY,
+                    email TEXT NOT NULL,
+                    booking JSONB NOT NULL,
+                    context JSONB NOT NULL,
+                    generated JSONB NOT NULL,
+                    status TEXT NOT NULL DEFAULT 'sent',
+                    error TEXT NULL,
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+                )
+            `);
+            console.log('[DB] request_deliveries table ready');
         } catch (err) {
-            console.error('[DB] Error initializing table:', err.message);
+            console.error('[DB] Error initializing tables:', err.message);
         }
     };
     initDb();
@@ -598,6 +613,65 @@ async function callGemini(prompt) {
     }
 }
 
+// ============================================================
+// GENERATION LOGIC (reusable)
+// ============================================================
+// Core generation function used by both /api/generate-request and /api/deliver-request
+// Returns the generated payload with quality enforcement
+// ============================================================
+
+async function generateRequestPayload(booking, context) {
+    const sanitizedData = sanitizeInput({ booking, context });
+    const prompt = buildPrompt(sanitizedData);
+    
+    let firstPassValid = false;
+    let secondPassAttempted = false;
+    let finalSource = 'fallback';
+    
+    try {
+        // First pass: Call Gemini
+        const firstResult = await callGemini(prompt);
+        
+        // Validate first pass
+        const firstValidation = validateOutput(firstResult);
+        firstPassValid = firstValidation.ok;
+        
+        if (firstValidation.ok) {
+            finalSource = 'first';
+            console.log(`[Generation] hotel=${sanitizedData.booking.hotel} final_source=first`);
+            return firstResult;
+        }
+        
+        // First pass failed - attempt retry with correction prompt
+        console.log(`[Generation] First pass failed: ${firstValidation.reasons.join('; ')}`);
+        secondPassAttempted = true;
+        
+        const correctionPrompt = buildCorrectionPrompt(prompt, firstValidation.reasons);
+        const secondResult = await callGemini(correctionPrompt);
+        
+        // Validate second pass
+        const secondValidation = validateOutput(secondResult);
+        
+        if (secondValidation.ok) {
+            finalSource = 'second';
+            console.log(`[Generation] hotel=${sanitizedData.booking.hotel} final_source=second`);
+            return secondResult;
+        }
+        
+        // Second pass also failed - use fallback
+        console.log(`[Generation] Second pass failed: ${secondValidation.reasons.join('; ')}`);
+        finalSource = 'fallback';
+        
+    } catch (geminiError) {
+        console.error(`[Generation] Gemini error: ${geminiError.message}`);
+        finalSource = 'fallback';
+    }
+    
+    // Return fallback payload
+    console.log(`[Generation] hotel=${sanitizedData.booking.hotel} final_source=fallback`);
+    return getFallbackPayload();
+}
+
 // API endpoint (rate limited)
 app.post('/api/generate-request', rateLimit, async (req, res) => {
     try {
@@ -610,59 +684,9 @@ app.post('/api/generate-request', rateLimit, async (req, res) => {
             });
         }
         
-        // Sanitize input
-        const sanitizedData = sanitizeInput(req.body);
-        
-        // Build prompt
-        const prompt = buildPrompt(sanitizedData);
-        
-        // Quality enforcement logging
-        let firstPassValid = false;
-        let secondPassAttempted = false;
-        let finalSource = 'fallback';
-        
-        try {
-            // First pass: Call Gemini
-            const firstResult = await callGemini(prompt);
-            
-            // Validate first pass
-            const firstValidation = validateOutput(firstResult);
-            firstPassValid = firstValidation.ok;
-            
-            if (firstValidation.ok) {
-                finalSource = 'first';
-                console.log(`[QualityEnforcement] hotel=${sanitizedData.booking.hotel} first_pass_valid=true second_pass_attempted=false final_source=first`);
-                return res.json(firstResult);
-            }
-            
-            // First pass failed - attempt retry with correction prompt
-            console.log(`[QualityEnforcement] First pass failed: ${firstValidation.reasons.join('; ')}`);
-            secondPassAttempted = true;
-            
-            const correctionPrompt = buildCorrectionPrompt(prompt, firstValidation.reasons);
-            const secondResult = await callGemini(correctionPrompt);
-            
-            // Validate second pass
-            const secondValidation = validateOutput(secondResult);
-            
-            if (secondValidation.ok) {
-                finalSource = 'second';
-                console.log(`[QualityEnforcement] hotel=${sanitizedData.booking.hotel} first_pass_valid=false second_pass_attempted=true final_source=second`);
-                return res.json(secondResult);
-            }
-            
-            // Second pass also failed - use fallback
-            console.log(`[QualityEnforcement] Second pass failed: ${secondValidation.reasons.join('; ')}`);
-            finalSource = 'fallback';
-            
-        } catch (geminiError) {
-            console.error(`[QualityEnforcement] Gemini error: ${geminiError.message}`);
-            finalSource = 'fallback';
-        }
-        
-        // Return fallback payload (always 200, never 5xx for content issues)
-        console.log(`[QualityEnforcement] hotel=${sanitizedData.booking.hotel} first_pass_valid=${firstPassValid} second_pass_attempted=${secondPassAttempted} final_source=${finalSource}`);
-        return res.json(getFallbackPayload());
+        // Generate using reusable function
+        const result = await generateRequestPayload(req.body.booking, req.body.context);
+        return res.json(result);
         
     } catch (error) {
         console.error('Error in request handling:', error.message);
@@ -901,6 +925,141 @@ app.get('/unsubscribe', async (req, res) => {
             </body>
             </html>
         `);
+    }
+});
+
+// ============================================================
+// POST-PAYMENT DELIVERY
+// ============================================================
+// Send generated request to traveler via email after payment
+// ============================================================
+
+const sgMail = require('@sendgrid/mail');
+
+// Configure SendGrid if API key is set
+if (process.env.SENDGRID_API_KEY) {
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+}
+
+// POST /api/deliver-request - Email generated content to traveler
+app.post('/api/deliver-request', async (req, res) => {
+    try {
+        // Check if SendGrid is configured
+        if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_FROM_EMAIL) {
+            console.error('[Delivery] SendGrid not configured');
+            return res.status(502).json({ error: 'Delivery failed.' });
+        }
+
+        // Check if DB is available
+        if (!pool) {
+            console.error('[Delivery] Database not configured');
+            return res.status(502).json({ error: 'Delivery failed.' });
+        }
+
+        const { email, booking, context, order } = req.body;
+
+        // Validate email
+        if (!email || typeof email !== 'string' || !EMAIL_REGEX.test(email)) {
+            return res.status(400).json({ error: 'Valid email is required.' });
+        }
+
+        // Validate required fields
+        if (!booking || !context) {
+            return res.status(400).json({ error: 'Booking and context are required.' });
+        }
+
+        const cleanEmail = email.trim().toLowerCase();
+
+        try {
+            // Generate the request using existing logic
+            console.log(`[Delivery] Generating request for ${cleanEmail}`);
+            const generated = await generateRequestPayload(booking, context);
+
+            // Build email content
+            const emailText = `Your StayHustler upgrade request is ready!
+
+Hotel: ${booking.hotel || 'Unknown'}
+Check-in: ${booking.checkin || 'Unknown'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EMAIL SUBJECT FOR THE HOTEL:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${generated.email_subject}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EMAIL BODY TO SEND TO THE HOTEL:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${generated.email_body}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TIMING GUIDANCE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${generated.timing_guidance.map((tip, i) => `${i + 1}. ${tip}`).join('\n')}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FALLBACK SCRIPT (if email doesn't work):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${generated.fallback_script}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+IMPORTANT: You send this to the hotel yourself. We do not contact the hotel on your behalf. Copy the subject and body above, then email them to your hotel's reservations or front desk.
+
+Questions? Visit https://stayhustler.com
+
+—
+StayHustler
+`;
+
+            // Send email via SendGrid
+            const msg = {
+                to: cleanEmail,
+                from: process.env.SENDGRID_FROM_EMAIL,
+                subject: 'Your StayHustler request is ready',
+                text: emailText
+            };
+
+            await sgMail.send(msg);
+            console.log(`[Delivery] Email sent to ${cleanEmail}`);
+
+            // Log to database
+            await pool.query(`
+                INSERT INTO request_deliveries (email, booking, context, generated, status)
+                VALUES ($1, $2, $3, $4, 'sent')
+            `, [cleanEmail, JSON.stringify(booking), JSON.stringify(context), JSON.stringify(generated)]);
+
+            console.log(`[Delivery] Success for ${cleanEmail} hotel=${booking.hotel || 'unknown'}`);
+            res.json({ ok: true });
+
+        } catch (sendError) {
+            console.error(`[Delivery] SendGrid error for ${cleanEmail}:`, sendError.message);
+
+            // Log failure to database
+            try {
+                await pool.query(`
+                    INSERT INTO request_deliveries (email, booking, context, generated, status, error)
+                    VALUES ($1, $2, $3, $4, 'failed', $5)
+                `, [
+                    cleanEmail,
+                    JSON.stringify(booking),
+                    JSON.stringify(context),
+                    JSON.stringify({}),
+                    sendError.message
+                ]);
+            } catch (dbError) {
+                console.error(`[Delivery] Failed to log error to DB:`, dbError.message);
+            }
+
+            return res.status(502).json({ error: 'Delivery failed.' });
+        }
+
+    } catch (err) {
+        console.error('[Delivery] Error:', err.message);
+        res.status(502).json({ error: 'Delivery failed.' });
     }
 });
 
