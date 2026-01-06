@@ -903,11 +903,11 @@
             window.location.href = 'preview.html';
         });
         
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', () => {
+        // Initialize immediately (script is at bottom of body, DOM is ready)
+        (function init() {
             const derived = initDerivedFields();
             checkFormValidity();
-        });
+        })();
     </script>
 </body>
 </html>
