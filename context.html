@@ -312,6 +312,85 @@
             margin-top: var(--space-sm);
         }
         
+        /* Derived Fields Section */
+        .derived-section {
+            background: var(--color-bg-warm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: var(--space-sm) var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .derived-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .derived-title {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .derived-title svg {
+            width: 16px;
+            height: 16px;
+            color: var(--color-accent);
+        }
+        
+        .derived-edit-btn {
+            font-size: 0.85rem;
+            color: var(--color-accent);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            text-decoration: underline;
+        }
+        
+        .derived-edit-btn:hover {
+            color: var(--color-accent-hover);
+        }
+        
+        .derived-values {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs) var(--space-md);
+            margin-top: var(--space-xs);
+        }
+        
+        .derived-value {
+            font-size: 0.95rem;
+            color: var(--color-text);
+        }
+        
+        .derived-value strong {
+            font-weight: 500;
+        }
+        
+        .derived-fields-editable {
+            display: none;
+            margin-top: var(--space-sm);
+            padding-top: var(--space-sm);
+            border-top: 1px solid var(--color-border);
+        }
+        
+        .derived-fields-editable.visible {
+            display: block;
+        }
+        
+        .derived-fields-editable .form-group {
+            margin-bottom: var(--space-sm);
+        }
+        
+        .derived-fields-editable .form-group:last-child {
+            margin-bottom: 0;
+        }
+        
         .conditional-field input {
             width: 100%;
             padding: 0.875rem 1rem;
@@ -423,10 +502,53 @@
             </header>
 
             <form class="form-card" id="context-form">
-                <div class="form-section">
-                    <div class="form-group">
-                        <label for="length-of-stay" class="form-label">Length of stay <span class="required">*</span></label>
-                        <select id="length-of-stay" class="form-select" required>
+                <!-- Derived fields section (shown when booking dates are available) -->
+                <div class="derived-section" id="derived-section" style="display: none;">
+                    <div class="derived-header" id="derived-header">
+                        <span class="derived-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Derived from your booking
+                        </span>
+                        <button type="button" class="derived-edit-btn" id="derived-edit-btn">Edit</button>
+                    </div>
+                    <div class="derived-values" id="derived-values">
+                        <span class="derived-value"><strong>Stay:</strong> <span id="derived-length-display">—</span></span>
+                        <span class="derived-value"><strong>Arrival:</strong> <span id="derived-arrival-display">—</span></span>
+                    </div>
+                    <div class="derived-fields-editable" id="derived-fields-editable">
+                        <div class="form-group">
+                            <label for="length-of-stay" class="form-label">Length of stay</label>
+                            <select id="length-of-stay" class="form-select">
+                                <option value="">Select</option>
+                                <option value="1">1 night</option>
+                                <option value="2">2 nights</option>
+                                <option value="3-4">3–4 nights</option>
+                                <option value="5+">5+ nights</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="arrival-day" class="form-label">Arrival day</label>
+                            <select id="arrival-day" class="form-select">
+                                <option value="">Select</option>
+                                <option value="monday">Monday</option>
+                                <option value="tuesday">Tuesday</option>
+                                <option value="wednesday">Wednesday</option>
+                                <option value="thursday">Thursday</option>
+                                <option value="friday">Friday</option>
+                                <option value="saturday">Saturday</option>
+                                <option value="sunday">Sunday</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manual fields section (shown when booking dates are NOT available) -->
+                <div class="form-section" id="manual-fields-section">
+                    <div class="form-group" id="length-of-stay-group">
+                        <label for="length-of-stay-manual" class="form-label">Length of stay <span class="required">*</span></label>
+                        <select id="length-of-stay-manual" class="form-select" required>
                             <option value="">Select</option>
                             <option value="1">1 night</option>
                             <option value="2">2 nights</option>
@@ -435,9 +557,9 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="arrival-day" class="form-label">Arrival day <span class="required">*</span></label>
-                        <select id="arrival-day" class="form-select" required>
+                    <div class="form-group" id="arrival-day-group">
+                        <label for="arrival-day-manual" class="form-label">Arrival day <span class="required">*</span></label>
+                        <select id="arrival-day-manual" class="form-select" required>
                             <option value="">Select</option>
                             <option value="monday">Monday</option>
                             <option value="tuesday">Tuesday</option>
@@ -547,9 +669,26 @@
         const form = document.getElementById('context-form');
         const submitBtn = document.getElementById('submit-btn');
         
-        // Required fields
+        // Derived section elements
+        const derivedSection = document.getElementById('derived-section');
+        const derivedEditBtn = document.getElementById('derived-edit-btn');
+        const derivedFieldsEditable = document.getElementById('derived-fields-editable');
+        const derivedLengthDisplay = document.getElementById('derived-length-display');
+        const derivedArrivalDisplay = document.getElementById('derived-arrival-display');
+        
+        // Manual fields section
+        const manualFieldsSection = document.getElementById('manual-fields-section');
+        const lengthOfStayGroup = document.getElementById('length-of-stay-group');
+        const arrivalDayGroup = document.getElementById('arrival-day-group');
+        
+        // Select elements (derived)
         const lengthOfStay = document.getElementById('length-of-stay');
         const arrivalDay = document.getElementById('arrival-day');
+        
+        // Select elements (manual fallback)
+        const lengthOfStayManual = document.getElementById('length-of-stay-manual');
+        const arrivalDayManual = document.getElementById('arrival-day-manual');
+        
         const checkinTime = document.getElementById('checkin-time');
         const flexibilityInputs = document.querySelectorAll('input[name="flexibility"]');
         const askPreferenceInputs = document.querySelectorAll('input[name="ask-preference"]');
@@ -559,10 +698,135 @@
         const preferredRoomInput = document.getElementById('preferred-room');
         const emailNote = document.getElementById('email-note');
         
+        // Track if fields were derived
+        let fieldsAreDerived = false;
+        let derivedLengthValue = '';
+        let derivedArrivalValue = '';
+        
+        // Day names for display
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const dayValues = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        
+        // Length display mapping
+        const lengthDisplayMap = {
+            '1': '1 night',
+            '2': '2 nights',
+            '3-4': '3–4 nights',
+            '5+': '5+ nights'
+        };
+        
+        // Compute nights from dates
+        function computeNights(checkinStr, checkoutStr) {
+            const checkin = new Date(checkinStr);
+            const checkout = new Date(checkoutStr);
+            if (isNaN(checkin) || isNaN(checkout)) return null;
+            const diffTime = checkout - checkin;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays > 0 ? diffDays : null;
+        }
+        
+        // Map nights to lengthOfStay value
+        function nightsToLengthValue(nights) {
+            if (nights === 1) return '1';
+            if (nights === 2) return '2';
+            if (nights >= 3 && nights <= 4) return '3-4';
+            if (nights >= 5) return '5+';
+            return '';
+        }
+        
+        // Get arrival day from date
+        function getArrivalDay(checkinStr) {
+            const checkin = new Date(checkinStr);
+            if (isNaN(checkin)) return null;
+            const dayIndex = checkin.getDay();
+            return {
+                value: dayValues[dayIndex],
+                display: dayNames[dayIndex]
+            };
+        }
+        
+        // Initialize derived fields from booking data
+        function initDerivedFields() {
+            try {
+                const bookingRaw = localStorage.getItem('stayhustler_booking');
+                if (!bookingRaw) return false;
+                
+                const booking = JSON.parse(bookingRaw);
+                if (!booking.checkin || !booking.checkout) return false;
+                
+                const nights = computeNights(booking.checkin, booking.checkout);
+                const arrival = getArrivalDay(booking.checkin);
+                
+                if (!nights || !arrival) return false;
+                
+                // Compute derived values
+                derivedLengthValue = nightsToLengthValue(nights);
+                derivedArrivalValue = arrival.value;
+                
+                if (!derivedLengthValue || !derivedArrivalValue) return false;
+                
+                // Set derived select values
+                lengthOfStay.value = derivedLengthValue;
+                arrivalDay.value = derivedArrivalValue;
+                
+                // Update display
+                derivedLengthDisplay.textContent = lengthDisplayMap[derivedLengthValue] || derivedLengthValue;
+                derivedArrivalDisplay.textContent = arrival.display;
+                
+                // Show derived section, hide manual length/arrival fields
+                derivedSection.style.display = 'block';
+                lengthOfStayGroup.style.display = 'none';
+                arrivalDayGroup.style.display = 'none';
+                
+                // Remove required from manual fields since derived are auto-filled
+                lengthOfStayManual.removeAttribute('required');
+                arrivalDayManual.removeAttribute('required');
+                
+                fieldsAreDerived = true;
+                return true;
+                
+            } catch (e) {
+                console.error('Error deriving fields:', e);
+                return false;
+            }
+        }
+        
+        // Toggle edit mode for derived fields
+        derivedEditBtn.addEventListener('click', () => {
+            const isVisible = derivedFieldsEditable.classList.contains('visible');
+            if (isVisible) {
+                derivedFieldsEditable.classList.remove('visible');
+                derivedEditBtn.textContent = 'Edit';
+            } else {
+                derivedFieldsEditable.classList.add('visible');
+                derivedEditBtn.textContent = 'Done';
+            }
+        });
+        
+        // Update display when derived fields are edited
+        lengthOfStay.addEventListener('change', () => {
+            derivedLengthDisplay.textContent = lengthDisplayMap[lengthOfStay.value] || lengthOfStay.value;
+            checkFormValidity();
+        });
+        
+        arrivalDay.addEventListener('change', () => {
+            const idx = dayValues.indexOf(arrivalDay.value);
+            derivedArrivalDisplay.textContent = idx >= 0 ? dayNames[idx] : arrivalDay.value;
+            checkFormValidity();
+        });
+        
         // Check form validity
         function checkFormValidity() {
-            const hasLengthOfStay = lengthOfStay.value !== '';
-            const hasArrivalDay = arrivalDay.value !== '';
+            let hasLengthOfStay, hasArrivalDay;
+            
+            if (fieldsAreDerived) {
+                hasLengthOfStay = lengthOfStay.value !== '';
+                hasArrivalDay = arrivalDay.value !== '';
+            } else {
+                hasLengthOfStay = lengthOfStayManual.value !== '';
+                hasArrivalDay = arrivalDayManual.value !== '';
+            }
+            
             const hasCheckinTime = checkinTime.value !== '';
             const hasFlexibility = Array.from(flexibilityInputs).some(input => input.checked);
             const hasAskPreference = Array.from(askPreferenceInputs).some(input => input.checked);
@@ -571,8 +835,8 @@
             submitBtn.disabled = !isValid;
         }
         
-        // Event listeners for selects
-        [lengthOfStay, arrivalDay, checkinTime].forEach(select => {
+        // Event listeners for manual selects
+        [lengthOfStayManual, arrivalDayManual, checkinTime].forEach(select => {
             select.addEventListener('change', checkFormValidity);
         });
         
@@ -610,10 +874,20 @@
             
             if (submitBtn.disabled) return;
             
+            // Get length and arrival values from appropriate source
+            let finalLengthOfStay, finalArrivalDay;
+            if (fieldsAreDerived) {
+                finalLengthOfStay = lengthOfStay.value;
+                finalArrivalDay = arrivalDay.value;
+            } else {
+                finalLengthOfStay = lengthOfStayManual.value;
+                finalArrivalDay = arrivalDayManual.value;
+            }
+            
             // Gather form data
             const contextData = {
-                lengthOfStay: lengthOfStay.value,
-                arrivalDay: arrivalDay.value,
+                lengthOfStay: finalLengthOfStay,
+                arrivalDay: finalArrivalDay,
                 checkinTime: checkinTime.value,
                 loyaltyStatus: document.getElementById('loyalty-status').value,
                 occasion: document.getElementById('occasion').value,
@@ -627,6 +901,12 @@
             
             // Navigate to preview
             window.location.href = 'preview.html';
+        });
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const derived = initDerivedFields();
+            checkFormValidity();
         });
     </script>
 </body>
