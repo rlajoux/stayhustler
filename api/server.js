@@ -93,7 +93,7 @@ function sanitizeInput(body) {
 function buildPrompt(data) {
     const { booking, context } = data;
     
-    return `You are an expert in hotel guest relations. Generate a polite, professional hotel upgrade/perk request.
+    return `You are an expert in hotel guest relations. Generate a polite, professional, and SPECIFIC hotel upgrade/perk request email.
 
 INPUT DATA:
 - Hotel: ${booking.hotel}
@@ -111,22 +111,56 @@ INPUT DATA:
 - Preferred room type (if specific): ${context.preferredRoomType || 'N/A'}
 - How guest prefers to ask: ${context.askPreference}
 
-REQUIREMENTS:
-1. Generate a professional, calm, polite email requesting an upgrade or perks
-2. Never sound entitled or demanding
-3. Acknowledge that upgrades depend on availability
-4. Do NOT use words: "hack", "trick", "free", "guarantee"
-5. Do NOT mention "AI", "Gemini", or "StayHustler"
-6. Do NOT claim to contact the hotel on behalf of the guest
-7. Include [Your Name] placeholder at the end of the email
-8. If an occasion is mentioned (birthday, anniversary, etc.), reference it appropriately
-9. If loyalty status is Gold or Silver, mention membership subtly
-10. Be specific about what's being requested but remain flexible
+STRICT EMAIL REQUIREMENTS:
+1. Length: The email_body MUST be 140-220 words. Not shorter, not longer.
 
-OUTPUT FORMAT (respond with valid JSON only, no markdown):
+2. Specificity: The email MUST reference at least TWO of the following details from the input (if available):
+   - Arrival day or check-in date
+   - Length of stay
+   - Booking channel
+   - Loyalty status (if any)
+   - Occasion (if any)
+   - Flexibility preferences (room type or timing)
+
+3. The Ask: Include ONE specific-but-flexible upgrade request. Either:
+   - Name a higher category (e.g., "a Junior Suite or Club-level room"), OR
+   - Use "any higher-category room or suite that might remain available"
+
+4. Operational Courtesy: Include ONE signal that shows hotel-operations awareness:
+   - E.g., "I'm flexible on room type and timing" or "I understand availability and demand drive these decisions"
+
+5. Soft Close: End with acknowledgment that they're happy to keep their existing booking if an upgrade isn't possible.
+
+6. Tone: Warm, gracious, never entitled or pressuring. Read like a seasoned traveler, not someone gaming the system.
+
+BANNED PHRASES (never use these words):
+"free", "guarantee", "hack", "trick", "owed", "must", "demand", "entitled", "deserve"
+
+ADDITIONAL RULES:
+- Do NOT mention "AI", "Gemini", or "StayHustler"
+- Do NOT claim to contact the hotel on behalf of the guest
+- Use [Your Name] as the signature placeholder
+- If an occasion is mentioned (birthday, anniversary, honeymoon), weave it in naturally
+- If loyalty status exists, mention membership subtly (not as leverage)
+
+GOLD STANDARD EXAMPLE (emulate this tone and structure, do NOT copy verbatim):
+---
+Hello [Hotel Team],
+
+I'm looking forward to my upcoming stay arriving Thursday for two nights. I booked a Deluxe King and wanted to share a quick note ahead of arrival.
+
+If any higher-category rooms are forecasted to remain available around check-in, I'd be grateful to be considered. I'm flexible on room type and timing and completely understand that availability and demand come first.
+
+This is my first stay with you and I'm excited to experience the property. If it's not possible, I'm of course happy to keep my existing reservation.
+
+Warm regards,
+[Your Name]
+---
+
+OUTPUT FORMAT (respond with STRICT JSON only, no markdown, no code blocks, no commentary):
 {
-  "email_subject": "Brief, professional subject line",
-  "email_body": "The full email text with proper greeting and closing. Use [Your Name] for signature.",
+  "email_subject": "Brief, professional subject line (not generic)",
+  "email_body": "The full email text (140-220 words) with proper greeting and closing. Use [Your Name] for signature.",
   "timing_guidance": ["First timing tip", "Second timing tip", "Third timing tip"],
   "fallback_script": "A brief, polite script (1-2 sentences) for asking at the front desk in person"
 }
