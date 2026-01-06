@@ -25,9 +25,10 @@ if (process.env.DATABASE_URL) {
     // Create table on startup if it doesn't exist
     const initDb = async () => {
         try {
+            // Use SERIAL id instead of UUID to avoid extension issues
             await pool.query(`
                 CREATE TABLE IF NOT EXISTS newsletter_subscribers (
-                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    id SERIAL PRIMARY KEY,
                     email TEXT NOT NULL UNIQUE,
                     source TEXT NOT NULL DEFAULT 'unknown',
                     status TEXT NOT NULL DEFAULT 'subscribed',
@@ -689,7 +690,9 @@ app.post('/api/subscribe', async (req, res) => {
         // Upsert: insert or update if exists
         // If email exists with status=unsubscribed, set status=subscribed and clear unsubscribed_at
         // If email exists with status=subscribed, update last_ip/user_agent (idempotent)
-        await pool.query(`
+        console.log(`[Subscribe] Attempting insert for ${cleanEmail}`);
+        
+        const result = await pool.query(`
             INSERT INTO newsletter_subscribers (email, source, status, last_ip, user_agent)
             VALUES ($1, $2, 'subscribed', $3, $4)
             ON CONFLICT (email) DO UPDATE SET
@@ -697,13 +700,15 @@ app.post('/api/subscribe', async (req, res) => {
                 unsubscribed_at = NULL,
                 last_ip = EXCLUDED.last_ip,
                 user_agent = EXCLUDED.user_agent
+            RETURNING id
         `, [cleanEmail, cleanSource, ip, userAgent]);
 
-        console.log(`[Subscribe] email=${cleanEmail} source=${cleanSource}`);
+        console.log(`[Subscribe] Success: email=${cleanEmail} source=${cleanSource} id=${result.rows[0]?.id}`);
         res.json({ ok: true });
 
     } catch (err) {
-        console.error('[Subscribe] Error:', err.message, err.stack);
+        console.error(`[Subscribe] FAILED: ${err.message}`);
+        console.error(`[Subscribe] Stack: ${err.stack}`);
         res.status(500).json({ error: 'Subscription failed.' });
     }
 });
