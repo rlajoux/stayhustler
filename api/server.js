@@ -1,9 +1,51 @@
 const express = require('express');
 const cors = require('cors');
+const { Pool } = require('pg');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// ============================================================
+// POSTGRES DATABASE
+// ============================================================
+// Singleton pool using DATABASE_URL from Railway.
+// Auto-creates newsletter_subscribers table on startup if missing.
+// ============================================================
+
+let pool = null;
+
+// Initialize Postgres pool if DATABASE_URL is set
+if (process.env.DATABASE_URL) {
+    pool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+    });
+
+    // Create table on startup if it doesn't exist
+    const initDb = async () => {
+        try {
+            await pool.query(`
+                CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    email TEXT NOT NULL UNIQUE,
+                    source TEXT NOT NULL DEFAULT 'unknown',
+                    status TEXT NOT NULL DEFAULT 'subscribed',
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+                    unsubscribed_at TIMESTAMPTZ NULL,
+                    last_ip TEXT NULL,
+                    user_agent TEXT NULL
+                )
+            `);
+            console.log('[DB] newsletter_subscribers table ready');
+        } catch (err) {
+            console.error('[DB] Error initializing table:', err.message);
+        }
+    };
+    initDb();
+} else {
+    console.warn('[DB] DATABASE_URL not set - subscriber features disabled');
+}
 
 // CORS configuration
 // If ALLOWED_ORIGIN env var is set, use only that origin
@@ -605,6 +647,83 @@ app.post('/api/generate-request', rateLimit, async (req, res) => {
             error: 'Failed to generate request',
             message: 'Unable to generate custom content at this time. Please try again.'
         });
+    }
+});
+
+// ============================================================
+// NEWSLETTER SUBSCRIPTION ENDPOINTS
+// ============================================================
+
+// Simple email validation regex
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// POST /api/subscribe - Subscribe to newsletter
+app.post('/api/subscribe', async (req, res) => {
+    try {
+        // Check if DB is available
+        if (!pool) {
+            console.error('[Subscribe] Database not configured');
+            return res.status(500).json({ error: 'Subscription failed.' });
+        }
+
+        const { email, source } = req.body;
+
+        // Validate email
+        if (!email || typeof email !== 'string') {
+            return res.status(400).json({ error: 'Email is required.' });
+        }
+
+        const cleanEmail = email.trim().toLowerCase();
+        if (!EMAIL_REGEX.test(cleanEmail)) {
+            return res.status(400).json({ error: 'Invalid email format.' });
+        }
+
+        // Clamp source to 60 chars, default to 'unknown'
+        const cleanSource = source ? String(source).slice(0, 60) : 'unknown';
+
+        // Extract IP and user agent
+        const forwarded = req.headers['x-forwarded-for'];
+        const ip = forwarded ? forwarded.split(',')[0].trim() : (req.socket?.remoteAddress || null);
+        const userAgent = req.headers['user-agent'] ? String(req.headers['user-agent']).slice(0, 200) : null;
+
+        // Upsert: insert or update if exists
+        // If email exists with status=unsubscribed, set status=subscribed and clear unsubscribed_at
+        // If email exists with status=subscribed, update last_ip/user_agent (idempotent)
+        await pool.query(`
+            INSERT INTO newsletter_subscribers (email, source, status, last_ip, user_agent)
+            VALUES ($1, $2, 'subscribed', $3, $4)
+            ON CONFLICT (email) DO UPDATE SET
+                status = 'subscribed',
+                unsubscribed_at = NULL,
+                last_ip = EXCLUDED.last_ip,
+                user_agent = EXCLUDED.user_agent
+        `, [cleanEmail, cleanSource, ip, userAgent]);
+
+        console.log(`[Subscribe] email=${cleanEmail} source=${cleanSource}`);
+        res.json({ ok: true });
+
+    } catch (err) {
+        console.error('[Subscribe] Error:', err.message);
+        res.status(500).json({ error: 'Subscription failed.' });
+    }
+});
+
+// GET /api/subscribers/count - Get subscriber count (for verification)
+app.get('/api/subscribers/count', async (req, res) => {
+    try {
+        if (!pool) {
+            return res.json({ count: 0 });
+        }
+
+        const result = await pool.query(`
+            SELECT COUNT(*) as count FROM newsletter_subscribers WHERE status = 'subscribed'
+        `);
+        const count = parseInt(result.rows[0].count, 10);
+        res.json({ count });
+
+    } catch (err) {
+        console.error('[SubscriberCount] Error:', err.message);
+        res.json({ count: 0 });
     }
 });
 
