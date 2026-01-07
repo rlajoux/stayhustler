@@ -165,9 +165,15 @@ function rateLimit(req, res, next) {
     
     // Check if over limit
     if (entry.count > RATE_LIMIT_MAX) {
-        console.log('[RateLimit] rate_limited', { ip, count: entry.count });
+        const timeElapsed = now - entry.windowStart;
+        const timeRemaining = RATE_LIMIT_WINDOW_MS - timeElapsed;
+        const retryAfterSeconds = Math.ceil(timeRemaining / 1000);
+        
+        console.log('[RateLimit] rate_limited', { ip, count: entry.count, retry_after: retryAfterSeconds });
+        res.setHeader('Retry-After', retryAfterSeconds.toString());
         return res.status(429).json({
-            error: 'Rate limit exceeded. Please try again in a few minutes.'
+            error: 'Rate limit exceeded. Please try again in a few minutes.',
+            retry_after: retryAfterSeconds
         });
     }
     
@@ -667,16 +673,20 @@ async function callGemini(prompt) {
 // Returns the generated payload with quality enforcement
 // ============================================================
 
-async function generateRequestPayload(booking, context) {
+async function generateRequestPayload(booking, context, requestId = null) {
     const sanitizedData = sanitizeInput({ booking, context });
     const prompt = buildPrompt(sanitizedData);
     
     let firstPassValid = false;
     let secondPassAttempted = false;
     let finalSource = 'fallback';
+    const rid = requestId || 'unknown';
+    
+    console.log(`[Generation:${rid}] Starting generation for hotel=${sanitizedData.booking.hotel}`);
     
     try {
         // First pass: Call Gemini
+        console.log(`[Generation:${rid}] Calling Gemini (first pass)`);
         const firstResult = await callGemini(prompt);
         
         // Validate first pass
@@ -685,14 +695,15 @@ async function generateRequestPayload(booking, context) {
         
         if (firstValidation.ok) {
             finalSource = 'first';
-            console.log(`[Generation] hotel=${sanitizedData.booking.hotel} final_source=first`);
-            return firstResult;
+            console.log(`[Generation:${rid}] ✓ First pass valid, final_source=first`);
+            return { result: firstResult, finalSource };
         }
         
         // First pass failed - attempt retry with correction prompt
-        console.log(`[Generation] First pass failed: ${firstValidation.reasons.join('; ')}`);
+        console.log(`[Generation:${rid}] ✗ First pass failed: ${firstValidation.reasons.join('; ')}`);
         secondPassAttempted = true;
         
+        console.log(`[Generation:${rid}] Attempting second pass with corrections`);
         const correctionPrompt = buildCorrectionPrompt(prompt, firstValidation.reasons);
         const secondResult = await callGemini(correctionPrompt);
         
@@ -701,38 +712,54 @@ async function generateRequestPayload(booking, context) {
         
         if (secondValidation.ok) {
             finalSource = 'second';
-            console.log(`[Generation] hotel=${sanitizedData.booking.hotel} final_source=second`);
-            return secondResult;
+            console.log(`[Generation:${rid}] ✓ Second pass valid, final_source=second`);
+            return { result: secondResult, finalSource };
         }
         
         // Second pass also failed - use fallback
-        console.log(`[Generation] Second pass failed: ${secondValidation.reasons.join('; ')}`);
+        console.log(`[Generation:${rid}] ✗ Second pass failed: ${secondValidation.reasons.join('; ')}`);
+        console.log(`[Generation:${rid}] Using fallback, first_pass_valid=${firstPassValid}, second_pass_attempted=${secondPassAttempted}`);
         finalSource = 'fallback';
         
     } catch (geminiError) {
-        console.error(`[Generation] Gemini error: ${geminiError.message}`);
+        console.error(`[Generation:${rid}] Gemini error: ${geminiError.message}`);
+        console.log(`[Generation:${rid}] Using fallback due to exception`);
         finalSource = 'fallback';
     }
     
     // Return fallback payload
-    console.log(`[Generation] hotel=${sanitizedData.booking.hotel} final_source=fallback`);
-    return getFallbackPayload();
+    console.log(`[Generation:${rid}] Returning fallback, final_source=fallback`);
+    return { result: getFallbackPayload(), finalSource };
 }
 
 // API endpoint (rate limited)
 app.post('/api/generate-request', rateLimit, async (req, res) => {
+    // Generate correlation ID for tracking
+    const requestId = Math.random().toString(36).substring(2, 9);
+    
+    console.log(`[API:${requestId}] POST /api/generate-request received`);
+    
     try {
         // Validate request
         const errors = validateRequest(req.body);
         if (errors.length > 0) {
+            console.log(`[API:${requestId}] Validation failed: ${errors.join('; ')}`);
             return res.status(400).json({ 
                 error: 'Validation failed', 
                 details: errors 
             });
         }
         
+        console.log(`[API:${requestId}] Request validated, has_booking=${!!req.body.booking}, has_context=${!!req.body.context}`);
+        
         // Generate using reusable function
-        const result = await generateRequestPayload(req.body.booking, req.body.context);
+        const { result, finalSource } = await generateRequestPayload(req.body.booking, req.body.context, requestId);
+        
+        // Add headers for frontend observability
+        res.setHeader('X-Request-Id', requestId);
+        res.setHeader('X-Generation-Source', finalSource);
+        
+        console.log(`[API:${requestId}] Returning response with source=${finalSource}`);
         return res.json(result);
         
     } catch (error) {
@@ -1020,7 +1047,9 @@ app.post('/api/deliver-request', async (req, res) => {
         try {
             // Generate the request using existing logic
             console.log(`[Delivery] Generating request for ${cleanEmail}`);
-            const generated = await generateRequestPayload(booking, context);
+            const { result: generated, finalSource } = await generateRequestPayload(booking, context);
+            
+            console.log(`[Delivery] Generation complete with source=${finalSource}`);
 
             // Build email content
             const emailText = `Your StayHustler upgrade request is ready!

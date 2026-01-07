@@ -803,25 +803,41 @@ Warm regards,
         }
 
         // Show fallback content with notice
-        function showFallback() {
+        function showFallback(reason = 'unknown') {
+            console.log('[Frontend] Showing fallback, reason:', reason);
             fallbackNotice.style.display = 'block';
             applyContent(defaultContent);
         }
 
         // Generate request from API
         async function generateRequest() {
+            console.log('[Frontend] Starting generation request');
+            
             // Parse stored data
             const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
             const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
 
+            // Debug: Log presence of required fields (no PII)
+            console.log('[Frontend] Payload check:', {
+                has_booking: !!booking,
+                has_hotel: !!booking.hotel,
+                has_city: !!booking.city,
+                has_checkin: !!booking.checkin,
+                has_checkout: !!booking.checkout,
+                has_context: !!context,
+                has_arrivalDay: !!context.arrivalDay,
+                has_lengthOfStay: !!context.lengthOfStay
+            });
+
             // Check if we have minimum required data
             if (!booking.hotel || !context.arrivalDay) {
-                console.warn('Missing booking or context data, using fallback');
+                console.warn('[Frontend] Missing required fields - hotel or arrivalDay');
                 showFallback();
                 return;
             }
 
             try {
+                console.log('[Frontend] Calling API...');
                 const response = await fetch(`${API_BASE}/api/generate-request`, {
                     method: 'POST',
                     headers: {
@@ -830,23 +846,84 @@ Warm regards,
                     body: JSON.stringify({ booking, context })
                 });
 
+                // Extract headers for debugging
+                const requestId = response.headers.get('X-Request-Id');
+                const generationSource = response.headers.get('X-Generation-Source');
+                const retryAfter = response.headers.get('Retry-After');
+                
+                console.log('[Frontend] API response:', {
+                    status: response.status,
+                    ok: response.ok,
+                    request_id: requestId,
+                    generation_source: generationSource,
+                    retry_after: retryAfter
+                });
+
+                // Handle rate limiting (429)
+                if (response.status === 429) {
+                    console.warn('[Frontend] Rate limited, retry_after:', retryAfter);
+                    showRateLimitError(retryAfter);
+                    return;
+                }
+
                 if (!response.ok) {
+                    console.error('[Frontend] API error:', response.status);
                     throw new Error(`API error: ${response.status}`);
                 }
 
                 const data = await response.json();
                 
+                console.log('[Frontend] Response data check:', {
+                    has_email_subject: !!data.email_subject,
+                    has_email_body: !!data.email_body,
+                    has_timing_guidance: !!data.timing_guidance,
+                    has_fallback_script: !!data.fallback_script,
+                    generation_source: generationSource
+                });
+                
                 // Validate response has required fields
                 if (!data.email_subject || !data.email_body) {
+                    console.error('[Frontend] Invalid API response - missing required fields');
                     throw new Error('Invalid API response');
+                }
+
+                // Only show fallback notice if source is explicitly 'fallback'
+                if (generationSource === 'fallback') {
+                    console.log('[Frontend] Backend used fallback, showing notice');
+                    fallbackNotice.style.display = 'block';
+                } else {
+                    console.log('[Frontend] Custom content generated successfully');
+                    fallbackNotice.style.display = 'none';
                 }
 
                 applyContent(data);
 
             } catch (error) {
-                console.error('Failed to generate request:', error);
+                console.error('[Frontend] Exception caught:', error.message);
                 showFallback();
             }
+        }
+        
+        // Show rate limit error with retry option
+        function showRateLimitError(retryAfter) {
+            loadingIndicator.style.display = 'none';
+            fallbackNotice.style.display = 'block';
+            fallbackNotice.innerHTML = `
+                Temporarily rate-limited. Please retry in ${retryAfter || 60} seconds.
+                <button id="retry-btn" style="margin-left: 10px; padding: 5px 10px; cursor: pointer;">Retry Now</button>
+            `;
+            
+            // Add retry button handler
+            setTimeout(() => {
+                const retryBtn = document.getElementById('retry-btn');
+                if (retryBtn) {
+                    retryBtn.addEventListener('click', () => {
+                        console.log('[Frontend] User clicked retry after rate limit');
+                        fallbackNotice.innerHTML = 'Retrying...';
+                        generateRequest();
+                    });
+                }
+            }, 100);
         }
 
         // Initialize on page load
