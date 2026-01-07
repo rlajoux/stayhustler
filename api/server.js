@@ -341,7 +341,7 @@ function truncate(str, maxLen = 200) {
 // ============================================================
 // Validates Gemini output against strict quality rules:
 // A) email_subject: 6-12 words, includes date token, not starting with "Reservation Inquiry"
-// B) email_body: 160-210 words, includes "Reservation: [Confirmation Number]",
+// B) email_body: 140-220 words, includes "Reservation: [Confirmation Number]",
 //    includes "forecasted to remain available" exactly once, no banned words
 // C) timing_guidance: array of exactly 3 strings, each 10-140 chars
 // D) fallback_script: single sentence, 8-30 words, no banned words
@@ -435,8 +435,8 @@ function validateOutput(output) {
         reasons.push('email_body must be a string');
     } else {
         const bodyWords = wordCount(output.email_body);
-        if (bodyWords < 160 || bodyWords > 210) {
-            reasons.push(`email_body must be 160-210 words (got ${bodyWords})`);
+        if (bodyWords < 140 || bodyWords > 220) {
+            reasons.push(`email_body must be 140-220 words (got ${bodyWords})`);
         }
         if (!output.email_body.includes('Reservation: [Confirmation Number]')) {
             reasons.push('email_body must include exactly "Reservation: [Confirmation Number]"');
@@ -531,16 +531,26 @@ function repairOutput(output, validationReasons) {
         }
     }
     
-    // Repair C: Word count slightly outside range
-    if (validationReasons.some(r => r.includes('email_body must be 160-210 words'))) {
+    // Repair C: Word count outside range
+    if (validationReasons.some(r => r.includes('email_body must be'))) {
         if (typeof repaired.email_body === 'string') {
             const bodyWords = wordCount(repaired.email_body);
-            if (bodyWords < 160 && bodyWords >= 145) {
-                // Too short by <15 words - add a polite closing sentence
-                repaired.email_body += '\n\nI appreciate your time and consideration in reviewing this request.';
-                repairsMade.push('Added padding sentence for word count');
-            } else if (bodyWords > 210 && bodyWords <= 225) {
-                // Too long by <15 words - trim excess sentences
+            if (bodyWords < 140 && bodyWords >= 100) {
+                // Too short - add contextual padding
+                const paddingSentences = [
+                    'I appreciate your time and consideration in reviewing this request.',
+                    'Thank you for your attention to this matter, and I look forward to a wonderful stay at your property.',
+                    'I understand these decisions depend on availability and truly appreciate any consideration you can provide.'
+                ];
+                // Add one or more sentences until we hit minimum
+                let attempts = 0;
+                while (wordCount(repaired.email_body) < 140 && attempts < paddingSentences.length) {
+                    repaired.email_body += '\n\n' + paddingSentences[attempts];
+                    attempts++;
+                }
+                repairsMade.push('Added padding sentences for word count');
+            } else if (bodyWords > 220 && bodyWords <= 250) {
+                // Too long - trim excess sentences
                 const sentences = repaired.email_body.split(/\.\s+/);
                 if (sentences.length > 3) {
                     // Remove the second-to-last sentence (usually least critical)
@@ -571,11 +581,14 @@ ${reasons.map(r => `- ${r}`).join('\n')}
 
 Please generate a CORRECTED response that fixes ALL the above issues.
 
-CRITICAL REQUIREMENTS:
+CRITICAL REQUIREMENTS (MUST FOLLOW EXACTLY):
 - email_subject: 6-12 words, must include date (e.g., "Jan 15-18"), must NOT start with "Reservation Inquiry"
-- email_body: 160-210 words, must include "Reservation: [Confirmation Number]" exactly, must include "forecasted to remain available" exactly once, no banned words (hack, trick, free, guarantee, owed, must, demand)
+- email_body: MUST BE 140-220 WORDS (count carefully!), must include "Reservation: [Confirmation Number]" exactly, must include "forecasted to remain available" EXACTLY ONCE, NEVER use these banned words: hack, trick, free, guarantee, owed, must, demand
 - timing_guidance: exactly 3 items, each 10-140 characters
 - fallback_script: single sentence, 8-30 words, ends with . or ?
+
+WORD COUNT IS CRITICAL: The email_body must have at least 140 words. Add more detail and context if needed.
+BANNED WORDS: Never use "demand" - use alternatives like "consider", "reviewing", "attention"
 
 Respond with STRICT JSON only. No markdown, no code blocks, no commentary.
 {
@@ -593,7 +606,7 @@ Generate the CORRECTED JSON response:`;
 
 // Deterministic fallback payload (must pass all validation rules)
 // - email_subject: 6-12 words, includes date token, not starting with "Reservation Inquiry"
-// - email_body: 160-210 words, includes "Reservation: [Confirmation Number]", "forecasted to remain available" once
+// - email_body: 140-220 words, includes "Reservation: [Confirmation Number]", "forecasted to remain available" once
 // - timing_guidance: 3 items, each 10-140 chars
 // - fallback_script: 8-30 words, single sentence, ends with . or ?
 function getFallbackPayload() {
@@ -775,7 +788,7 @@ E) LAST-MINUTE TIMING MITIGATION:
 
 SAFEGUARDS:
 - Do NOT combine more than 2 mitigation strategies in one email
-- Mitigation language must fit naturally within 160-210 word count
+- Mitigation language must fit naturally within 140-220 word count (TARGET: 160-180 words)
 - Do NOT violate tone rules (no apologies, no over-explaining)
 - Do NOT fabricate details (occasions, loyalty, prior stays)
 - All existing validation rules still apply
@@ -837,7 +850,7 @@ Warm regards,
 Respond with STRICT JSON only. No markdown, no code blocks, no commentary.
 {
   "email_subject": "6-12 word subject including dates (e.g., Jan 15–18), not starting with Reservation Inquiry",
-  "email_body": "Full email text (160-210 words). Must include 'Reservation: [Confirmation Number]' near top and 'forecasted to remain available' exactly once. Use [Your Name] for signature. ADAPT THE ASK based on flexibility_priority.",
+  "email_body": "Full email text (140-220 words, TARGET 160-180). Must include 'Reservation: [Confirmation Number]' near top and 'forecasted to remain available' exactly once. Use [Your Name] for signature. ADAPT THE ASK based on flexibility_priority. NEVER use banned words: hack, trick, free, guarantee, owed, must, demand.",
   "timing_guidance": ["First timing tip", "Second timing tip", "Third timing tip"],
   "fallback_script": "One sentence for asking at the front desk in person. ALIGN WITH flexibility_priority: any/category = mention upgraded rooms, view = mention room location/view, timing = mention late checkout/early check-in, none = mention quiet room placement"
 }
