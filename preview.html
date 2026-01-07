@@ -217,6 +217,70 @@
             margin: 0 auto;
             line-height: 1.7;
         }
+
+        .outlook-percentage {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            font-weight: 400;
+            color: var(--color-text);
+            margin-bottom: var(--space-xs);
+        }
+
+        .outlook-label {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-md);
+        }
+
+        .estimate-disclaimer {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-md);
+            font-style: italic;
+        }
+
+        .drivers-section {
+            margin-top: var(--space-md);
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--color-border);
+        }
+
+        .drivers-title {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .drivers-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+            justify-content: center;
+        }
+
+        .driver-chip {
+            display: inline-block;
+            padding: 0.4rem 0.9rem;
+            background: var(--color-bg-warm);
+            border: 1px solid var(--color-border);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: var(--color-text);
+        }
+
+        .less-precise-notice {
+            display: none;
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-top: var(--space-sm);
+            font-style: italic;
+        }
+
+        .less-precise-notice.visible {
+            display: block;
+        }
         
         /* Summary Section */
         .summary-section {
@@ -514,12 +578,17 @@
             </div>
 
             <section class="outlook-card" id="outlook-card">
-                <div class="badge badge-moderate" id="outlook-badge">
-                    <span id="badge-text">Moderate</span>
-                </div>
+                <div class="outlook-percentage" id="outlook-percentage">--</div>
+                <div class="outlook-label">Estimated upgrade odds</div>
+                <p class="estimate-disclaimer">Estimate based on common hotel practices; availability varies.</p>
                 <p class="outlook-explanation">
                     Based on your stay profile and timing, an informed, polite request can improve outcomes. Availability ultimately drives upgrades.
                 </p>
+                <div class="drivers-section" id="drivers-section" style="display: none;">
+                    <div class="drivers-title">Why this estimate</div>
+                    <div class="drivers-chips" id="drivers-chips"></div>
+                    <p class="less-precise-notice" id="less-precise-notice">Some details missing; estimate may be less precise.</p>
+                </div>
             </section>
 
             <section class="summary-section">
@@ -615,41 +684,161 @@
             document.getElementById('missing-notice').classList.add('visible');
         }
 
-        // Compute outlook badge
-        function computeOutlook() {
-            let level = 1; // 0 = Low, 1 = Moderate, 2 = Strong
+        // Compute percentage-based outlook with explainability
+        function computeUpgradeOdds() {
+            let score = -0.25; // Base score (baseline ~44%)
+            const drivers = [];
+            let hasMissingFields = false;
 
+            // Extract and normalize data
+            const channel = (bookingData.channel || bookingData.bookingChannel || '').toLowerCase();
             const lengthOfStay = contextData.lengthOfStay || '';
             const arrivalDay = (contextData.arrivalDay || '').toLowerCase();
-            const loyaltyStatus = contextData.loyaltyStatus || '';
-            const askPreference = contextData.askPreference || '';
-            const bookingChannel = bookingData.bookingChannel || '';
+            const loyalty = (contextData.loyalty || contextData.loyaltyStatus || '').toLowerCase();
+            const occasion = (contextData.occasion || '').toLowerCase();
+            const flexibility = (contextData.flexibility || '').toLowerCase();
+            const askPreference = (contextData.askPreference || '').toLowerCase();
 
-            // 1 night + Fri/Sat arrival → Low
-            if (lengthOfStay === '1' && (arrivalDay === 'friday' || arrivalDay === 'saturday')) {
-                level = 0;
+            // Channel scoring
+            if (channel.includes('direct')) {
+                score += 0.55;
+                drivers.push('Direct booking');
+            } else if (channel.includes('corporate') || channel.includes('negotiated')) {
+                score += 0.40;
+                drivers.push('Corporate rate');
+            } else if (channel.includes('ota') || channel.includes('travel agency')) {
+                score -= 0.55;
+                drivers.push('OTA booking');
+            } else if (channel) {
+                // Unknown channel provided, neutral
+            } else {
+                hasMissingFields = true;
             }
 
-            // Gold/top-tier loyalty OR ask preference is Both → +1
-            if (loyaltyStatus === 'gold' || askPreference === 'both') {
-                level = Math.min(level + 1, 2);
+            // Loyalty scoring
+            if (loyalty.includes('gold') || loyalty.includes('top')) {
+                score += 0.55;
+                drivers.push('Top-tier loyalty');
+            } else if (loyalty.includes('silver') || loyalty.includes('mid')) {
+                score += 0.30;
+                drivers.push('Mid-tier loyalty');
+            } else if (loyalty.includes('member') && loyalty !== 'none') {
+                score += 0.10;
+                drivers.push('Member status');
+            } else if (loyalty === 'none') {
+                // No loyalty, no adjustment
+            } else {
+                hasMissingFields = true;
             }
 
-            // Corporate or Direct booking → +1
-            if (bookingChannel === 'corporate' || bookingChannel === 'direct') {
-                level = Math.min(level + 1, 2);
+            // Length of stay scoring
+            if (lengthOfStay === '1' || lengthOfStay === '1 night') {
+                score -= 0.10;
+                drivers.push('1-night stay');
+            } else if (lengthOfStay === '2' || lengthOfStay === '2 nights') {
+                score += 0.05;
+            } else if (lengthOfStay === '3-4' || lengthOfStay.includes('3') || lengthOfStay.includes('4')) {
+                score += 0.10;
+            } else if (lengthOfStay === '5+' || lengthOfStay.includes('5')) {
+                score -= 0.05;
+                drivers.push('Extended stay');
+            } else if (lengthOfStay) {
+                // Unknown format, neutral
+            } else {
+                hasMissingFields = true;
             }
 
-            return ['Low', 'Moderate', 'Strong'][level];
+            // Arrival day scoring (demand proxy)
+            if (arrivalDay === 'friday') {
+                score -= 0.25;
+                drivers.push('Weekend arrival');
+            } else if (arrivalDay === 'saturday') {
+                score -= 0.35;
+                drivers.push('Weekend arrival');
+            } else if (arrivalDay === 'sunday') {
+                score -= 0.10;
+            } else if (arrivalDay === 'monday' || arrivalDay === 'tuesday' || arrivalDay === 'wednesday' || arrivalDay === 'thursday') {
+                score += 0.05;
+                drivers.push('Weekday arrival');
+            } else if (arrivalDay) {
+                // Unknown day, neutral
+            } else {
+                hasMissingFields = true;
+            }
+
+            // Ask preference scoring
+            if (askPreference === 'both') {
+                score += 0.20;
+                drivers.push('Asking before arrival');
+            } else if (askPreference === 'email') {
+                score += 0.10;
+                drivers.push('Email request');
+            } else if (askPreference === 'inperson' || askPreference === 'in_person') {
+                score += 0.05;
+            } else if (askPreference) {
+                // Unknown preference, neutral
+            } else {
+                hasMissingFields = true;
+            }
+
+            // Flexibility scoring
+            if (flexibility === 'any') {
+                score += 0.25;
+                drivers.push('Flexible on room type');
+            } else if (flexibility === 'specific') {
+                score += 0.10;
+            } else if (flexibility === 'no') {
+                score -= 0.20;
+            } else if (flexibility) {
+                // Unknown value, neutral
+            } else {
+                hasMissingFields = true;
+            }
+
+            // Occasion scoring
+            if (occasion.includes('anniversary') || occasion.includes('honeymoon')) {
+                score += 0.20;
+                drivers.push('Special occasion');
+            } else if (occasion.includes('birthday') || occasion.includes('first visit') || (occasion && occasion !== 'none')) {
+                score += 0.10;
+                drivers.push('Special occasion');
+            }
+
+            // Convert score to probability using logistic function
+            const prob = 1 / (1 + Math.exp(-score));
+            let percentage = Math.round(prob * 100);
+
+            // Clamp to 5-85% range
+            percentage = Math.max(5, Math.min(85, percentage));
+
+            return {
+                percentage,
+                drivers,
+                hasMissingFields
+            };
         }
 
-        // Render badge
-        const outlook = computeOutlook();
-        const badge = document.getElementById('outlook-badge');
-        const badgeText = document.getElementById('badge-text');
+        // Render percentage and drivers
+        const oddsResult = computeUpgradeOdds();
+        const percentageEl = document.getElementById('outlook-percentage');
+        const driversSection = document.getElementById('drivers-section');
+        const driversChips = document.getElementById('drivers-chips');
+        const lessPreciseNotice = document.getElementById('less-precise-notice');
 
-        badge.className = 'badge badge-' + outlook.toLowerCase();
-        badgeText.textContent = outlook;
+        percentageEl.textContent = oddsResult.percentage + '%';
+
+        // Show drivers if any
+        if (oddsResult.drivers.length > 0) {
+            driversSection.style.display = 'block';
+            driversChips.innerHTML = oddsResult.drivers
+                .map(driver => '<span class="driver-chip">' + driver + '</span>')
+                .join('');
+        }
+
+        // Show less precise notice if fields missing
+        if (oddsResult.hasMissingFields) {
+            lessPreciseNotice.classList.add('visible');
+        }
 
         // Build summary list
         function buildSummary() {
