@@ -767,6 +767,104 @@
             "montreal": "neutral"
         };
 
+        // Helper: Parse length of stay to numeric nights
+        function parseLengthOfStay(lengthStr) {
+            if (!lengthStr) return null;
+            if (lengthStr === '1' || lengthStr === '1 night') return 1;
+            if (lengthStr === '2' || lengthStr === '2 nights') return 2;
+            if (lengthStr === '3-4' || lengthStr.includes('3') || lengthStr.includes('4')) return 3.5; // midpoint
+            if (lengthStr === '5+' || lengthStr.includes('5')) return 5;
+            return null;
+        }
+
+        // Helper: Classify booked room category
+        function classifyRoomCategory(roomStr) {
+            if (!roomStr || typeof roomStr !== 'string') return 'unknown';
+            const lower = roomStr.toLowerCase();
+            
+            // Base category keywords
+            if (lower.includes('standard') || lower.includes('classic') || 
+                lower.includes('base') || lower.includes('entry')) {
+                return 'base';
+            }
+            
+            // Premium category keywords
+            if (lower.includes('suite') || lower.includes('executive') || 
+                lower.includes('premium')) {
+                return 'premium';
+            }
+            
+            // Mid-tier category keywords
+            if (lower.includes('deluxe') || lower.includes('superior')) {
+                return 'mid';
+            }
+            
+            return 'unknown';
+        }
+
+        // Helper: Check if arrival day is soft for given market type
+        function isSoftDay(arrivalDay, marketType, cityNormalized) {
+            if (!arrivalDay) return false;
+            
+            // Determine if market is business or leisure/resort
+            const isBusinessCity = ['new york', 'manhattan', 'london', 'paris', 'tokyo', 
+                                   'singapore', 'hong kong', 'san francisco', 'chicago',
+                                   'boston', 'seattle', 'washington'].includes(cityNormalized);
+            
+            const isResortCity = marketType === 'resort';
+            
+            if (isBusinessCity) {
+                // Business cities: Friday/Saturday are soft
+                return arrivalDay === 'friday' || arrivalDay === 'saturday';
+            } else if (isResortCity) {
+                // Resort cities: Monday–Wednesday are soft
+                return arrivalDay === 'monday' || arrivalDay === 'tuesday' || arrivalDay === 'wednesday';
+            }
+            
+            return false;
+        }
+
+        // Helper: Check if arrival day is peak
+        function isPeakDay(arrivalDay, marketType, cityNormalized) {
+            if (!arrivalDay) return false;
+            
+            const isBusinessCity = ['new york', 'manhattan', 'london', 'paris', 'tokyo', 
+                                   'singapore', 'hong kong', 'san francisco', 'chicago',
+                                   'boston', 'seattle', 'washington'].includes(cityNormalized);
+            
+            const isResortCity = marketType === 'resort';
+            
+            if (isBusinessCity) {
+                // Business cities: Monday–Thursday are peak
+                return arrivalDay === 'monday' || arrivalDay === 'tuesday' || 
+                       arrivalDay === 'wednesday' || arrivalDay === 'thursday';
+            } else if (isResortCity) {
+                // Resort cities: Friday/Saturday are peak
+                return arrivalDay === 'friday' || arrivalDay === 'saturday';
+            }
+            
+            return false;
+        }
+
+        // Helper: Calculate hours before arrival
+        function calculateHoursBeforeArrival(checkinDateStr) {
+            if (!checkinDateStr) return null;
+            
+            try {
+                // Parse checkin date (expected format: YYYY-MM-DD or MM/DD/YYYY)
+                const checkinDate = new Date(checkinDateStr);
+                if (isNaN(checkinDate.getTime())) return null;
+                
+                const now = new Date();
+                const diffMs = checkinDate.getTime() - now.getTime();
+                const diffHours = diffMs / (1000 * 60 * 60);
+                
+                return diffHours;
+            } catch (e) {
+                return null;
+            }
+        }
+
         // Compute percentage-based outlook with explainability
         function computeUpgradeOdds() {
             let score = -0.25; // Base score (baseline ~44%)
@@ -783,6 +881,11 @@
             const askPreference = (contextData.askPreference || '').toLowerCase();
             const hotelType = (bookingData.hotel_type || '').toLowerCase();
             const city = bookingData.city || '';
+            
+            // PHASE 1 NEW SIGNALS
+            const firstTimeStay = contextData.first_time_stay; // boolean or undefined
+            const roomBooked = bookingData.room; // string or undefined
+            const checkinDate = bookingData.checkin; // date string or undefined
 
             // Channel scoring
             if (channel.includes('direct')) {
@@ -909,6 +1012,59 @@
             }
             // chain and unknown: no adjustment, no driver chip
 
+            // ============================================================
+            // PHASE 1 HIGH-SIGNAL FACTORS
+            // ============================================================
+
+            // 1) First-Time Stay vs Returning Guest
+            if (hotelType === 'independent' && firstTimeStay === true) {
+                score += 0.20;
+                drivers.push('First stay at this property');
+            }
+            // If firstTimeStay is false or undefined, no adjustment
+
+            // 2) Advance Notice (When the Ask Is Made)
+            const hoursBeforeArrival = calculateHoursBeforeArrival(checkinDate);
+            if (hoursBeforeArrival !== null) {
+                if (hoursBeforeArrival >= 24 && hoursBeforeArrival <= 72) {
+                    score += 0.10;
+                    drivers.push('Asked with advance notice');
+                } else if (hoursBeforeArrival < 12) {
+                    score -= 0.05;
+                    drivers.push('Very last-minute request');
+                }
+                // Between 12-24 or >72: no adjustment
+            }
+
+            // 3) Length of Stay × Arrival Day Interaction
+            const lengthNights = parseLengthOfStay(lengthOfStay);
+            const normalizedCity = normalizeCity(city);
+            const marketTier = CITY_TIER[normalizedCity] || 'unknown';
+            
+            if (lengthNights !== null && arrivalDay) {
+                const softDay = isSoftDay(arrivalDay, marketTier, normalizedCity);
+                const peakDay = isPeakDay(arrivalDay, marketTier, normalizedCity);
+                
+                if (lengthNights <= 2 && softDay) {
+                    score += 0.10;
+                    drivers.push('Short stay on softer arrival day');
+                } else if (lengthNights >= 5 && peakDay) {
+                    score -= 0.15;
+                    drivers.push('Long stay during peak demand');
+                }
+            }
+
+            // 4) Booked Room Category Weight
+            const roomCategory = classifyRoomCategory(roomBooked);
+            if (roomCategory === 'base') {
+                score += 0.10;
+                drivers.push('Base room booked');
+            } else if (roomCategory === 'premium') {
+                score -= 0.10;
+                drivers.push('Already booked a premium room');
+            }
+            // mid/unknown: no adjustment
+
             // Convert score to probability using logistic function
             const prob = 1 / (1 + Math.exp(-score));
             let percentage = Math.round(prob * 100);
@@ -923,6 +1079,47 @@
             };
         }
 
+        // Prioritize drivers for display (max 4 chips)
+        function prioritizeDrivers(driversList) {
+            // Priority order:
+            // 1) Market / hotel type
+            // 2) First-time stay
+            // 3) Advance notice
+            // 4) Length × arrival interaction
+            // 5) Other factors
+            
+            const priority = {
+                'High-demand city': 1,
+                'Resort / elastic market': 1,
+                'Independent property': 1,
+                'First stay at this property': 2,
+                'Asked with advance notice': 3,
+                'Very last-minute request': 3,
+                'Short stay on softer arrival day': 4,
+                'Long stay during peak demand': 4,
+                'Direct booking': 5,
+                'OTA booking': 5,
+                'Top-tier loyalty': 5,
+                'Mid-tier loyalty': 5,
+                'Flexible on room type': 5,
+                'Special occasion': 5,
+                'Base room booked': 5,
+                'Already booked a premium room': 5,
+                'Asking before arrival': 5,
+                'Weekend arrival': 5,
+                'Weekday arrival': 5
+            };
+            
+            // Sort by priority, then limit to 4
+            const sorted = driversList.sort((a, b) => {
+                const prioA = priority[a] || 99;
+                const prioB = priority[b] || 99;
+                return prioA - prioB;
+            });
+            
+            return sorted.slice(0, 4);
+        }
+
         // Render percentage and drivers
         const oddsResult = computeUpgradeOdds();
         const percentageEl = document.getElementById('outlook-percentage');
@@ -932,10 +1129,11 @@
 
         percentageEl.textContent = oddsResult.percentage + '%';
 
-        // Show drivers if any
+        // Show drivers if any (prioritized, max 4)
         if (oddsResult.drivers.length > 0) {
+            const displayDrivers = prioritizeDrivers(oddsResult.drivers);
             driversSection.style.display = 'block';
-            driversChips.innerHTML = oddsResult.drivers
+            driversChips.innerHTML = displayDrivers
                 .map(driver => '<span class="driver-chip">' + driver + '</span>')
                 .join('');
         }
