@@ -248,6 +248,80 @@
             margin-bottom: var(--space-md);
         }
 
+        .odds-comparison {
+            margin-bottom: var(--space-md);
+        }
+
+        .odds-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: var(--space-xs);
+            padding: var(--space-sm) 0;
+        }
+
+        .odds-row-optimized {
+            border-top: 1px solid var(--color-border);
+            padding-top: var(--space-sm);
+            margin-top: var(--space-sm);
+        }
+
+        .odds-label-baseline,
+        .odds-label-optimized {
+            font-size: 0.95rem;
+            color: var(--color-text);
+        }
+
+        .odds-value-baseline {
+            font-family: var(--font-serif);
+            font-size: 1.75rem;
+            color: var(--color-text-muted);
+        }
+
+        .odds-value-optimized {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            color: var(--color-accent);
+            font-weight: 500;
+        }
+
+        .odds-sublabel {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-md);
+            font-style: italic;
+        }
+
+        .lift-display {
+            text-align: center;
+            padding: var(--space-sm);
+            background: var(--color-bg-warm);
+            border-radius: var(--radius);
+            margin-top: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+
+        .lift-label {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-right: var(--space-xs);
+        }
+
+        .lift-value {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            color: var(--color-success);
+            font-weight: 500;
+        }
+
+        .lift-disclaimer {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-sm);
+            text-align: center;
+            font-style: italic;
+        }
+
         .estimate-disclaimer {
             font-size: 0.8rem;
             color: var(--color-text-muted);
@@ -604,15 +678,31 @@
             </div>
 
             <section class="outlook-card" id="outlook-card">
-                <div class="outlook-percentage" id="outlook-percentage">--</div>
-                <div class="outlook-label">Estimated upgrade odds</div>
+                <div class="odds-comparison">
+                    <div class="odds-row">
+                        <div class="odds-label-baseline">Baseline odds (typical):</div>
+                        <div class="odds-value-baseline" id="baseline-percentage">--</div>
+                    </div>
+                    <div class="odds-sublabel">Based on market and booking factors</div>
+                    
+                    <div class="odds-row odds-row-optimized">
+                        <div class="odds-label-optimized">With a hotel-ready request:</div>
+                        <div class="odds-value-optimized" id="optimized-percentage">--</div>
+                    </div>
+                    
+                    <div class="lift-display" id="lift-display">
+                        <span class="lift-label">Estimated lift:</span>
+                        <span class="lift-value" id="lift-value">+0 points</span>
+                    </div>
+                </div>
+                
                 <p class="customization-note" id="customization-note">This request is tailored for your specific stay and written to align with how hotels typically handle situations like yours.</p>
-                <p class="estimate-disclaimer">Estimate based on common hotel practices; availability varies.</p>
+                <p class="lift-disclaimer">Availability drives outcomes. This reflects improved timing, tone, and flexibility—not a guarantee.</p>
                 <p class="outlook-explanation">
                     Based on your stay profile and timing, an informed, polite request can improve outcomes. Availability ultimately drives upgrades.
                 </p>
                 <div class="drivers-section" id="drivers-section" style="display: none;">
-                    <div class="drivers-title">Why this estimate</div>
+                    <div class="drivers-title">Optimized factors</div>
                     <div class="drivers-chips" id="drivers-chips"></div>
                     <p class="less-precise-notice" id="less-precise-notice">Some details missing; estimate may be less precise.</p>
                 </div>
@@ -876,221 +966,263 @@
             }
         }
 
-        // Compute percentage-based outlook with explainability
-        function computeUpgradeOdds() {
+        // ============================================================
+        // BASELINE SCORE COMPUTATION
+        // Structural factors only (market, booking, loyalty, timing)
+        // ============================================================
+        function computeBaselineScore() {
             let score = -0.25; // Base score (baseline ~44%)
-            const drivers = [];
-            let hasMissingFields = false;
+            const baselineDrivers = [];
 
             // Extract and normalize data
             const channel = (bookingData.channel || bookingData.bookingChannel || '').toLowerCase();
             const lengthOfStay = contextData.lengthOfStay || '';
             const arrivalDay = (contextData.arrivalDay || '').toLowerCase();
             const loyalty = (contextData.loyalty || contextData.loyaltyStatus || '').toLowerCase();
-            const occasion = (contextData.occasion || '').toLowerCase();
-            const flexibility = (contextData.flexibility || '').toLowerCase();
-            const askPreference = (contextData.askPreference || '').toLowerCase();
             const hotelType = (bookingData.hotel_type || '').toLowerCase();
             const city = bookingData.city || '';
-            
-            // PHASE 1 NEW SIGNALS
-            const firstTimeStay = contextData.first_time_stay; // boolean or undefined
-            const roomBooked = bookingData.room; // string or undefined
-            const checkinDate = bookingData.checkin; // date string or undefined
+            const roomBooked = bookingData.room;
+            const lengthNights = parseLengthOfStay(lengthOfStay);
+            const normalizedCity = normalizeCity(city);
+            const marketTier = CITY_TIER[normalizedCity] || 'unknown';
 
-            // Channel scoring
+            // Channel scoring (STRUCTURAL)
             if (channel.includes('direct')) {
                 score += 0.55;
-                drivers.push('Direct booking');
+                baselineDrivers.push('Direct booking');
             } else if (channel.includes('corporate') || channel.includes('negotiated')) {
                 score += 0.40;
-                drivers.push('Corporate rate');
+                baselineDrivers.push('Corporate rate');
             } else if (channel.includes('ota') || channel.includes('travel agency')) {
                 score -= 0.55;
-                drivers.push('OTA booking');
-            } else if (channel) {
-                // Unknown channel provided, neutral
-            } else {
-                hasMissingFields = true;
+                baselineDrivers.push('OTA booking');
             }
 
-            // Loyalty scoring
+            // Loyalty scoring (STRUCTURAL)
             if (loyalty.includes('gold') || loyalty.includes('top')) {
                 score += 0.55;
-                drivers.push('Top-tier loyalty');
+                baselineDrivers.push('Top-tier loyalty');
             } else if (loyalty.includes('silver') || loyalty.includes('mid')) {
                 score += 0.30;
-                drivers.push('Mid-tier loyalty');
+                baselineDrivers.push('Mid-tier loyalty');
             } else if (loyalty.includes('member') && loyalty !== 'none') {
                 score += 0.10;
-                drivers.push('Member status');
-            } else if (loyalty === 'none') {
-                // No loyalty, no adjustment
-            } else {
-                hasMissingFields = true;
+                baselineDrivers.push('Member status');
             }
 
-            // Length of stay scoring
+            // Length of stay scoring (STRUCTURAL)
             if (lengthOfStay === '1' || lengthOfStay === '1 night') {
                 score -= 0.10;
-                drivers.push('1-night stay');
+                baselineDrivers.push('1-night stay');
             } else if (lengthOfStay === '2' || lengthOfStay === '2 nights') {
                 score += 0.05;
             } else if (lengthOfStay === '3-4' || lengthOfStay.includes('3') || lengthOfStay.includes('4')) {
                 score += 0.10;
             } else if (lengthOfStay === '5+' || lengthOfStay.includes('5')) {
                 score -= 0.05;
-                drivers.push('Extended stay');
-            } else if (lengthOfStay) {
-                // Unknown format, neutral
-            } else {
-                hasMissingFields = true;
+                baselineDrivers.push('Extended stay');
             }
 
-            // Arrival day scoring (demand proxy)
+            // Arrival day scoring (STRUCTURAL)
             if (arrivalDay === 'friday') {
                 score -= 0.25;
-                drivers.push('Weekend arrival');
+                baselineDrivers.push('Weekend arrival');
             } else if (arrivalDay === 'saturday') {
                 score -= 0.35;
-                drivers.push('Weekend arrival');
+                baselineDrivers.push('Weekend arrival');
             } else if (arrivalDay === 'sunday') {
                 score -= 0.10;
             } else if (arrivalDay === 'monday' || arrivalDay === 'tuesday' || arrivalDay === 'wednesday' || arrivalDay === 'thursday') {
                 score += 0.05;
-                drivers.push('Weekday arrival');
-            } else if (arrivalDay) {
-                // Unknown day, neutral
-            } else {
-                hasMissingFields = true;
+                baselineDrivers.push('Weekday arrival');
             }
 
-            // Ask preference scoring
-            if (askPreference === 'both') {
-                score += 0.20;
-                drivers.push('Asking before arrival');
-            } else if (askPreference === 'email') {
-                score += 0.10;
-                drivers.push('Email request');
-            } else if (askPreference === 'inperson' || askPreference === 'in_person') {
-                score += 0.05;
-            } else if (askPreference) {
-                // Unknown preference, neutral
-            } else {
-                hasMissingFields = true;
-            }
-
-            // Flexibility scoring
-            if (flexibility === 'any') {
-                score += 0.25;
-                drivers.push('Flexible on room type');
-            } else if (flexibility === 'specific') {
-                score += 0.10;
-            } else if (flexibility === 'no') {
-                score -= 0.20;
-            } else if (flexibility) {
-                // Unknown value, neutral
-            } else {
-                hasMissingFields = true;
-            }
-
-            // Occasion scoring
-            if (occasion.includes('anniversary') || occasion.includes('honeymoon')) {
-                score += 0.20;
-                drivers.push('Special occasion');
-            } else if (occasion.includes('birthday') || occasion.includes('first visit') || (occasion && occasion !== 'none')) {
-                score += 0.10;
-                drivers.push('Special occasion');
-            }
-
-            // Market tier scoring (city-based demand dynamics)
-            const normalizedCity = normalizeCity(city);
-            const marketTier = CITY_TIER[normalizedCity] || 'unknown';
-            
+            // Market tier scoring (STRUCTURAL)
             if (marketTier === 'compressed') {
                 score -= 0.20;
-                drivers.push('High-demand city');
+                baselineDrivers.push('High-demand city');
             } else if (marketTier === 'resort') {
                 score += 0.15;
-                drivers.push('Resort / elastic market');
+                baselineDrivers.push('Resort / elastic market');
             }
-            // neutral and unknown: no adjustment, no driver chip
 
-            // Hotel type scoring
+            // Hotel type scoring (STRUCTURAL)
             if (hotelType === 'independent') {
                 score += 0.10;
-                drivers.push('Independent property');
-            }
-            // chain and unknown: no adjustment, no driver chip
-
-            // ============================================================
-            // PHASE 1 HIGH-SIGNAL FACTORS
-            // ============================================================
-
-            // 1) First-Time Stay vs Returning Guest
-            if (hotelType === 'independent' && firstTimeStay === true) {
-                score += 0.20;
-                drivers.push('First stay at this property');
-            }
-            // If firstTimeStay is false or undefined, no adjustment
-
-            // 2) Advance Notice (When the Ask Is Made)
-            const hoursBeforeArrival = calculateHoursBeforeArrival(checkinDate);
-            if (hoursBeforeArrival !== null) {
-                if (hoursBeforeArrival >= 24 && hoursBeforeArrival <= 72) {
-                    score += 0.10;
-                    drivers.push('Asked with advance notice');
-                } else if (hoursBeforeArrival < 12) {
-                    score -= 0.05;
-                    drivers.push('Very last-minute request');
-                }
-                // Between 12-24 or >72: no adjustment
+                baselineDrivers.push('Independent property');
             }
 
-            // 3) Length of Stay × Arrival Day Interaction
-            const lengthNights = parseLengthOfStay(lengthOfStay);
-            const normalizedCity = normalizeCity(city);
-            const marketTier = CITY_TIER[normalizedCity] || 'unknown';
-            
+            // Booked room category (STRUCTURAL)
+            const roomCategory = classifyRoomCategory(roomBooked);
+            if (roomCategory === 'base') {
+                score += 0.10;
+                baselineDrivers.push('Base room booked');
+            } else if (roomCategory === 'premium') {
+                score -= 0.10;
+                baselineDrivers.push('Already booked a premium room');
+            }
+
+            // Length × Arrival Day Interaction (STRUCTURAL)
             if (lengthNights !== null && arrivalDay) {
                 const softDay = isSoftDay(arrivalDay, marketTier, normalizedCity);
                 const peakDay = isPeakDay(arrivalDay, marketTier, normalizedCity);
                 
                 if (lengthNights <= 2 && softDay) {
                     score += 0.10;
-                    drivers.push('Short stay on softer arrival day');
+                    baselineDrivers.push('Short stay on softer arrival day');
                 } else if (lengthNights >= 5 && peakDay) {
                     score -= 0.15;
-                    drivers.push('Long stay during peak demand');
+                    baselineDrivers.push('Long stay during peak demand');
                 }
             }
 
-            // 4) Booked Room Category Weight
-            const roomCategory = classifyRoomCategory(roomBooked);
-            if (roomCategory === 'base') {
+            return { score, drivers: baselineDrivers };
+        }
+
+        // ============================================================
+        // OPTIMIZED SCORE COMPUTATION
+        // Baseline + execution factors (ask method, flexibility, timing)
+        // ============================================================
+        function computeOptimizedScore() {
+            // Start with baseline
+            const baseline = computeBaselineScore();
+            let score = baseline.score;
+            const optimizedDrivers = [...baseline.drivers]; // Copy baseline drivers
+
+            // Extract execution data
+            const askPreference = (contextData.askPreference || '').toLowerCase();
+            const flexibility = (contextData.flexibility || contextData.flexibility_primary || '').toLowerCase();
+            const occasion = (contextData.occasion || '').toLowerCase();
+            const firstTimeStay = contextData.first_time_stay;
+            const hotelType = (bookingData.hotel_type || '').toLowerCase();
+            const checkinDate = bookingData.checkin;
+            const channel = (bookingData.channel || bookingData.bookingChannel || '').toLowerCase();
+            const lengthOfStay = contextData.lengthOfStay || '';
+            const normalizedCity = normalizeCity(bookingData.city || '');
+            const marketTier = CITY_TIER[normalizedCity] || 'unknown';
+
+            // EXECUTION FACTOR: Ask preference
+            if (askPreference === 'both') {
+                score += 0.20;
+                optimizedDrivers.push('Asking before arrival');
+            } else if (askPreference === 'email') {
                 score += 0.10;
-                drivers.push('Base room booked');
-            } else if (roomCategory === 'premium') {
-                score -= 0.10;
-                drivers.push('Already booked a premium room');
+                optimizedDrivers.push('Email request');
+            } else if (askPreference === 'inperson' || askPreference === 'in_person') {
+                score += 0.05;
             }
-            // mid/unknown: no adjustment
 
-            // Convert score to probability using logistic function
-            const prob = 1 / (1 + Math.exp(-score));
-            let percentage = Math.round(prob * 100);
+            // EXECUTION FACTOR: Flexibility
+            if (flexibility === 'any') {
+                score += 0.25;
+                optimizedDrivers.push('Flexible on room type');
+            } else if (flexibility === 'category') {
+                score += 0.15;
+                optimizedDrivers.push('Category flexibility');
+            } else if (flexibility === 'view') {
+                score += 0.10;
+                optimizedDrivers.push('View preference');
+            } else if (flexibility === 'timing') {
+                score += 0.08;
+                optimizedDrivers.push('Timing flexibility');
+            } else if (flexibility === 'specific') {
+                score += 0.10;
+            } else if (flexibility === 'no' || flexibility === 'none') {
+                score -= 0.20;
+            }
 
-            // Clamp to 5-85% range
-            percentage = Math.max(5, Math.min(85, percentage));
+            // EXECUTION FACTOR: Occasion (guest provides context)
+            if (occasion.includes('anniversary') || occasion.includes('honeymoon')) {
+                score += 0.20;
+                optimizedDrivers.push('Special occasion');
+            } else if (occasion.includes('birthday') || occasion.includes('first visit') || (occasion && occasion !== 'none')) {
+                score += 0.10;
+                optimizedDrivers.push('Special occasion');
+            }
+
+            // EXECUTION FACTOR: First-time stay (independent hotels)
+            if (hotelType === 'independent' && firstTimeStay === true) {
+                score += 0.20;
+                optimizedDrivers.push('First stay at this property');
+            }
+
+            // EXECUTION FACTOR: Advance notice
+            const hoursBeforeArrival = calculateHoursBeforeArrival(checkinDate);
+            if (hoursBeforeArrival !== null) {
+                if (hoursBeforeArrival >= 24 && hoursBeforeArrival <= 72) {
+                    score += 0.10;
+                    optimizedDrivers.push('Asked with advance notice');
+                } else if (hoursBeforeArrival < 12) {
+                    score -= 0.05;
+                    optimizedDrivers.push('Very last-minute request');
+                }
+            }
+
+            // EXECUTION FACTOR: Mitigation credit
+            // If facing structural disadvantages, well-phrased request helps
+            const hasOTA = channel.includes('ota') || channel.includes('travel agency');
+            const hasCompressed = marketTier === 'compressed';
+            const hasLongStay = lengthOfStay === '5+' || (parseLengthOfStay(lengthOfStay) >= 5);
+            
+            if (hasOTA || hasCompressed || hasLongStay) {
+                score += 0.05;
+                // Don't add a chip for this - it's implicit in the optimized wording
+            }
+
+            return { score, drivers: optimizedDrivers };
+        }
+
+        // ============================================================
+        // COMPUTE BOTH BASELINE AND OPTIMIZED ODDS
+        // ============================================================
+        function computeUpgradeOdds() {
+            const baselineResult = computeBaselineScore();
+            const optimizedResult = computeOptimizedScore();
+
+            // Convert scores to probabilities
+            const baselineProb = 1 / (1 + Math.exp(-baselineResult.score));
+            const optimizedProb = 1 / (1 + Math.exp(-optimizedResult.score));
+
+            // Convert to percentages and clamp
+            let baselinePct = Math.round(baselineProb * 100);
+            let optimizedPct = Math.round(optimizedProb * 100);
+
+            baselinePct = Math.max(5, Math.min(85, baselinePct));
+            optimizedPct = Math.max(5, Math.min(85, optimizedPct));
+
+            // Compute lift
+            let lift = optimizedPct - baselinePct;
+
+            // Guardrails
+            if (lift < 0) {
+                lift = 0;
+                optimizedPct = baselinePct;
+            }
+
+            // Cap lift at +20 points
+            if (lift > 20) {
+                lift = 20;
+                optimizedPct = baselinePct + 20;
+            }
+
+            // Check for missing fields
+            let hasMissingFields = false;
+            if (!contextData.arrivalDay || !contextData.lengthOfStay || 
+                !(bookingData.channel || bookingData.bookingChannel) || 
+                !(contextData.loyalty || contextData.loyaltyStatus)) {
+                hasMissingFields = true;
+            }
 
             return {
-                percentage,
-                drivers,
+                baselinePct,
+                optimizedPct,
+                lift,
+                baselineDrivers: baselineResult.drivers,
+                optimizedDrivers: optimizedResult.drivers,
                 hasMissingFields
             };
         }
 
-        // Prioritize drivers for display (max 4 chips)
         function prioritizeDrivers(driversList) {
             // Priority order:
             // 1) Market / hotel type
@@ -1131,29 +1263,40 @@
             return sorted.slice(0, 4);
         }
 
-        // Render percentage and drivers
+        // Render baseline and optimized odds
         const oddsResult = computeUpgradeOdds();
-        const percentageEl = document.getElementById('outlook-percentage');
+        const baselineEl = document.getElementById('baseline-percentage');
+        const optimizedEl = document.getElementById('optimized-percentage');
+        const liftValueEl = document.getElementById('lift-value');
         const customizationNote = document.getElementById('customization-note');
         const driversSection = document.getElementById('drivers-section');
         const driversChips = document.getElementById('drivers-chips');
         const lessPreciseNotice = document.getElementById('less-precise-notice');
 
-        percentageEl.textContent = oddsResult.percentage + '%';
+        // Display baseline and optimized percentages
+        baselineEl.textContent = oddsResult.baselinePct + '%';
+        optimizedEl.textContent = oddsResult.optimizedPct + '%';
+        
+        // Display lift
+        if (oddsResult.lift > 0) {
+            liftValueEl.textContent = '+' + oddsResult.lift + ' points';
+        } else {
+            liftValueEl.textContent = 'No lift (limited execution factors)';
+        }
 
-        // Update customization note based on odds
-        if (oddsResult.percentage < 35) {
+        // Update customization note based on optimized odds
+        if (oddsResult.optimizedPct < 35) {
             customizationNote.textContent = 'These odds reflect typical availability. The request below is designed to reduce friction and emphasize flexibility where it matters most.';
-        } else if (oddsResult.percentage > 55) {
+        } else if (oddsResult.optimizedPct > 55) {
             customizationNote.textContent = 'This is a strong setup. The request below is written to take advantage of the timing and flexibility in your case.';
         } else {
             // Default for middle range (35-55%)
             customizationNote.textContent = 'This request is tailored for your specific stay and written to align with how hotels typically handle situations like yours.';
         }
 
-        // Show drivers if any (prioritized, max 4)
-        if (oddsResult.drivers.length > 0) {
-            const displayDrivers = prioritizeDrivers(oddsResult.drivers);
+        // Show optimized drivers if any (prioritized, max 4)
+        if (oddsResult.optimizedDrivers.length > 0) {
+            const displayDrivers = prioritizeDrivers(oddsResult.optimizedDrivers);
             driversSection.style.display = 'block';
             driversChips.innerHTML = displayDrivers
                 .map(driver => '<span class="driver-chip">' + driver + '</span>')
