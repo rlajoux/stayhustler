@@ -322,11 +322,43 @@
             font-style: italic;
         }
 
-        .estimate-disclaimer {
-            font-size: 0.8rem;
+        .odds-microcopy {
+            background: var(--color-bg-warm);
+            border-left: 3px solid var(--color-accent);
+            padding: var(--space-md);
+            margin: var(--space-md) 0;
+            border-radius: var(--radius);
+        }
+
+        .odds-microcopy-primary {
+            font-size: 0.95rem;
+            color: var(--color-text);
+            font-weight: 500;
+            margin-bottom: var(--space-xs);
+            line-height: 1.4;
+        }
+
+        .odds-microcopy-support {
+            font-size: 0.85rem;
             color: var(--color-text-muted);
-            margin-bottom: var(--space-md);
+            margin-bottom: var(--space-xs);
+            line-height: 1.5;
+        }
+
+        .odds-microcopy-optional {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-sm);
+            line-height: 1.5;
+        }
+
+        .odds-microcopy-footer {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
             font-style: italic;
+            margin-top: var(--space-sm);
+            padding-top: var(--space-xs);
+            border-top: 1px solid var(--color-border);
         }
 
         .customization-note {
@@ -694,6 +726,13 @@
                         <span class="lift-label">Estimated lift:</span>
                         <span class="lift-value" id="lift-value">+0 points</span>
                     </div>
+                </div>
+                
+                <div class="odds-microcopy" id="odds-microcopy">
+                    <p class="odds-microcopy-primary" id="microcopy-primary"></p>
+                    <p class="odds-microcopy-support" id="microcopy-support"></p>
+                    <p class="odds-microcopy-optional" id="microcopy-optional" style="display: none;"></p>
+                    <p class="odds-microcopy-footer" id="microcopy-footer"></p>
                 </div>
                 
                 <p class="customization-note" id="customization-note">This request is tailored for your specific stay and written to align with how hotels typically handle situations like yours.</p>
@@ -1223,6 +1262,31 @@
             };
         }
 
+        // Get tiered microcopy based on baseline odds
+        function getOddsMicrocopy(baselinePct) {
+            let primary, support, optional;
+            const footer = "Availability always comes first. This request focuses on timing, tone, and flexibility—not guarantees.";
+            
+            if (baselinePct < 25) {
+                // LOW tier
+                primary = "This is a tougher scenario—but not a dead end.";
+                support = "The request below is written to reduce friction and make it easy for staff to help if anything opens up.";
+                optional = "Even when upgrades are unlikely, flexibility can lead to partial wins (view, location, or timing).";
+            } else if (baselinePct <= 50) {
+                // MEDIUM tier
+                primary = "This is a workable setup.";
+                support = "The request is tailored to your stay and written to align with how hotels typically handle situations like yours.";
+                optional = "Timing and flexibility are doing most of the work here.";
+            } else {
+                // HIGH tier
+                primary = "This is a strong setup.";
+                support = "The request below is written to take advantage of the timing and flexibility in your case.";
+                optional = "Availability still drives outcomes, but this is about as favorable as it gets.";
+            }
+            
+            return { primary, support, optional, footer };
+        }
+
         function prioritizeDrivers(driversList) {
             // Priority order:
             // 1) Market / hotel type
@@ -1283,6 +1347,22 @@
         } else {
             liftValueEl.textContent = 'No lift (limited execution factors)';
         }
+
+        // Populate odds microcopy based on baseline tier
+        const microcopy = getOddsMicrocopy(oddsResult.baselinePct);
+        document.getElementById('microcopy-primary').textContent = microcopy.primary;
+        document.getElementById('microcopy-support').textContent = microcopy.support;
+        
+        // Show optional line (show for LOW and HIGH tiers, hide for MEDIUM to keep it compact)
+        const optionalEl = document.getElementById('microcopy-optional');
+        if (oddsResult.baselinePct < 25 || oddsResult.baselinePct > 50) {
+            optionalEl.textContent = microcopy.optional;
+            optionalEl.style.display = 'block';
+        } else {
+            optionalEl.style.display = 'none';
+        }
+        
+        document.getElementById('microcopy-footer').textContent = microcopy.footer;
 
         // Update customization note based on optimized odds
         if (oddsResult.optimizedPct < 35) {
