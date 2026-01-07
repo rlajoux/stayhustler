@@ -826,7 +826,8 @@ Warm regards,
                 has_checkout: !!booking.checkout,
                 has_context: !!context,
                 has_arrivalDay: !!context.arrivalDay,
-                has_lengthOfStay: !!context.lengthOfStay
+                has_lengthOfStay: !!context.lengthOfStay,
+                has_askPreference: !!context.askPreference
             });
 
             // Validate required fields are present
@@ -837,6 +838,7 @@ Warm regards,
             if (!booking.checkout) missingFields.push('checkout');
             if (!context.arrivalDay) missingFields.push('arrivalDay');
             if (!context.lengthOfStay) missingFields.push('lengthOfStay');
+            if (!context.askPreference) missingFields.push('askPreference');  // Backend requires this!
             
             if (missingFields.length > 0) {
                 console.error('[Frontend] Missing required fields:', missingFields.join(', '));
