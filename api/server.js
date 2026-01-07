@@ -113,6 +113,7 @@ app.use(cors({
     },
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
+    exposedHeaders: ['X-Request-Id', 'X-Generation-Source', 'Retry-After'],  // CRITICAL: Expose custom headers to browser
     credentials: false
 }));
 
