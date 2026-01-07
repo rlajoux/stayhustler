@@ -1,0 +1,34 @@
+{
+  "articles": [
+    {
+      "filename": "best-time-to-ask-for-hotel-upgrade.md",
+      "seo_title": "Best Time to Ask for a Hotel Upgrade (24-36 Hour Window)",
+      "meta_description": "The 24-36 hour window before arrival is ideal for upgrade requests. Learn when hotels have the most flexibility and why timing matters more than wording.",
+      "slug": "best-time-to-ask-for-hotel-upgrade"
+    },
+    {
+      "filename": "hotel-upgrade-email-template.md",
+      "seo_title": "Hotel Upgrade Email Template That Actually Works",
+      "meta_description": "Most upgrade email templates fail because they ignore hotel operations. Learn the 4-part structure hotels respond to and what language actually works.",
+      "slug": "hotel-upgrade-email-template"
+    },
+    {
+      "filename": "how-to-ask-for-a-hotel-upgrade.md",
+      "seo_title": "How to Ask for a Hotel Upgrade (The Right Way)",
+      "meta_description": "Hotel upgrades aren't about luck or clever wording—they're about understanding operations. Learn when to ask, how to phrase it, and what actually works.",
+      "slug": "how-to-ask-for-a-hotel-upgrade"
+    },
+    {
+      "filename": "independent-vs-chain-hotel-upgrades.md",
+      "seo_title": "Independent vs Chain Hotel Upgrades: Key Differences",
+      "meta_description": "Upgrade dynamics differ dramatically between independent hotels and chains. Learn which approach works for each property type and how to adjust your strategy.",
+      "slug": "independent-vs-chain-hotel-upgrades"
+    },
+    {
+      "filename": "late-checkout-vs-room-upgrade.md",
+      "seo_title": "Late Checkout vs Room Upgrade: Which Is Easier to Get?",
+      "meta_description": "Late checkout is often easier than room upgrades because it affects housekeeping, not revenue. Learn which enhancement to request and when each works best.",
+      "slug": "late-checkout-vs-room-upgrade"
+    }
+  ]
+}

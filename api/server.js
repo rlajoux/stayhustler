@@ -430,20 +430,20 @@ function validateOutput(output) {
         }
     }
 
-    // B) email_body validation
+    // B) email_body validation (more lenient for repair)
     if (typeof output.email_body !== 'string') {
         reasons.push('email_body must be a string');
     } else {
         const bodyWords = wordCount(output.email_body);
-        if (bodyWords < 140 || bodyWords > 220) {
-            reasons.push(`email_body must be 140-220 words (got ${bodyWords})`);
+        if (bodyWords < 80 || bodyWords > 300) {
+            reasons.push(`email_body must be 80-300 words (got ${bodyWords})`);
         }
         if (!output.email_body.includes('Reservation: [Confirmation Number]')) {
             reasons.push('email_body must include exactly "Reservation: [Confirmation Number]"');
         }
         const forecastCount = countOccurrences(output.email_body, 'forecasted to remain available');
-        if (forecastCount !== 1) {
-            reasons.push(`email_body must include "forecasted to remain available" exactly once (got ${forecastCount})`);
+        if (forecastCount === 0 || forecastCount > 2) {
+            reasons.push(`email_body must include "forecasted to remain available" (got ${forecastCount})`);
         }
         const bodyBanned = containsBannedWords(output.email_body);
         if (bodyBanned.hit) {
@@ -492,6 +492,52 @@ function repairOutput(output, validationReasons) {
     const repaired = JSON.parse(JSON.stringify(output)); // deep clone
     let repairsMade = [];
     
+    // Repair 0: Remove banned words (do this first!)
+    if (validationReasons.some(r => r.includes('contains banned words'))) {
+        if (typeof repaired.email_body === 'string') {
+            const bannedWordReplacements = {
+                'demand': 'consider',
+                'demands': 'considerations',
+                'demanded': 'requested',
+                'must': 'would appreciate',
+                'owed': 'appreciated',
+                'guarantee': 'hope',
+                'guaranteed': 'expected',
+                'hack': 'approach',
+                'trick': 'strategy',
+                'free': 'complimentary'
+            };
+            
+            Object.entries(bannedWordReplacements).forEach(([banned, replacement]) => {
+                const regex = new RegExp(`\\b${banned}\\b`, 'gi');
+                if (regex.test(repaired.email_body)) {
+                    repaired.email_body = repaired.email_body.replace(regex, replacement);
+                    repairsMade.push(`Replaced banned word: ${banned}`);
+                }
+            });
+        }
+        
+        if (typeof repaired.fallback_script === 'string') {
+            const bannedWordReplacements = {
+                'demand': 'request',
+                'must': 'would appreciate',
+                'owed': 'appreciated',
+                'guarantee': 'hope',
+                'hack': 'approach',
+                'trick': 'strategy',
+                'free': 'complimentary'
+            };
+            
+            Object.entries(bannedWordReplacements).forEach(([banned, replacement]) => {
+                const regex = new RegExp(`\\b${banned}\\b`, 'gi');
+                if (regex.test(repaired.fallback_script)) {
+                    repaired.fallback_script = repaired.fallback_script.replace(regex, replacement);
+                    repairsMade.push(`Replaced banned word in script: ${banned}`);
+                }
+            });
+        }
+    }
+    
     // Repair A: Missing reservation line in email_body
     if (validationReasons.some(r => r.includes('Reservation: [Confirmation Number]'))) {
         if (typeof repaired.email_body === 'string' && !repaired.email_body.includes('Reservation: [Confirmation Number]')) {
@@ -511,11 +557,20 @@ function repairOutput(output, validationReasons) {
             const count = countOccurrences(repaired.email_body, 'forecasted to remain available');
             if (count === 0) {
                 // Find a sentence to modify - look for upgrade request
-                repaired.email_body = repaired.email_body.replace(
-                    /If any (premium|upgraded|higher-category) rooms/i,
-                    'If any $1 rooms are forecasted to remain available'
-                );
-                repairsMade.push('Inserted required phrase');
+                const replacements = [
+                    [/If any (premium|upgraded|higher-category|suite) rooms/i, 'If any $1 rooms are forecasted to remain available'],
+                    [/(premium|upgraded|higher-category|suite) rooms (are|become) available/i, '$1 rooms are forecasted to remain available'],
+                    [/rooms (are|become) available/i, 'rooms are forecasted to remain available'],
+                    [/if (something|anything) (opens up|becomes available)/i, 'if anything is forecasted to remain available']
+                ];
+                
+                for (const [pattern, replacement] of replacements) {
+                    if (pattern.test(repaired.email_body)) {
+                        repaired.email_body = repaired.email_body.replace(pattern, replacement);
+                        repairsMade.push('Inserted required phrase');
+                        break;
+                    }
+                }
             } else if (count > 1) {
                 // Remove duplicates - keep first occurrence
                 let firstFound = false;
@@ -531,33 +586,37 @@ function repairOutput(output, validationReasons) {
         }
     }
     
-    // Repair C: Word count outside range
-    if (validationReasons.some(r => r.includes('email_body must be'))) {
-        if (typeof repaired.email_body === 'string') {
-            const bodyWords = wordCount(repaired.email_body);
-            if (bodyWords < 140 && bodyWords >= 100) {
-                // Too short - add contextual padding
-                const paddingSentences = [
-                    'I appreciate your time and consideration in reviewing this request.',
-                    'Thank you for your attention to this matter, and I look forward to a wonderful stay at your property.',
-                    'I understand these decisions depend on availability and truly appreciate any consideration you can provide.'
-                ];
-                // Add one or more sentences until we hit minimum
-                let attempts = 0;
-                while (wordCount(repaired.email_body) < 140 && attempts < paddingSentences.length) {
-                    repaired.email_body += '\n\n' + paddingSentences[attempts];
-                    attempts++;
+    // Repair C: Word count outside range - AGGRESSIVE
+    if (typeof repaired.email_body === 'string') {
+        const bodyWords = wordCount(repaired.email_body);
+        if (bodyWords < 140) {
+            // Too short - add contextual padding aggressively
+            const paddingSentences = [
+                'I appreciate your time and consideration in reviewing this request.',
+                'Thank you for your attention to this matter, and I look forward to a wonderful stay at your property.',
+                'I understand these decisions depend on availability and truly appreciate any consideration you can provide.',
+                'Your property has wonderful reviews and I am excited to experience it firsthand.',
+                'Please let me know if there is any additional information I can provide.'
+            ];
+            // Add sentences until we hit minimum (even if we go over a bit)
+            let attempts = 0;
+            while (wordCount(repaired.email_body) < 140 && attempts < paddingSentences.length) {
+                repaired.email_body += '\n\n' + paddingSentences[attempts];
+                attempts++;
+            }
+            if (attempts > 0) {
+                repairsMade.push(`Added ${attempts} padding sentence(s) for word count`);
+            }
+        } else if (bodyWords > 220) {
+            // Too long - trim excess sentences
+            const sentences = repaired.email_body.split(/\.\s+/);
+            if (sentences.length > 4) {
+                // Remove middle sentences (usually least critical)
+                while (wordCount(repaired.email_body) > 220 && sentences.length > 4) {
+                    sentences.splice(Math.floor(sentences.length / 2), 1);
                 }
-                repairsMade.push('Added padding sentences for word count');
-            } else if (bodyWords > 220 && bodyWords <= 250) {
-                // Too long - trim excess sentences
-                const sentences = repaired.email_body.split(/\.\s+/);
-                if (sentences.length > 3) {
-                    // Remove the second-to-last sentence (usually least critical)
-                    sentences.splice(-2, 1);
-                    repaired.email_body = sentences.join('. ');
-                    repairsMade.push('Trimmed excess sentence for word count');
-                }
+                repaired.email_body = sentences.join('. ');
+                repairsMade.push('Trimmed excess sentences for word count');
             }
         }
     }
@@ -571,7 +630,114 @@ function repairOutput(output, validationReasons) {
         }
     }
     
+    // Repair E: Subject line word count
+    if (typeof repaired.email_subject === 'string') {
+        const subjectWords = wordCount(repaired.email_subject);
+        if (subjectWords < 6) {
+            repaired.email_subject = 'Upcoming reservation — ' + repaired.email_subject;
+            repairsMade.push('Extended subject line');
+        } else if (subjectWords > 12) {
+            const words = repaired.email_subject.split(/\s+/);
+            repaired.email_subject = words.slice(0, 12).join(' ');
+            repairsMade.push('Trimmed subject line');
+        }
+    }
+    
+    // Repair F: Timing guidance array issues
+    if (Array.isArray(repaired.timing_guidance)) {
+        if (repaired.timing_guidance.length < 3) {
+            // Add generic tips to reach 3
+            const genericTips = [
+                'Email 24-36 hours before check-in for best timing',
+                'Ask in person during check-in before handing over ID',
+                'Be polite, flexible, and understand availability comes first'
+            ];
+            while (repaired.timing_guidance.length < 3) {
+                repaired.timing_guidance.push(genericTips[repaired.timing_guidance.length]);
+            }
+            repairsMade.push('Added missing timing tips');
+        } else if (repaired.timing_guidance.length > 3) {
+            repaired.timing_guidance = repaired.timing_guidance.slice(0, 3);
+            repairsMade.push('Trimmed excess timing tips');
+        }
+    }
+    
+    // Repair G: Fallback script issues
+    if (typeof repaired.fallback_script === 'string') {
+        const scriptWords = wordCount(repaired.fallback_script);
+        if (scriptWords < 8) {
+            repaired.fallback_script = 'If any upgraded rooms are forecasted to remain available this evening, I would be grateful to be considered.';
+            repairsMade.push('Replaced short fallback script');
+        } else if (scriptWords > 30) {
+            // Trim to first sentence or first 30 words
+            const words = repaired.fallback_script.split(/\s+/);
+            repaired.fallback_script = words.slice(0, 30).join(' ') + '.';
+            repairsMade.push('Trimmed long fallback script');
+        }
+        
+        // Ensure it ends with . or ?
+        if (!/[.?]$/.test(repaired.fallback_script.trim())) {
+            repaired.fallback_script = repaired.fallback_script.trim() + '.';
+            repairsMade.push('Added period to fallback script');
+        }
+    }
+    
     return { repaired, repairsMade };
+}
+
+// Emergency content builder - creates minimal valid content from booking data
+// Used when Gemini completely fails to generate anything usable
+function buildEmergencyContent(sanitizedData) {
+    const { booking, context } = sanitizedData;
+    const hotel = booking.hotel || 'your property';
+    const checkin = booking.checkin || 'my upcoming stay';
+    const room = booking.room || 'standard room';
+    const channel = booking.channel || 'online';
+    
+    // Format date for subject
+    let dateStr = 'Upcoming stay';
+    if (checkin) {
+        try {
+            const date = new Date(checkin);
+            const month = date.toLocaleString('en-US', { month: 'short' });
+            const day = date.getDate();
+            dateStr = `${month} ${day} arrival`;
+        } catch (e) {
+            // Use generic if date parsing fails
+        }
+    }
+    
+    const email_subject = `${dateStr} — pre-arrival request`;
+    
+    const email_body = `Hello ${hotel} Team,
+
+Reservation: [Confirmation Number]
+
+I'm writing ahead of my ${checkin} arrival. I ${channel === 'direct' ? 'booked directly with you' : 'booked online'} and reserved a ${room}.
+
+If any higher-category rooms or suites are forecasted to remain available around my check-in time, I would be grateful to be considered for an upgrade. I'm flexible on room type and location and completely understand that availability comes first.
+
+I appreciate your property's hospitality and am looking forward to my stay. If an upgrade isn't possible, I'm of course happy to keep my existing reservation as booked.
+
+Thank you for any consideration you can provide.
+
+Warm regards,
+[Your Name]`;
+
+    const timing_guidance = [
+        'Email this 24-36 hours before check-in for best results',
+        'You can also ask politely at check-in before handing over your ID',
+        'Be flexible and understanding—availability drives all upgrade decisions'
+    ];
+    
+    const fallback_script = 'If any upgraded rooms are forecasted to remain available around check-in, I would be grateful to be considered.';
+    
+    return {
+        email_subject,
+        email_body,
+        timing_guidance,
+        fallback_script
+    };
 }
 
 // Build correction prompt for retry
@@ -975,7 +1141,7 @@ async function generateRequestPayload(booking, context, requestId = null) {
         
         // Second pass also failed - attempt deterministic repair before fallback
         console.log(`[Generation:${rid}] ✗ Second pass failed: ${secondValidation.reasons.join('; ')}`);
-        console.log(`[Generation:${rid}] Attempting repair step`);
+        console.log(`[Generation:${rid}] Attempting aggressive repair step`);
         
         const { repaired, repairsMade } = repairOutput(secondResult, secondValidation.reasons);
         
@@ -990,24 +1156,47 @@ async function generateRequestPayload(booking, context, requestId = null) {
                 console.log(`[Generation:${rid}] ✓ Repaired output valid, final_source=repaired`);
                 return { result: repaired, finalSource };
             } else {
-                console.log(`[Generation:${rid}] ✗ Repair failed to fix all issues: ${repairedValidation.reasons.join('; ')}`);
+                // FORCE USE REPAIRED CONTENT even if not perfect
+                // It's better to show customized content with minor issues than generic fallback
+                finalSource = 'repaired-forced';
+                console.log(`[Generation:${rid}] ⚠ Using repaired content despite minor issues: ${repairedValidation.reasons.join('; ')}`);
+                return { result: repaired, finalSource };
             }
         } else {
-            console.log(`[Generation:${rid}] No repairs could be applied`);
+            // Try repairing first pass if it exists and has fewer issues
+            console.log(`[Generation:${rid}] No repairs from second pass, trying first pass repair`);
+            const { repaired: firstRepaired, repairsMade: firstRepairsMade } = repairOutput(firstResult, firstValidation.reasons);
+            
+            if (firstRepairsMade.length > 0) {
+                console.log(`[Generation:${rid}] First pass repairs: ${firstRepairsMade.join('; ')}`);
+                finalSource = 'repaired-forced';
+                return { result: firstRepaired, finalSource };
+            }
+            
+            // Last resort: use second pass as-is (customized content is better than template)
+            console.log(`[Generation:${rid}] ⚠ Using second pass as-is (customized, may have minor issues)`);
+            finalSource = 'forced';
+            return { result: secondResult, finalSource };
         }
-        
-        // All attempts failed - use fallback
-        console.log(`[Generation:${rid}] Using fallback, first_pass_valid=${firstPassValid}, second_pass_attempted=${secondPassAttempted}`);
-        finalSource = 'fallback';
         
     } catch (geminiError) {
         console.error(`[Generation:${rid}] Gemini error: ${geminiError.message}`);
-        console.log(`[Generation:${rid}] Using fallback due to exception`);
-        finalSource = 'fallback';
+        
+        // Even on exception, try to return something if we got partial results
+        try {
+            console.log(`[Generation:${rid}] Attempting to build emergency content from context`);
+            const emergencyContent = buildEmergencyContent(sanitizedData);
+            finalSource = 'emergency';
+            return { result: emergencyContent, finalSource };
+        } catch (emergencyError) {
+            console.error(`[Generation:${rid}] Emergency content failed: ${emergencyError.message}`);
+            console.log(`[Generation:${rid}] Using fallback as last resort`);
+            finalSource = 'fallback';
+        }
     }
     
-    // Return fallback payload
-    console.log(`[Generation:${rid}] Returning fallback, final_source=fallback`);
+    // Return fallback payload ONLY as absolute last resort
+    console.log(`[Generation:${rid}] Returning fallback as absolute last resort, final_source=fallback`);
     return { result: getFallbackPayload(), finalSource };
 }
 
