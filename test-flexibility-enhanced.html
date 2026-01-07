@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Enhanced Flexibility - StayHustler</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #faf9f7;
+        }
+        h1 {
+            font-family: Palatino, Georgia, serif;
+            color: #2d2a26;
+        }
+        .test-section {
+            background: white;
+            border: 1px solid #e8e4de;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .test-result {
+            background: #f5f3ef;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        .pass { color: #5c8a6b; font-weight: bold; }
+        .fail { color: #c45c5c; font-weight: bold; }
+        button {
+            background: #2d2a26;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1a1816;
+        }
+        pre {
+            background: #2d2a26;
+            color: #c9a962;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Enhanced Flexibility Test Suite</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Data Structure</h2>
+        <button onclick="testDataStructure()">Run Test</button>
+        <div id="test1-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Backward Compatibility</h2>
+        <button onclick="testBackwardCompatibility()">Run Test</button>
+        <div id="test2-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 3: Conditional Fields</h2>
+        <button onclick="testConditionalFields()">Run Test</button>
+        <div id="test3-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Current localStorage Data</h2>
+        <button onclick="showCurrentData()">Show Data</button>
+        <button onclick="clearTestData()">Clear Data</button>
+        <div id="current-data"></div>
+    </div>
+
+    <script>
+        function testDataStructure() {
+            const testCases = [
+                {
+                    name: "Any flexibility",
+                    input: { flexibility_primary: "any", flexibility_detail: "" },
+                    expected: { flexibility: "any", flexibility_primary: "any", flexibility_detail: "" }
+                },
+                {
+                    name: "Category with detail",
+                    input: { flexibility_primary: "category", flexibility_detail: "junior suite" },
+                    expected: { flexibility: "specific", flexibility_primary: "category", flexibility_detail: "junior suite" }
+                },
+                {
+                    name: "View with detail",
+                    input: { flexibility_primary: "view", flexibility_detail: "ocean view, high floor" },
+                    expected: { flexibility: "specific", flexibility_primary: "view", flexibility_detail: "ocean view, high floor" }
+                },
+                {
+                    name: "Timing with detail",
+                    input: { flexibility_primary: "timing", flexibility_detail: "late checkout" },
+                    expected: { flexibility: "specific", flexibility_primary: "timing", flexibility_detail: "late checkout" }
+                },
+                {
+                    name: "None (keep booked room)",
+                    input: { flexibility_primary: "none", flexibility_detail: "" },
+                    expected: { flexibility: "no", flexibility_primary: "none", flexibility_detail: "" }
+                }
+            ];
+            
+            let results = "<h3>Data Structure Tests</h3>";
+            let passCount = 0;
+            
+            testCases.forEach(test => {
+                const pass = 
+                    test.input.flexibility_primary === test.expected.flexibility_primary &&
+                    test.input.flexibility_detail === test.expected.flexibility_detail;
+                
+                if (pass) passCount++;
+                
+                results += `<div class="test-result">
+                    <span class="${pass ? 'pass' : 'fail'}">${pass ? '✓' : '✗'}</span> ${test.name}<br>
+                    Input: ${JSON.stringify(test.input)}<br>
+                    Expected: ${JSON.stringify(test.expected)}
+                </div>`;
+            });
+            
+            results += `<p><strong>${passCount}/${testCases.length} tests passed</strong></p>`;
+            document.getElementById('test1-result').innerHTML = results;
+        }
+        
+        function testBackwardCompatibility() {
+            const mappings = [
+                { new_value: "any", old_value: "any" },
+                { new_value: "category", old_value: "specific" },
+                { new_value: "view", old_value: "specific" },
+                { new_value: "timing", old_value: "specific" },
+                { new_value: "none", old_value: "no" }
+            ];
+            
+            let results = "<h3>Backward Compatibility Tests</h3>";
+            let passCount = 0;
+            
+            mappings.forEach(map => {
+                // Simulate old code reading flexibility field
+                const legacyFlexibility = 
+                    map.new_value === 'any' ? 'any' :
+                    (map.new_value === 'category' || map.new_value === 'view' || map.new_value === 'timing') ? 'specific' :
+                    map.new_value === 'none' ? 'no' : '';
+                
+                const pass = legacyFlexibility === map.old_value;
+                if (pass) passCount++;
+                
+                results += `<div class="test-result">
+                    <span class="${pass ? 'pass' : 'fail'}">${pass ? '✓' : '✗'}</span> 
+                    ${map.new_value} → ${map.old_value}<br>
+                    Legacy field would be: "${legacyFlexibility}"
+                </div>`;
+            });
+            
+            results += `<p><strong>${passCount}/${mappings.length} mappings correct</strong></p>`;
+            document.getElementById('test2-result').innerHTML = results;
+        }
+        
+        function testConditionalFields() {
+            const scenarios = [
+                {
+                    selection: "any",
+                    shouldShow: { category: false, view: false, timing: false }
+                },
+                {
+                    selection: "category",
+                    shouldShow: { category: true, view: false, timing: false }
+                },
+                {
+                    selection: "view",
+                    shouldShow: { category: false, view: true, timing: false }
+                },
+                {
+                    selection: "timing",
+                    shouldShow: { category: false, view: false, timing: true }
+                },
+                {
+                    selection: "none",
+                    shouldShow: { category: false, view: false, timing: false }
+                }
+            ];
+            
+            let results = "<h3>Conditional Field Tests</h3>";
+            results += "<p>Expected behavior when each option is selected:</p>";
+            
+            scenarios.forEach(scenario => {
+                results += `<div class="test-result">
+                    <strong>Selection: ${scenario.selection}</strong><br>
+                    Category field: ${scenario.shouldShow.category ? 'SHOWN' : 'hidden'}<br>
+                    View field: ${scenario.shouldShow.view ? 'SHOWN' : 'hidden'}<br>
+                    Timing field: ${scenario.shouldShow.timing ? 'SHOWN' : 'hidden'}
+                </div>`;
+            });
+            
+            document.getElementById('test3-result').innerHTML = results;
+        }
+        
+        function showCurrentData() {
+            const contextData = localStorage.getItem('stayhustler_context');
+            
+            if (!contextData) {
+                document.getElementById('current-data').innerHTML = 
+                    '<div class="test-result">No context data in localStorage</div>';
+                return;
+            }
+            
+            try {
+                const parsed = JSON.parse(contextData);
+                document.getElementById('current-data').innerHTML = 
+                    '<h3>Current Context Data:</h3><pre>' + 
+                    JSON.stringify(parsed, null, 2) + 
+                    '</pre>';
+            } catch (e) {
+                document.getElementById('current-data').innerHTML = 
+                    '<div class="test-result fail">Error parsing data: ' + e.message + '</div>';
+            }
+        }
+        
+        function clearTestData() {
+            localStorage.removeItem('stayhustler_context');
+            document.getElementById('current-data').innerHTML = 
+                '<div class="test-result pass">✓ Context data cleared</div>';
+        }
+        
+        // Auto-run tests on load
+        window.addEventListener('load', () => {
+            testDataStructure();
+            testBackwardCompatibility();
+            testConditionalFields();
+            showCurrentData();
+        });
+    </script>
+</body>
+</html>
