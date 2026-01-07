@@ -598,6 +598,10 @@ function sanitizeInput(body) {
 function buildPrompt(data) {
     const { booking, context } = data;
     
+    // Handle new flexibility fields with backward compatibility
+    const flexPrimary = context.flexibility_primary || context.flexibility || 'any';
+    const flexDetail = context.flexibility_detail || '';
+    
     return `You are an expert in hotel guest relations. Generate a polite, professional, and SPECIFIC hotel upgrade request email.
 
 INPUT DATA:
@@ -612,8 +616,8 @@ INPUT DATA:
 - Preferred check-in time: ${context.checkinTimePref || 'Not specified'}
 - Loyalty status: ${context.loyalty}
 - Occasion: ${context.occasion}
-- Flexibility on room type: ${context.flexibility}
-- Preferred room type (if specific): ${context.preferredRoomType || 'N/A'}
+- Flexibility priority: ${flexPrimary}
+- Flexibility detail: ${flexDetail || 'N/A'}
 - How guest prefers to ask: ${context.askPreference}
 
 ===== SUBJECT LINE RULES =====
@@ -632,10 +636,39 @@ INPUT DATA:
    "Reservation: [Confirmation Number]"
    Keep this placeholder exactly as shown.
 
-3. The Ask: Make ONE clear, specific-but-flexible request:
-   - Request consideration for "any higher-category room" (optionally add "including suites if appropriate")
-   - Do NOT use vague language like "upgrade or perks"
+3. The Ask: CRITICAL - Adapt the request based on flexibility_priority:
+   
+   IF flexibility_priority = "any":
+   - Ask for "any higher-category room" (optionally mention "including suites if appropriate")
+   - State general flexibility on room type
    - Use the phrase "forecasted to remain available" exactly ONCE in the email
+   
+   IF flexibility_priority = "category":
+   - Ask for higher-category room
+   - If flexibility_detail is present, incorporate it as a preference (e.g., "particularly a junior suite")
+   - Still include flexibility language (e.g., "open to similar categories if needed")
+   - Use the phrase "forecasted to remain available" exactly ONCE in the email
+   
+   IF flexibility_priority = "view":
+   - PRIMARY ask must be for "a better located room" - emphasize: higher floor, better view, quieter location, corner room, etc.
+   - If flexibility_detail is present, incorporate it (e.g., "ocean view" or "high floor")
+   - Do NOT focus on category upgrade; view/location is the priority
+   - You MAY lightly mention "if a higher-category room is forecasted to remain available" but the main ask is view/location
+   - Use the phrase "forecasted to remain available" exactly ONCE in the email
+   
+   IF flexibility_priority = "timing":
+   - PRIMARY ask must be late checkout OR early check-in (default to late checkout unless detail suggests otherwise)
+   - If flexibility_detail is present, use it (e.g., "late checkout around 2pm")
+   - Do NOT push hard for category upgrade; timing enhancement is the main request
+   - Keep tone: "If timing flexibility is possible..."
+   - Use the phrase "forecasted to remain available" exactly ONCE (can apply to room inventory context)
+   
+   IF flexibility_priority = "none":
+   - Do NOT ask for an upgrade
+   - Ask only for a small, non-disruptive preference: quiet room, away from elevator, OR a timing perk if harmless
+   - Tone: "If anything small is possible without disruption..."
+   - Keep request minimal and gracious
+   - Use the phrase "forecasted to remain available" exactly ONCE (in minimal context)
 
 4. Specificity: Reference at least TWO of these details from input (if available):
    - Arrival day or check-in date
@@ -643,9 +676,9 @@ INPUT DATA:
    - Booking channel
    - Loyalty status (if any)
    - Occasion (if any)
-   - Flexibility preferences (room type or timing)
+   - Flexibility preferences (adapt based on flexibility_priority)
 
-5. Flexibility Signal: If flexibility info is provided, mention it (e.g., "I'm flexible on room type and check-in timing").
+5. Flexibility Signal: Mention flexibility in a way that matches flexibility_priority (room type for any/category, location for view, timing for timing, minimal for none).
 
 6. Operational Courtesy: Include ONE signal showing hotel-operations awareness:
    - E.g., "I understand availability and demand come first"
@@ -663,6 +696,7 @@ Never use: "free", "guarantee", "hack", "trick", "owed", "must", "demand", "enti
 - Use [Your Name] as the signature placeholder
 - If an occasion is mentioned (birthday, anniversary, honeymoon), weave it in naturally
 - If loyalty status exists, mention membership subtly (not as leverage)
+- If flexibility_priority is not provided or unrecognized, treat it as "any"
 
 ===== GOLD STANDARD EXAMPLE (emulate tone and structure, do NOT copy verbatim) =====
 Subject: Upcoming stay Jan 15–17 — quick note ahead of arrival
@@ -687,9 +721,9 @@ Warm regards,
 Respond with STRICT JSON only. No markdown, no code blocks, no commentary.
 {
   "email_subject": "6-12 word subject including dates (e.g., Jan 15–18), not starting with Reservation Inquiry",
-  "email_body": "Full email text (160-210 words). Must include 'Reservation: [Confirmation Number]' near top and 'forecasted to remain available' exactly once. Use [Your Name] for signature.",
+  "email_body": "Full email text (160-210 words). Must include 'Reservation: [Confirmation Number]' near top and 'forecasted to remain available' exactly once. Use [Your Name] for signature. ADAPT THE ASK based on flexibility_priority.",
   "timing_guidance": ["First timing tip", "Second timing tip", "Third timing tip"],
-  "fallback_script": "One sentence for asking at the front desk in person"
+  "fallback_script": "One sentence for asking at the front desk in person. ALIGN WITH flexibility_priority: any/category = mention upgraded rooms, view = mention room location/view, timing = mention late checkout/early check-in, none = mention quiet room placement"
 }
 
 Generate the JSON response:`;
