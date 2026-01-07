@@ -472,49 +472,11 @@
                 <section class="payment-section">
                     <form id="payment-form">
                         <fieldset>
-                            <legend>Choose a payment method</legend>
+                            <legend>Payment method</legend>
                             
                             <div class="payment-methods" role="radiogroup">
                                 <div class="payment-option">
-                                    <input type="radio" id="method-card" name="payment-method" value="card" class="payment-input">
-                                    <label for="method-card" class="payment-label">
-                                        <span class="payment-icon">
-                                            <svg viewBox="0 0 32 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                                <rect x="1" y="1" width="30" height="18" rx="2"/>
-                                                <line x1="1" y1="7" x2="31" y2="7"/>
-                                                <line x1="6" y1="13" x2="14" y2="13"/>
-                                            </svg>
-                                        </span>
-                                        <span class="payment-name">Card</span>
-                                    </label>
-                                </div>
-                                
-                                <div class="payment-option">
-                                    <input type="radio" id="method-apple" name="payment-method" value="apple-pay" class="payment-input">
-                                    <label for="method-apple" class="payment-label">
-                                        <span class="payment-icon">
-                                            <svg viewBox="0 0 32 20" fill="currentColor">
-                                                <path d="M8.5 5.2c-.5.6-1.3 1.1-2.1 1-.1-.8.3-1.7.8-2.2.5-.6 1.4-1 2-1.1.1.9-.2 1.7-.7 2.3zm.7 1.2c-1.2-.1-2.2.7-2.7.7-.6 0-1.4-.6-2.4-.6-1.2 0-2.3.7-3 1.8-1.3 2.2-.3 5.5.9 7.3.6.9 1.3 1.9 2.3 1.8 1-.1 1.3-.6 2.4-.6s1.5.6 2.5.6c1 0 1.6-.9 2.2-1.8.7-1 1-2 1-2.1-.1 0-1.9-.7-1.9-2.9 0-1.8 1.5-2.7 1.6-2.8-.9-1.3-2.3-1.4-2.7-1.4h-.2z"/>
-                                            </svg>
-                                        </span>
-                                        <span class="payment-name">Apple Pay</span>
-                                    </label>
-                                </div>
-                                
-                                <div class="payment-option">
-                                    <input type="radio" id="method-google" name="payment-method" value="google-pay" class="payment-input">
-                                    <label for="method-google" class="payment-label">
-                                        <span class="payment-icon">
-                                            <svg viewBox="0 0 32 20" fill="currentColor">
-                                                <path d="M16 8.5v3.2h4.5c-.2 1-1.2 3-4.5 3-2.7 0-4.9-2.2-4.9-5s2.2-5 4.9-5c1.5 0 2.6.7 3.1 1.2l2.1-2C19.7 2.5 18 1.7 16 1.7c-4.6 0-8.3 3.7-8.3 8.3s3.7 8.3 8.3 8.3c4.8 0 8-3.4 8-8.1 0-.5-.1-1-.1-1.4H16v-.3z"/>
-                                            </svg>
-                                        </span>
-                                        <span class="payment-name">Google Pay</span>
-                                    </label>
-                                </div>
-                                
-                                <div class="payment-option">
-                                    <input type="radio" id="method-stripe" name="payment-method" value="stripe" class="payment-input">
+                                    <input type="radio" id="method-stripe" name="payment-method" value="stripe" class="payment-input" checked>
                                     <label for="method-stripe" class="payment-label">
                                         <span class="payment-icon">
                                             <svg viewBox="0 0 32 20" fill="currentColor">
@@ -522,7 +484,6 @@
                                             </svg>
                                         </span>
                                         <span class="payment-name">Stripe Checkout</span>
-                                        <span style="font-size: 0.75rem; color: var(--color-text-muted); margin-left: 0.5rem;">(Test)</span>
                                     </label>
                                 </div>
                             </div>
@@ -588,9 +549,11 @@
         const whyPanel = document.getElementById('why-panel');
         const paymentInputs = document.querySelectorAll('input[name="payment-method"]');
         
-        let selectedMethod = null;
+        // Stripe is pre-selected, so set it as default
+        let selectedMethod = 'stripe';
+        payBtn.disabled = false; // Enable button since Stripe is pre-selected
 
-        // Enable/disable button based on selection
+        // Enable/disable button based on selection (kept for potential future payment methods)
         paymentInputs.forEach(input => {
             input.addEventListener('change', () => {
                 if (input.checked) {
