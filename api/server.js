@@ -739,6 +739,47 @@ INPUT DATA:
 
 8. Tone: Warm, gracious, never entitled or pressuring. Sound like a seasoned traveler, not someone gaming the system.
 
+===== MITIGATION STRATEGIES (WHEN STRUCTURAL DISADVANTAGES APPLY) =====
+When a structural disadvantage applies, SUBTLY reduce friction by acknowledging constraints and increasing flexibility. Add at most 1–2 mitigation sentences. Do NOT fabricate facts or become apologetic.
+
+A) OTA BOOKING MITIGATION:
+   If booking.channel contains "ota" or "travel agency":
+   - Add explicit flexibility language: "I'm very flexible on room type/timing"
+   - Include 'easy guest' signal: "completely understand availability comes first"
+   - Avoid any sense of entitlement or demand
+   - Natural placement: weave into flexibility or operational courtesy sentences
+
+B) PEAK / HIGH-DEMAND MITIGATION:
+   If arrivalDay is "friday" or "saturday" OR city suggests compressed market (e.g., New York, Paris, London):
+   - Add ONE sentence acknowledging demand reality
+   - Example pattern (adapt naturally): "I know this is a busy arrival period and appreciate any consideration if something opens up"
+   - Placement: after the main ask, before the soft close
+
+C) LONG STAY MITIGATION:
+   If lengthOfStay suggests 4+ nights (e.g., "5+", "3-4" on upper end):
+   - Offer partial flexibility: "Even for part of the stay, I'd be grateful to be considered"
+   - Natural placement: same sentence or immediately after the main ask
+
+D) PREMIUM ROOM MITIGATION:
+   If booking.room suggests premium category (contains "suite", "executive", "premium", "deluxe"):
+   - Pivot PRIMARY ask to placement/view/timing rather than category upgrade
+   - Keep category mention secondary: "If a higher category is forecasted to remain available, wonderful, but primarily interested in..."
+   - Emphasize: better location, view, floor, quiet placement
+   - Do NOT push hard for room category upgrade
+
+E) LAST-MINUTE TIMING MITIGATION:
+   If check-in date is very near current date (same day or within 24 hours):
+   - Remove urgency and pressure explicitly
+   - Example pattern: "If anything becomes available later today or during my stay..."
+   - Tone: calm, no rush, understanding
+
+SAFEGUARDS:
+- Do NOT combine more than 2 mitigation strategies in one email
+- Mitigation language must fit naturally within 160-210 word count
+- Do NOT violate tone rules (no apologies, no over-explaining)
+- Do NOT fabricate details (occasions, loyalty, prior stays)
+- All existing validation rules still apply
+
 ===== BANNED PHRASES =====
 Never use: "free", "guarantee", "hack", "trick", "owed", "must", "demand", "entitled", "deserve", "upgrade or perks"
 
@@ -750,7 +791,9 @@ Never use: "free", "guarantee", "hack", "trick", "owed", "must", "demand", "enti
 - If loyalty status exists, mention membership subtly (not as leverage)
 - If flexibility_priority is not provided or unrecognized, treat it as "any"
 
-===== GOLD STANDARD EXAMPLE (emulate tone and structure, do NOT copy verbatim) =====
+===== GOLD STANDARD EXAMPLES (emulate tone and structure, do NOT copy verbatim) =====
+
+EXAMPLE 1 - Standard request (no major disadvantages):
 Subject: Upcoming stay Jan 15–17 — quick note ahead of arrival
 
 Hello [Hotel Team],
@@ -767,6 +810,27 @@ Thank you for any consideration. I'm excited to experience the property.
 
 Warm regards,
 [Your Name]
+
+---
+
+EXAMPLE 2 - OTA booking + peak weekend (mitigation applied):
+Subject: Arrival Jan 15–17 — flexible request ahead of stay
+
+Hello [Hotel Team],
+
+Reservation: [Confirmation Number]
+
+I'm very much looking forward to my upcoming Friday arrival for two nights. I booked a Standard King through Booking.com and wanted to reach out with a flexible request.
+
+If any higher-category rooms are forecasted to remain available around check-in, I'd be grateful to be considered. I'm very flexible on room type and timing and completely understand availability comes first, particularly on a weekend arrival.
+
+Even a better location or quieter room would be wonderful. If nothing is possible, I'm of course happy to keep my existing reservation exactly as booked.
+
+Thank you for any consideration you can offer. I appreciate the property's hospitality.
+
+Warm regards,
+[Your Name]
+
 ---
 
 ===== OUTPUT FORMAT =====
