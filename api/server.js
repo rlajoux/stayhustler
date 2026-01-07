@@ -1931,8 +1931,8 @@ app.get(`${ADMIN_PATH}/subscribers`, basicAuth, async (req, res) => {
         }
         
         // Build filter form
-        const queryParams = { limit };
-        if (statusFilter) queryParams.status = statusFilter;
+        const urlParams = { limit };
+        if (statusFilter) urlParams.status = statusFilter;
         
         const content = `
             <h1>Newsletter Subscribers</h1>
@@ -1953,7 +1953,7 @@ app.get(`${ADMIN_PATH}/subscribers`, basicAuth, async (req, res) => {
             
             ${tableHTML}
             
-            ${paginationHTML(page, totalPages, `${ADMIN_PATH}/subscribers`, queryParams)}
+            ${paginationHTML(page, totalPages, `${ADMIN_PATH}/subscribers`, urlParams)}
         `;
         
         res.send(adminLayout('Subscribers', content));
@@ -2039,8 +2039,8 @@ app.get(`${ADMIN_PATH}/deliveries`, basicAuth, async (req, res) => {
         }
         
         // Build filter form
-        const queryParams = { limit };
-        if (statusFilter) queryParams.status = statusFilter;
+        const urlParams = { limit };
+        if (statusFilter) urlParams.status = statusFilter;
         
         const content = `
             <h1>Request Deliveries</h1>
@@ -2061,7 +2061,7 @@ app.get(`${ADMIN_PATH}/deliveries`, basicAuth, async (req, res) => {
             
             ${tableHTML}
             
-            ${paginationHTML(page, totalPages, `${ADMIN_PATH}/deliveries`, queryParams)}
+            ${paginationHTML(page, totalPages, `${ADMIN_PATH}/deliveries`, urlParams)}
         `;
         
         res.send(adminLayout('Deliveries', content));
