@@ -684,6 +684,73 @@
             document.getElementById('missing-notice').classList.add('visible');
         }
 
+        // City normalization - extract key city name from full string
+        function normalizeCity(cityString) {
+            if (!cityString || typeof cityString !== 'string') return '';
+            // Remove country suffixes and extra text, lowercase, trim
+            return cityString
+                .toLowerCase()
+                .replace(/,.*$/, '')  // Remove everything after comma
+                .replace(/\(.*\)/, '') // Remove parentheses
+                .trim();
+        }
+
+        // Market tier map - major cities categorized by upgrade dynamics
+        const CITY_TIER = {
+            // Compressed markets (high demand, low inventory flexibility)
+            "paris": "compressed",
+            "london": "compressed",
+            "new york": "compressed",
+            "manhattan": "compressed",
+            "tokyo": "compressed",
+            "singapore": "compressed",
+            "hong kong": "compressed",
+            "san francisco": "compressed",
+            "barcelona": "compressed",
+            "amsterdam": "compressed",
+            "dubai": "compressed",
+            "rome": "compressed",
+            "venice": "compressed",
+            "sydney": "compressed",
+            
+            // Resort markets (seasonal, more elastic)
+            "las vegas": "resort",
+            "miami": "resort",
+            "miami beach": "resort",
+            "bali": "resort",
+            "phuket": "resort",
+            "cancun": "resort",
+            "maldives": "resort",
+            "santorini": "resort",
+            "maui": "resort",
+            "aspen": "resort",
+            "cabo": "resort",
+            "cabo san lucas": "resort",
+            "turks and caicos": "resort",
+            "key west": "resort",
+            
+            // Neutral markets (balanced dynamics)
+            "bangkok": "neutral",
+            "austin": "neutral",
+            "seattle": "neutral",
+            "boston": "neutral",
+            "chicago": "neutral",
+            "denver": "neutral",
+            "portland": "neutral",
+            "nashville": "neutral",
+            "atlanta": "neutral",
+            "dallas": "neutral",
+            "houston": "neutral",
+            "phoenix": "neutral",
+            "san diego": "neutral",
+            "washington": "neutral",
+            "los angeles": "neutral",
+            "melbourne": "neutral",
+            "toronto": "neutral",
+            "vancouver": "neutral",
+            "montreal": "neutral"
+        };
+
         // Compute percentage-based outlook with explainability
         function computeUpgradeOdds() {
             let score = -0.25; // Base score (baseline ~44%)
@@ -698,6 +765,8 @@
             const occasion = (contextData.occasion || '').toLowerCase();
             const flexibility = (contextData.flexibility || '').toLowerCase();
             const askPreference = (contextData.askPreference || '').toLowerCase();
+            const hotelType = (bookingData.hotel_type || '').toLowerCase();
+            const city = bookingData.city || '';
 
             // Channel scoring
             if (channel.includes('direct')) {
@@ -803,6 +872,26 @@
                 score += 0.10;
                 drivers.push('Special occasion');
             }
+
+            // Market tier scoring (city-based demand dynamics)
+            const normalizedCity = normalizeCity(city);
+            const marketTier = CITY_TIER[normalizedCity] || 'unknown';
+            
+            if (marketTier === 'compressed') {
+                score -= 0.20;
+                drivers.push('High-demand city');
+            } else if (marketTier === 'resort') {
+                score += 0.15;
+                drivers.push('Resort / elastic market');
+            }
+            // neutral and unknown: no adjustment, no driver chip
+
+            // Hotel type scoring
+            if (hotelType === 'independent') {
+                score += 0.10;
+                drivers.push('Independent property');
+            }
+            // chain and unknown: no adjustment, no driver chip
 
             // Convert score to probability using logistic function
             const prob = 1 / (1 + Math.exp(-score));

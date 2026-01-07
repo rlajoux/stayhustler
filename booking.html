@@ -439,6 +439,15 @@
                             <option value="corporate">Corporate / negotiated rate</option>
                         </select>
                     </div>
+                    
+                    <div class="form-group">
+                        <label for="hotel-type" class="form-label">Hotel type (optional)</label>
+                        <select id="hotel-type" class="form-select">
+                            <option value="unknown">Not sure</option>
+                            <option value="chain">Chain / branded</option>
+                            <option value="independent">Independent / boutique</option>
+                        </select>
+                    </div>
                 </div>
 
                 <p class="trust-note">Your booking details stay private and are used only to generate your request.</p>
@@ -497,7 +506,8 @@
                     checkin: document.getElementById('check-in').value,
                     checkout: document.getElementById('check-out').value,
                     room: document.getElementById('room-type').value,
-                    channel: document.getElementById('booking-channel').value
+                    channel: document.getElementById('booking-channel').value,
+                    hotel_type: document.getElementById('hotel-type').value
                 };
                 localStorage.setItem('stayhustler_booking', JSON.stringify(bookingData));
                 window.location.href = 'context.html';
