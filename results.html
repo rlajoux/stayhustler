@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-H8G7MYD59K');
+    </script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your insider request – StayHustler</title>
@@ -13,6 +23,12 @@
     <meta property="og:url" content="https://stayhustler.com/results.html">
     <meta property="og:image" content="https://stayhustler.com/og-image.png">
     <meta property="og:site_name" content="StayHustler">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://stayhustler.com/results.html">
+    
+    <!-- Robots meta -->
+    <meta name="robots" content="noindex, nofollow">
     
     <style>
         :root {
@@ -382,6 +398,55 @@
             margin: 0 auto;
         }
         
+        /* Learn More Section */
+        .learn-more {
+            background: var(--color-bg-warm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .learn-more-title {
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+            color: var(--color-text);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .learn-more-subtitle {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-md);
+        }
+        
+        .learn-more-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .learn-more-links li {
+            margin-bottom: var(--space-sm);
+        }
+        
+        .learn-more-links li:last-child {
+            margin-bottom: 0;
+        }
+        
+        .learn-more-links a {
+            color: var(--color-accent);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color var(--transition);
+            display: inline-block;
+        }
+        
+        .learn-more-links a:hover {
+            color: var(--color-accent-hover);
+            text-decoration: underline;
+        }
+        
         /* Secondary CTAs */
         .secondary-ctas {
             display: grid;
@@ -607,6 +672,51 @@ Warm regards,
                 <p>Upgrades and perks depend on availability and hotel discretion. This guidance improves odds, not guarantees outcomes.</p>
             </div>
 
+            <!-- Learn More Section -->
+            <section class="learn-more">
+                <h3 class="learn-more-title">Want to understand this better?</h3>
+                <p class="learn-more-subtitle">These guides explain how hotels evaluate upgrade requests and timing.</p>
+                <ul class="learn-more-links">
+                    <li><a href="/guides/how-to-ask-for-a-hotel-upgrade">How to ask for a hotel upgrade the right way</a></li>
+                    <li><a href="/guides/best-time-to-ask-for-hotel-upgrade">Best time to ask for a hotel upgrade</a></li>
+                    <li><a href="/guides/late-checkout-vs-room-upgrade">Late checkout vs room upgrade: which is easier?</a></li>
+                </ul>
+            </section>
+
+            <!-- Section E: Resend Email -->
+            <section class="content-card">
+                <div class="card-header">
+                    <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <h2 class="card-title">Resend to email</h2>
+                </div>
+                
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: var(--space-md);">
+                    Didn't receive the email? Enter your email address to resend your personalized request.
+                </p>
+                
+                <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap; margin-bottom: var(--space-sm);">
+                    <input 
+                        type="email" 
+                        id="resend-email" 
+                        placeholder="your@email.com"
+                        style="flex: 1; min-width: 200px; padding: 0.75rem 1rem; font-family: var(--font-sans); font-size: 0.9rem; color: var(--color-text); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius);"
+                    >
+                    <button type="button" class="btn btn-primary" id="resend-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14"></polyline>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                        </svg>
+                        Resend
+                    </button>
+                </div>
+                
+                <p id="resend-status" style="font-size: 0.85rem; min-height: 1.2rem;"></p>
+            </section>
+
             <!-- Primary Continue CTA -->
             <div style="text-align: center; margin-bottom: var(--space-lg);">
                 <a href="save.html" class="btn btn-primary" style="display: inline-flex; padding: 1rem 2rem;">Continue</a>
@@ -769,25 +879,51 @@ Warm regards,
         }
 
         // Show fallback content with notice
-        function showFallback() {
+        function showFallback(reason = 'unknown') {
+            console.log('[Frontend] Showing fallback, reason:', reason);
             fallbackNotice.style.display = 'block';
             applyContent(defaultContent);
         }
 
         // Generate request from API
         async function generateRequest() {
+            console.log('[Frontend] Starting generation request');
+            
             // Parse stored data
             const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
             const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
 
-            // Check if we have minimum required data
-            if (!booking.hotel || !context.arrivalDay) {
-                console.warn('Missing booking or context data, using fallback');
-                showFallback();
+            // Debug: Log presence of required fields (no PII)
+            console.log('[Frontend] Payload check:', {
+                has_booking: !!booking,
+                has_hotel: !!booking.hotel,
+                has_city: !!booking.city,
+                has_checkin: !!booking.checkin,
+                has_checkout: !!booking.checkout,
+                has_context: !!context,
+                has_arrivalDay: !!context.arrivalDay,
+                has_lengthOfStay: !!context.lengthOfStay,
+                has_askPreference: !!context.askPreference
+            });
+
+            // Validate required fields are present
+            const missingFields = [];
+            if (!booking.hotel) missingFields.push('hotel');
+            if (!booking.city) missingFields.push('city');
+            if (!booking.checkin) missingFields.push('checkin');
+            if (!booking.checkout) missingFields.push('checkout');
+            if (!context.arrivalDay) missingFields.push('arrivalDay');
+            if (!context.lengthOfStay) missingFields.push('lengthOfStay');
+            if (!context.askPreference) missingFields.push('askPreference');  // Backend requires this!
+            
+            if (missingFields.length > 0) {
+                console.error('[Frontend] Missing required fields:', missingFields.join(', '));
+                showMissingFieldsError(missingFields);
                 return;
             }
 
             try {
+                console.log('[Frontend] Calling API...');
                 const response = await fetch(`${API_BASE}/api/generate-request`, {
                     method: 'POST',
                     headers: {
@@ -796,27 +932,202 @@ Warm regards,
                     body: JSON.stringify({ booking, context })
                 });
 
+                // Extract headers for debugging
+                const requestId = response.headers.get('X-Request-Id');
+                const generationSource = response.headers.get('X-Generation-Source');
+                const retryAfter = response.headers.get('Retry-After');
+                
+                console.log('[Frontend] API response:', {
+                    status: response.status,
+                    ok: response.ok,
+                    request_id: requestId,
+                    generation_source: generationSource,
+                    retry_after: retryAfter
+                });
+
+                // Handle rate limiting (429)
+                if (response.status === 429) {
+                    console.warn('[Frontend] Rate limited, retry_after:', retryAfter);
+                    showRateLimitError(retryAfter);
+                    return;
+                }
+
                 if (!response.ok) {
+                    console.error('[Frontend] API error:', response.status, 'source:', generationSource);
+                    // For 502 errors, show fallback with notice
+                    if (response.status === 502 || response.status === 500) {
+                        showFallback('backend-error-' + response.status);
+                        return;
+                    }
                     throw new Error(`API error: ${response.status}`);
                 }
 
                 const data = await response.json();
                 
+                console.log('[Frontend] Response data check:', {
+                    has_email_subject: !!data.email_subject,
+                    has_email_body: !!data.email_body,
+                    has_timing_guidance: !!data.timing_guidance,
+                    has_fallback_script: !!data.fallback_script,
+                    generation_source: generationSource
+                });
+                
                 // Validate response has required fields
                 if (!data.email_subject || !data.email_body) {
+                    console.error('[Frontend] Invalid API response - missing required fields');
                     throw new Error('Invalid API response');
                 }
 
-                applyContent(data);
+                // Only show fallback notice if source is explicitly 'fallback'
+                if (generationSource === 'fallback') {
+                    console.log('[Frontend] Backend used fallback, showing notice');
+                    fallbackNotice.style.display = 'block';
+                } else {
+                    console.log('[Frontend] Custom content generated successfully, source:', generationSource || 'unknown');
+                    fallbackNotice.style.display = 'none';
+                }
+
+                // Apply content and catch any errors without showing fallback notice
+                try {
+                    applyContent(data);
+                    console.log('[Frontend] Content applied successfully');
+                } catch (applyError) {
+                    console.error('[Frontend] Error applying content:', applyError);
+                    // Don't show fallback notice - we already have valid data
+                    // Just log the error and continue
+                }
 
             } catch (error) {
-                console.error('Failed to generate request:', error);
-                showFallback();
+                console.error('[Frontend] Exception caught during API call:', error.message, error.stack);
+                showFallback('api-error');
             }
+        }
+        
+        // Show rate limit error with retry option
+        function showRateLimitError(retryAfter) {
+            loadingIndicator.style.display = 'none';
+            fallbackNotice.style.display = 'block';
+            fallbackNotice.innerHTML = `
+                Temporarily rate-limited. Please retry in ${retryAfter || 60} seconds.
+                <button id="retry-btn" style="margin-left: 10px; padding: 5px 10px; cursor: pointer;">Retry Now</button>
+            `;
+            
+            // Add retry button handler
+            setTimeout(() => {
+                const retryBtn = document.getElementById('retry-btn');
+                if (retryBtn) {
+                    retryBtn.addEventListener('click', () => {
+                        console.log('[Frontend] User clicked retry after rate limit');
+                        fallbackNotice.innerHTML = 'Retrying...';
+                        generateRequest();
+                    });
+                }
+            }, 100);
+        }
+        
+        // Show missing fields error with link to go back
+        function showMissingFieldsError(missingFields) {
+            loadingIndicator.style.display = 'none';
+            fallbackNotice.style.display = 'block';
+            fallbackNotice.innerHTML = `
+                Missing trip details: ${missingFields.join(', ')}. 
+                <a href="booking.html" style="color: var(--color-accent); text-decoration: underline;">Please go back and complete the booking step.</a>
+            `;
+            // Still show default template so page isn't empty
+            emailTextarea.value = defaultContent.email_body;
+            emailTextarea.style.display = 'block';
+            emailSubject.textContent = defaultContent.email_subject;
+            renderTimingList(defaultContent.timing_guidance);
+            scriptBlock.textContent = defaultContent.fallback_script;
         }
 
         // Initialize on page load
         generateRequest();
+
+        // ===== RESEND EMAIL FUNCTIONALITY =====
+        const resendEmailInput = document.getElementById('resend-email');
+        const resendBtn = document.getElementById('resend-btn');
+        const resendStatus = document.getElementById('resend-status');
+
+        // Pre-fill email from localStorage
+        const storedEmail = localStorage.getItem('stayhustler_email');
+        if (storedEmail) {
+            resendEmailInput.value = storedEmail;
+        }
+
+        // Check if delivery_id exists
+        const deliveryId = localStorage.getItem('stayhustler_delivery_id');
+
+        if (!deliveryId) {
+            resendStatus.textContent = 'Complete checkout first to enable resend.';
+            resendStatus.style.color = 'var(--color-text-muted)';
+            resendBtn.disabled = true;
+            resendBtn.style.opacity = '0.5';
+            resendBtn.style.cursor = 'not-allowed';
+        } else {
+            // Resend button click handler
+            resendBtn.addEventListener('click', async () => {
+                const email = resendEmailInput.value.trim();
+
+                // Validate email
+                if (!email) {
+                    resendStatus.textContent = 'Please enter an email address.';
+                    resendStatus.style.color = '#d9534f';
+                    return;
+                }
+
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    resendStatus.textContent = 'Please enter a valid email address.';
+                    resendStatus.style.color = '#d9534f';
+                    return;
+                }
+
+                // Disable button during request
+                resendBtn.disabled = true;
+                resendBtn.style.opacity = '0.5';
+                resendStatus.textContent = 'Sending...';
+                resendStatus.style.color = 'var(--color-text-muted)';
+
+                try {
+                    const response = await fetch(`${API_BASE}/api/resend-delivery`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            delivery_id: deliveryId,
+                            email: email
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.ok) {
+                        resendStatus.textContent = 'Email sent successfully!';
+                        resendStatus.style.color = 'var(--color-success)';
+                        
+                        // Update stored email
+                        localStorage.setItem('stayhustler_email', email);
+                    } else if (response.status === 429) {
+                        resendStatus.textContent = 'Rate limit exceeded. Please try again later.';
+                        resendStatus.style.color = '#d9534f';
+                    } else {
+                        throw new Error(data.error || 'Failed to resend');
+                    }
+                } catch (error) {
+                    console.error('Resend error:', error);
+                    resendStatus.textContent = 'Failed to send. Please try again.';
+                    resendStatus.style.color = '#d9534f';
+                } finally {
+                    // Re-enable button after 2 seconds
+                    setTimeout(() => {
+                        resendBtn.disabled = false;
+                        resendBtn.style.opacity = '1';
+                    }, 2000);
+                }
+            });
+        }
     </script>
 </body>
 </html>

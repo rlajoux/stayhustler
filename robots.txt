@@ -1,0 +1,20 @@
+# StayHustler robots.txt
+User-agent: *
+Allow: /
+
+# Disallow non-content or private flows
+Disallow: /payment.html
+Disallow: /results.html
+Disallow: /preview.html
+Disallow: /save.html
+Disallow: /feedback.html
+Disallow: /reengage.html
+Disallow: /stripe-success.html
+Disallow: /stripe-cancel.html
+Disallow: /diagnostic.html
+Disallow: /stripe-test.html
+Disallow: /quick-test.html
+Disallow: /test-*.html
+
+# Sitemap
+Sitemap: https://stayhustler.com/sitemap.xml

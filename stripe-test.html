@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Checkout Test - StayHustler</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 600px;
+            margin: 60px auto;
+            padding: 20px;
+            background: #faf9f7;
+        }
+        h1 {
+            font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+            color: #2d2a26;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #6b6560;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: white;
+            border: 1px solid #e8e4de;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 16px rgba(45, 42, 38, 0.06);
+        }
+        button {
+            background: #2d2a26;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+        button:hover {
+            background: #1a1816;
+            transform: translateY(-1px);
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        pre {
+            background: #f5f3ef;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .status {
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .info-box {
+            background: #e8e4de;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .info-box strong {
+            color: #2d2a26;
+        }
+        a {
+            color: #c9a962;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Stripe Checkout Test</h1>
+    <p class="subtitle">Test the Stripe payment integration</p>
+
+    <div class="card">
+        <h2 style="margin-top: 0; font-size: 20px;">Create Test Checkout Session</h2>
+        <p style="color: #6b6560; margin-bottom: 20px;">
+            This will create a Stripe Checkout Session for $7.00 and redirect you to Stripe's payment page.
+        </p>
+        
+        <button id="test-btn">Test Stripe Checkout ($7.00)</button>
+        
+        <div id="status"></div>
+        
+        <div class="info-box">
+            <strong>Test Card Number:</strong> 4242 4242 4242 4242<br>
+            <strong>Expiry:</strong> Any future date<br>
+            <strong>CVC:</strong> Any 3 digits<br>
+            <strong>ZIP:</strong> Any 5 digits
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 style="margin-top: 0; font-size: 20px;">API Response</h2>
+        <p style="color: #6b6560; margin-bottom: 15px;">
+            Raw response from /api/stripe/test:
+        </p>
+        <pre id="result">Click button above to test...</pre>
+    </div>
+
+    <div class="card">
+        <h2 style="margin-top: 0; font-size: 20px;">How It Works</h2>
+        <ol style="color: #6b6560; line-height: 1.8;">
+            <li>Click the button above</li>
+            <li>Frontend calls POST /api/stripe/test</li>
+            <li>Backend creates a Stripe Checkout Session</li>
+            <li>Returns checkout_url in response</li>
+            <li>Browser redirects to Stripe's hosted checkout page</li>
+            <li>Enter test card details (see box above)</li>
+            <li>Complete payment</li>
+            <li>Redirects to stripe-success.html or stripe-cancel.html</li>
+        </ol>
+        
+        <p style="margin-top: 20px;">
+            <strong>Note:</strong> This is running in <strong>test mode</strong>. No real charges are made.
+            Check payments at <a href="https://dashboard.stripe.com/test/payments" target="_blank">Stripe Dashboard</a>.
+        </p>
+    </div>
+
+    <script>
+        const API_BASE = "https://stayhustler-production.up.railway.app";
+        
+        const testBtn = document.getElementById('test-btn');
+        const result = document.getElementById('result');
+        const status = document.getElementById('status');
+        
+        testBtn.addEventListener('click', async () => {
+            // Disable button
+            testBtn.disabled = true;
+            testBtn.textContent = 'Creating checkout session...';
+            
+            // Show loading status
+            status.className = 'status loading';
+            status.textContent = '⏳ Calling API...';
+            
+            result.textContent = 'Loading...';
+            
+            try {
+                console.log('[Test] Calling /api/stripe/test...');
+                
+                const response = await fetch(`${API_BASE}/api/stripe/test`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                console.log('[Test] Response status:', response.status);
+                
+                const data = await response.json();
+                
+                // Show response
+                result.textContent = JSON.stringify(data, null, 2);
+                
+                if (response.ok && data.ok && data.checkout_url) {
+                    console.log('[Test] Got checkout URL:', data.checkout_url);
+                    
+                    status.className = 'status success';
+                    status.textContent = '✓ Checkout session created! Redirecting to Stripe in 2 seconds...';
+                    
+                    // Redirect after 2 seconds
+                    setTimeout(() => {
+                        console.log('[Test] Redirecting to Stripe...');
+                        window.location.href = data.checkout_url;
+                    }, 2000);
+                } else {
+                    // Error response
+                    console.error('[Test] Error:', data);
+                    
+                    status.className = 'status error';
+                    status.textContent = `✗ Error: ${data.error || 'Unknown error'}`;
+                    
+                    // Re-enable button
+                    testBtn.disabled = false;
+                    testBtn.textContent = 'Try Again';
+                }
+                
+            } catch (error) {
+                console.error('[Test] Exception:', error);
+                
+                result.textContent = `Exception: ${error.message}`;
+                
+                status.className = 'status error';
+                status.textContent = `✗ Failed to fetch: ${error.message}`;
+                
+                // Re-enable button
+                testBtn.disabled = false;
+                testBtn.textContent = 'Try Again';
+            }
+        });
+    </script>
+</body>
+</html>

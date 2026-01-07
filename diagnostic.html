@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StayHustler Diagnostic</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #faf9f7;
+        }
+        h1 { color: #2d2a26; }
+        .section {
+            background: white;
+            border: 1px solid #e8e4de;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .label { font-weight: 600; color: #6b6560; margin-top: 10px; }
+        pre {
+            background: #f5f3ef;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+        .status { 
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status.ok { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        button {
+            background: #2d2a26;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover { background: #1a1816; }
+    </style>
+</head>
+<body>
+    <h1>StayHustler Diagnostic Tool</h1>
+    
+    <div class="section">
+        <h2>localStorage Contents</h2>
+        <div class="label">stayhustler_booking:</div>
+        <pre id="booking-data">Not set</pre>
+        <div class="label">stayhustler_context:</div>
+        <pre id="context-data">Not set</pre>
+        <div class="label">stayhustler_paid:</div>
+        <pre id="paid-status">Not set</pre>
+        <div class="label">stayhustler_email:</div>
+        <pre id="email-data">Not set</pre>
+        <div class="label">stayhustler_delivery_id:</div>
+        <pre id="delivery-id">Not set</pre>
+    </div>
+
+    <div class="section">
+        <h2>Field Validation</h2>
+        <div id="validation-results"></div>
+    </div>
+
+    <div class="section">
+        <h2>API Test</h2>
+        <button onclick="testAPI()">Test Generate Request API</button>
+        <button onclick="clearStorage()">Clear All localStorage</button>
+        <div class="label">Result:</div>
+        <pre id="api-result">Click button to test</pre>
+    </div>
+
+    <script>
+        const API_BASE = "https://stayhustler-production.up.railway.app";
+
+        // Display localStorage contents
+        function displayData() {
+            const booking = localStorage.getItem('stayhustler_booking');
+            const context = localStorage.getItem('stayhustler_context');
+            const paid = localStorage.getItem('stayhustler_paid');
+            const email = localStorage.getItem('stayhustler_email');
+            const deliveryId = localStorage.getItem('stayhustler_delivery_id');
+
+            document.getElementById('booking-data').textContent = booking ? JSON.stringify(JSON.parse(booking), null, 2) : 'Not set';
+            document.getElementById('context-data').textContent = context ? JSON.stringify(JSON.parse(context), null, 2) : 'Not set';
+            document.getElementById('paid-status').textContent = paid || 'Not set';
+            document.getElementById('email-data').textContent = email || 'Not set';
+            document.getElementById('delivery-id').textContent = deliveryId || 'Not set';
+
+            // Validate fields
+            validateFields();
+        }
+
+        function validateFields() {
+            const results = [];
+            
+            const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
+            const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
+
+            // Required booking fields
+            const bookingFields = ['hotel', 'city', 'checkin', 'checkout'];
+            bookingFields.forEach(field => {
+                const status = booking[field] ? 'ok' : 'error';
+                results.push(`<div><span class="status ${status}">${field}</span>: ${booking[field] || 'MISSING'}</div>`);
+            });
+
+            // Required context fields
+            const contextFields = ['arrivalDay', 'lengthOfStay'];
+            contextFields.forEach(field => {
+                const status = context[field] ? 'ok' : 'error';
+                results.push(`<div><span class="status ${status}">${field}</span>: ${context[field] || 'MISSING'}</div>`);
+            });
+
+            // Optional but recommended
+            const optionalFields = ['loyalty', 'occasion', 'flexibility', 'askPreference'];
+            optionalFields.forEach(field => {
+                const status = context[field] ? 'ok' : 'warning';
+                results.push(`<div><span class="status ${status}">${field}</span>: ${context[field] || 'not set'}</div>`);
+            });
+
+            document.getElementById('validation-results').innerHTML = results.join('');
+        }
+
+        async function testAPI() {
+            const resultEl = document.getElementById('api-result');
+            resultEl.textContent = 'Testing...';
+
+            try {
+                const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
+                const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
+
+                if (!booking.hotel || !context.arrivalDay) {
+                    resultEl.textContent = 'ERROR: Missing required fields. Cannot test API.';
+                    return;
+                }
+
+                const response = await fetch(`${API_BASE}/api/generate-request`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ booking, context })
+                });
+
+                const requestId = response.headers.get('X-Request-Id');
+                const generationSource = response.headers.get('X-Generation-Source');
+                const data = await response.json();
+
+                const result = {
+                    status: response.status,
+                    ok: response.ok,
+                    request_id: requestId,
+                    generation_source: generationSource,
+                    has_email_subject: !!data.email_subject,
+                    has_email_body: !!data.email_body,
+                    has_timing_guidance: !!data.timing_guidance,
+                    email_subject_preview: data.email_subject ? data.email_subject.substring(0, 50) + '...' : 'N/A'
+                };
+
+                if (data.error) {
+                    result.error = data.error;
+                }
+
+                resultEl.textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                resultEl.textContent = `ERROR: ${error.message}`;
+            }
+        }
+
+        function clearStorage() {
+            if (confirm('Clear all StayHustler localStorage data?')) {
+                localStorage.removeItem('stayhustler_booking');
+                localStorage.removeItem('stayhustler_context');
+                localStorage.removeItem('stayhustler_paid');
+                localStorage.removeItem('stayhustler_email');
+                localStorage.removeItem('stayhustler_delivery_id');
+                localStorage.removeItem('stayhustler_order');
+                displayData();
+            }
+        }
+
+        // Initial display
+        displayData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market-Aware Odds Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #faf9f7;
+        }
+        h1 { color: #2d2a26; margin-bottom: 30px; }
+        .test-case {
+            background: white;
+            border: 1px solid #e8e4de;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2d2a26;
+            font-size: 16px;
+        }
+        .result {
+            font-size: 32px;
+            color: #c9a962;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+        .drivers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .chip {
+            background: #f5f3ef;
+            border: 1px solid #e8e4de;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+        pre {
+            background: #f5f3ef;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+        .expected {
+            color: #6b6560;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .comparison { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Market-Aware Upgrade Odds Test</h1>
+    
+    <div id="test-results"></div>
+
+    <script>
+        // Copy the exact scoring functions from preview.html
+        function normalizeCity(cityString) {
+            if (!cityString || typeof cityString !== 'string') return '';
+            return cityString
+                .toLowerCase()
+                .replace(/,.*$/, '')
+                .replace(/\(.*\)/, '')
+                .trim();
+        }
+
+        const CITY_TIER = {
+            "paris": "compressed",
+            "london": "compressed",
+            "new york": "compressed",
+            "manhattan": "compressed",
+            "tokyo": "compressed",
+            "singapore": "compressed",
+            "hong kong": "compressed",
+            "san francisco": "compressed",
+            "barcelona": "compressed",
+            "amsterdam": "compressed",
+            "dubai": "compressed",
+            "rome": "compressed",
+            "venice": "compressed",
+            "sydney": "compressed",
+            
+            "las vegas": "resort",
+            "miami": "resort",
+            "miami beach": "resort",
+            "bali": "resort",
+            "phuket": "resort",
+            "cancun": "resort",
+            "maldives": "resort",
+            "santorini": "resort",
+            "maui": "resort",
+            "aspen": "resort",
+            "cabo": "resort",
+            "cabo san lucas": "resort",
+            "turks and caicos": "resort",
+            "key west": "resort",
+            
+            "bangkok": "neutral",
+            "austin": "neutral",
+            "seattle": "neutral",
+            "boston": "neutral",
+            "chicago": "neutral",
+            "denver": "neutral",
+            "portland": "neutral",
+            "nashville": "neutral",
+            "atlanta": "neutral",
+            "dallas": "neutral",
+            "houston": "neutral",
+            "phoenix": "neutral",
+            "san diego": "neutral",
+            "washington": "neutral",
+            "los angeles": "neutral",
+            "melbourne": "neutral",
+            "toronto": "neutral",
+            "vancouver": "neutral",
+            "montreal": "neutral"
+        };
+
+        function computeUpgradeOdds(bookingData, contextData) {
+            let score = -0.25;
+            const drivers = [];
+
+            const channel = (bookingData.channel || '').toLowerCase();
+            const lengthOfStay = contextData.lengthOfStay || '';
+            const arrivalDay = (contextData.arrivalDay || '').toLowerCase();
+            const loyalty = (contextData.loyalty || '').toLowerCase();
+            const occasion = (contextData.occasion || '').toLowerCase();
+            const flexibility = (contextData.flexibility || '').toLowerCase();
+            const askPreference = (contextData.askPreference || '').toLowerCase();
+            const hotelType = (bookingData.hotel_type || '').toLowerCase();
+            const city = bookingData.city || '';
+
+            // Channel
+            if (channel.includes('direct')) {
+                score += 0.55;
+                drivers.push('Direct booking');
+            } else if (channel.includes('corporate')) {
+                score += 0.40;
+                drivers.push('Corporate rate');
+            } else if (channel.includes('ota')) {
+                score -= 0.55;
+                drivers.push('OTA booking');
+            }
+
+            // Loyalty
+            if (loyalty.includes('gold') || loyalty.includes('top')) {
+                score += 0.55;
+                drivers.push('Top-tier loyalty');
+            } else if (loyalty.includes('silver') || loyalty.includes('mid')) {
+                score += 0.30;
+                drivers.push('Mid-tier loyalty');
+            } else if (loyalty.includes('member') && loyalty !== 'none') {
+                score += 0.10;
+                drivers.push('Member status');
+            }
+
+            // Length of stay
+            if (lengthOfStay === '1' || lengthOfStay === '1 night') {
+                score -= 0.10;
+                drivers.push('1-night stay');
+            } else if (lengthOfStay === '2') {
+                score += 0.05;
+            } else if (lengthOfStay === '3-4') {
+                score += 0.10;
+            } else if (lengthOfStay === '5+') {
+                score -= 0.05;
+                drivers.push('Extended stay');
+            }
+
+            // Arrival day
+            if (arrivalDay === 'friday') {
+                score -= 0.25;
+                drivers.push('Weekend arrival');
+            } else if (arrivalDay === 'saturday') {
+                score -= 0.35;
+                drivers.push('Weekend arrival');
+            } else if (arrivalDay === 'sunday') {
+                score -= 0.10;
+            } else if (['monday', 'tuesday', 'wednesday', 'thursday'].includes(arrivalDay)) {
+                score += 0.05;
+                drivers.push('Weekday arrival');
+            }
+
+            // Ask preference
+            if (askPreference === 'both') {
+                score += 0.20;
+                drivers.push('Asking before arrival');
+            } else if (askPreference === 'email') {
+                score += 0.10;
+                drivers.push('Email request');
+            }
+
+            // Flexibility
+            if (flexibility === 'any') {
+                score += 0.25;
+                drivers.push('Flexible on room type');
+            } else if (flexibility === 'specific') {
+                score += 0.10;
+            } else if (flexibility === 'no') {
+                score -= 0.20;
+            }
+
+            // Occasion
+            if (occasion.includes('anniversary') || occasion.includes('honeymoon')) {
+                score += 0.20;
+                drivers.push('Special occasion');
+            } else if (occasion.includes('birthday') || occasion.includes('first visit')) {
+                score += 0.10;
+                drivers.push('Special occasion');
+            }
+
+            // Market tier (NEW)
+            const normalizedCity = normalizeCity(city);
+            const marketTier = CITY_TIER[normalizedCity] || 'unknown';
+            
+            if (marketTier === 'compressed') {
+                score -= 0.20;
+                drivers.push('High-demand city');
+            } else if (marketTier === 'resort') {
+                score += 0.15;
+                drivers.push('Resort / elastic market');
+            }
+
+            // Hotel type (NEW)
+            if (hotelType === 'independent') {
+                score += 0.10;
+                drivers.push('Independent property');
+            }
+
+            const prob = 1 / (1 + Math.exp(-score));
+            let percentage = Math.round(prob * 100);
+            percentage = Math.max(5, Math.min(85, percentage));
+
+            return { percentage, drivers, rawScore: score.toFixed(3), marketTier };
+        }
+
+        // Test cases
+        const testCases = [
+            {
+                name: "A) Paris (compressed) + Chain + Direct + Weekday",
+                booking: { city: 'Paris, France', hotel_type: 'chain', channel: 'direct' },
+                context: { loyalty: 'gold', arrivalDay: 'Tuesday', flexibility: 'any', askPreference: 'both', lengthOfStay: '3-4' },
+                expected: "Lower than baseline due to compressed market (-0.20)"
+            },
+            {
+                name: "B) Las Vegas (resort) + Independent + Direct + Weekday",
+                booking: { city: 'Las Vegas', hotel_type: 'independent', channel: 'direct' },
+                context: { loyalty: 'gold', arrivalDay: 'Tuesday', flexibility: 'any', askPreference: 'both', lengthOfStay: '3-4' },
+                expected: "Higher than baseline due to resort market (+0.15) and independent (+0.10)"
+            },
+            {
+                name: "C) Bangkok (neutral) + Unknown type",
+                booking: { city: 'Bangkok', hotel_type: 'unknown', channel: 'direct' },
+                context: { loyalty: 'silver', arrivalDay: 'Wednesday', flexibility: 'specific', askPreference: 'email', lengthOfStay: '2' },
+                expected: "No market adjustment (neutral city, unknown hotel type)"
+            },
+            {
+                name: "D) Small town (unknown market) + Independent",
+                booking: { city: 'Asheville, NC', hotel_type: 'independent', channel: 'direct' },
+                context: { loyalty: 'none', arrivalDay: 'Friday', flexibility: 'any', askPreference: 'both', lengthOfStay: '1' },
+                expected: "Small boost from independent (+0.10), no market tier penalty"
+            },
+            {
+                name: "E) Comparison: Same profile, Paris vs Las Vegas",
+                comparison: [
+                    {
+                        label: "Paris (compressed)",
+                        booking: { city: 'Paris, France', hotel_type: 'chain', channel: 'direct' },
+                        context: { loyalty: 'gold', arrivalDay: 'Tuesday', flexibility: 'any', askPreference: 'both', lengthOfStay: '3-4' }
+                    },
+                    {
+                        label: "Las Vegas (resort)",
+                        booking: { city: 'Las Vegas', hotel_type: 'chain', channel: 'direct' },
+                        context: { loyalty: 'gold', arrivalDay: 'Tuesday', flexibility: 'any', askPreference: 'both', lengthOfStay: '3-4' }
+                    }
+                ],
+                expected: "Las Vegas should be ~7-9% higher due to market dynamics (+0.35 score difference)"
+            }
+        ];
+
+        const resultsContainer = document.getElementById('test-results');
+
+        testCases.forEach(test => {
+            const testDiv = document.createElement('div');
+            testDiv.className = 'test-case';
+
+            if (test.comparison) {
+                // Comparison test
+                testDiv.innerHTML = `<div class="test-title">${test.name}</div>`;
+                const compDiv = document.createElement('div');
+                compDiv.className = 'comparison';
+
+                test.comparison.forEach(scenario => {
+                    const result = computeUpgradeOdds(scenario.booking, scenario.context);
+                    const scenarioDiv = document.createElement('div');
+                    scenarioDiv.innerHTML = `
+                        <strong>${scenario.label}</strong>
+                        <div class="result">${result.percentage}%</div>
+                        <div>Raw score: ${result.rawScore}</div>
+                        <div>Market: ${result.marketTier}</div>
+                        <div class="drivers">
+                            ${result.drivers.map(d => `<span class="chip">${d}</span>`).join('')}
+                        </div>
+                    `;
+                    compDiv.appendChild(scenarioDiv);
+                });
+
+                testDiv.appendChild(compDiv);
+                testDiv.innerHTML += `<div class="expected">Expected: ${test.expected}</div>`;
+            } else {
+                // Regular test
+                const result = computeUpgradeOdds(test.booking, test.context);
+                testDiv.innerHTML = `
+                    <div class="test-title">${test.name}</div>
+                    <div class="result">${result.percentage}%</div>
+                    <div>Raw score: ${result.rawScore} | Market tier: ${result.marketTier}</div>
+                    <div class="drivers">
+                        ${result.drivers.map(d => `<span class="chip">${d}</span>`).join('')}
+                    </div>
+                    <div class="expected">${test.expected}</div>
+                    <pre>${JSON.stringify({ booking: test.booking, context: test.context }, null, 2)}</pre>
+                `;
+            }
+
+            resultsContainer.appendChild(testDiv);
+        });
+    </script>
+</body>
+</html>

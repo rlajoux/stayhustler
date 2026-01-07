@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-H8G7MYD59K');
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful – StayHustler</title>
+    <meta name="description" content="Your payment was successful. Your personalized hotel upgrade request is ready.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Payment Successful – StayHustler">
+    <meta property="og:description" content="Your payment was successful.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stayhustler.com/stripe-success.html">
+    <meta property="og:site_name" content="StayHustler">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://stayhustler.com/stripe-success.html">
+    
+    <!-- Robots meta -->
+    <meta name="robots" content="noindex, nofollow">
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #faf9f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border: 1px solid #e8e4de;
+            border-radius: 10px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 2px 16px rgba(45, 42, 38, 0.06);
+        }
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            background: #7a9a6d;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        .checkmark svg {
+            width: 40px;
+            height: 40px;
+            stroke: white;
+            stroke-width: 3;
+        }
+        h1 {
+            font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+            color: #2d2a26;
+            font-size: 28px;
+            margin: 0 0 10px;
+        }
+        p {
+            color: #6b6560;
+            line-height: 1.6;
+            margin: 0 0 20px;
+        }
+        .redirect-message {
+            background: #f5f3ef;
+            padding: 15px;
+            border-radius: 6px;
+            color: #6b6560;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        .btn {
+            display: inline-block;
+            background: #2d2a26;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 20px;
+            transition: all 0.2s ease;
+        }
+        .btn:hover {
+            background: #1a1816;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="checkmark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
+        
+        <h1>Payment Successful!</h1>
+        <p>Your payment has been processed successfully. Your personalized hotel upgrade request is ready.</p>
+        
+        <div class="redirect-message" id="redirect-msg">
+            Redirecting to your results in <span id="countdown">3</span> seconds...
+        </div>
+        
+        <a href="results.html" class="btn" id="manual-link" style="display: none;">View My Request</a>
+    </div>
+
+    <script>
+        // Mark payment as successful
+        localStorage.setItem('stayhustler_paid', 'true');
+        const order = {
+            price: 7,
+            currency: 'USD',
+            ts: Date.now(),
+            method: 'stripe',
+            stripe_success: true
+        };
+        localStorage.setItem('stayhustler_order', JSON.stringify(order));
+
+        console.log('[Stripe Success] Payment completed, order saved to localStorage');
+
+        // Try to deliver email (non-blocking)
+        const email = localStorage.getItem('stayhustler_email');
+        if (email) {
+            try {
+                const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
+                const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
+                
+                console.log('[Stripe Success] Triggering email delivery...');
+                
+                fetch('https://stayhustler-production.up.railway.app/api/deliver-request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, booking, context, order })
+                }).then(response => response.json())
+                  .then(data => {
+                    if (data.ok && data.delivery_id) {
+                        localStorage.setItem('stayhustler_delivery_id', data.delivery_id);
+                        console.log('[Stripe Success] Email delivery initiated, ID:', data.delivery_id);
+                    } else {
+                        console.log('[Stripe Success] Email delivery failed');
+                    }
+                }).catch(err => {
+                    console.log('[Stripe Success] Delivery network error:', err);
+                });
+            } catch (err) {
+                console.log('[Stripe Success] Error preparing delivery:', err);
+            }
+        }
+
+        // Countdown and redirect
+        let countdown = 3;
+        const countdownEl = document.getElementById('countdown');
+        const redirectMsg = document.getElementById('redirect-msg');
+        const manualLink = document.getElementById('manual-link');
+
+        const interval = setInterval(() => {
+            countdown--;
+            countdownEl.textContent = countdown;
+            
+            if (countdown <= 0) {
+                clearInterval(interval);
+                console.log('[Stripe Success] Redirecting to results.html');
+                window.location.href = 'results.html';
+            }
+        }, 1000);
+
+        // Show manual link after 5 seconds as fallback
+        setTimeout(() => {
+            redirectMsg.style.display = 'none';
+            manualLink.style.display = 'inline-block';
+        }, 5000);
+    </script>
+</body>
+</html>

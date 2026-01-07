@@ -1,0 +1,88 @@
+ENHANCED FLEXIBILITY QUESTION - USER FLOW
+==========================================
+
+┌─────────────────────────────────────────────────────────┐
+│  "If an enhancement is possible, what are you most     │
+│   flexible on?" (required)                             │
+└─────────────────────────────────────────────────────────┘
+                          │
+                          ▼
+        ┌─────────────────────────────────┐
+        │  5 Radio Button Options         │
+        └─────────────────────────────────┘
+                          │
+        ┌─────────────────┴────────────────────┐
+        │                                      │
+┌───────▼────────┐                  ┌─────────▼─────────┐
+│ 1. Any better  │                  │ 5. Keep booked    │
+│    room        │                  │    room           │
+└────────────────┘                  └───────────────────┘
+        │                                      │
+        │ No additional fields                 │ No additional fields
+        │                                      │
+        └──────────────┬───────────────────────┘
+                       │
+         ┌─────────────┴─────────────┐
+         │                           │
+┌────────▼─────────┐      ┌─────────▼──────────┐
+│ 2. Category      │      │ 3. View/Location   │
+│    matters       │      │    matters         │
+└──────────────────┘      └────────────────────┘
+         │                          │
+         ▼                          ▼
+┌────────────────────────┐ ┌────────────────────────┐
+│ Optional text input:   │ │ Optional text input:   │
+│ "Preferred room        │ │ "Preferred view or     │
+│  category"             │ │  location"             │
+│ e.g., "junior suite"   │ │ e.g., "ocean view"     │
+└────────────────────────┘ └────────────────────────┘
+
+         ┌──────────────────┐
+         │ 4. Timing        │
+         │    matters       │
+         └──────────────────┘
+                  │
+                  ▼
+         ┌────────────────────────┐
+         │ Optional text input:   │
+         │ "Preferred timing"     │
+         │ e.g., "late checkout"  │
+         └────────────────────────┘
+
+ALL PATHS LEAD TO:
+==================
+┌─────────────────────────────────────────────┐
+│ [See my chances] button                     │
+└─────────────────────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────┐
+│ Data stored in localStorage:                │
+│                                             │
+│ {                                           │
+│   flexibility_primary: "category",          │
+│   flexibility_detail: "junior suite",       │
+│   flexibility: "specific" (auto-derived)    │
+│ }                                           │
+└─────────────────────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────┐
+│ Navigate to preview.html                    │
+│ (No changes needed - uses legacy field)     │
+└─────────────────────────────────────────────┘
+
+CONDITIONAL FIELD BEHAVIOR:
+============================
+Only ONE detail field visible at a time
+Smooth slide-down/up animation (0.3s)
+Tab index managed for accessibility
+Fields are optional (never block submission)
+
+BACKWARD COMPATIBILITY MAPPING:
+================================
+any      → flexibility: "any"
+category → flexibility: "specific"
+view     → flexibility: "specific"
+timing   → flexibility: "specific"
+none     → flexibility: "no"
