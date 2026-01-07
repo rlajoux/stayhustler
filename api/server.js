@@ -2,10 +2,16 @@ const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
 const crypto = require('crypto');
+const Stripe = require('stripe');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Initialize Stripe (will be null if STRIPE_SECRET_KEY not set)
+const stripe = process.env.STRIPE_SECRET_KEY 
+    ? new Stripe(process.env.STRIPE_SECRET_KEY)
+    : null;
 
 // ============================================================
 // POSTGRES DATABASE
@@ -149,22 +155,32 @@ const defaultOrigins = [
 
 app.use(cors({
     origin: function(origin, callback) {
+        console.log(`[CORS] Request from origin: ${origin || 'no-origin'}`);
+        
         // Allow requests with no origin (mobile apps, curl, etc.)
-        if (!origin) return callback(null, true);
+        if (!origin) {
+            console.log('[CORS] Allowing request with no origin');
+            return callback(null, true);
+        }
         
         // If ALLOWED_ORIGIN is set, use only that
         if (process.env.ALLOWED_ORIGIN) {
+            console.log(`[CORS] Checking against ALLOWED_ORIGIN: ${process.env.ALLOWED_ORIGIN}`);
             if (origin === process.env.ALLOWED_ORIGIN) {
+                console.log('[CORS] Origin matches ALLOWED_ORIGIN');
                 return callback(null, true);
             }
+            console.error(`[CORS] Origin rejected: ${origin}`);
             return callback(new Error('Not allowed by CORS'));
         }
         
         // Otherwise allow all origins for now
+        console.log('[CORS] Allowing all origins (no ALLOWED_ORIGIN set)');
         callback(null, true);
     },
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
+    exposedHeaders: ['X-Request-Id', 'X-Generation-Source', 'Retry-After'],
     credentials: false
 }));
 
@@ -217,9 +233,15 @@ function rateLimit(req, res, next) {
     
     // Check if over limit
     if (entry.count > RATE_LIMIT_MAX) {
-        console.log('[RateLimit] rate_limited', { ip, count: entry.count });
+        const timeElapsed = now - entry.windowStart;
+        const timeRemaining = RATE_LIMIT_WINDOW_MS - timeElapsed;
+        const retryAfterSeconds = Math.ceil(timeRemaining / 1000);
+        
+        console.log('[RateLimit] rate_limited', { ip, count: entry.count, retry_after: retryAfterSeconds });
+        res.setHeader('Retry-After', retryAfterSeconds.toString());
         return res.status(429).json({
-            error: 'Rate limit exceeded. Please try again in a few minutes.'
+            error: 'Rate limit exceeded. Please try again in a few minutes.',
+            retry_after: retryAfterSeconds
         });
     }
     
@@ -238,43 +260,49 @@ setInterval(() => {
     }
 }, RATE_LIMIT_WINDOW_MS);
 
-// Resend rate limiter (stricter: 3 per 10 minutes)
-const RESEND_LIMIT_MAX = 3;
-const resendLimitStore = new Map();
+// Stricter rate limiter for resend endpoint
+// Limit: 3 requests per 10 minutes per IP
+const RESEND_RATE_LIMIT_MAX = 3;
+const resendRateLimitStore = new Map();
 
 function resendRateLimit(req, res, next) {
     const ip = getClientIp(req);
     const now = Date.now();
     
-    let entry = resendLimitStore.get(ip);
+    let entry = resendRateLimitStore.get(ip);
     
     if (!entry) {
         entry = { count: 0, windowStart: now };
-        resendLimitStore.set(ip, entry);
+        resendRateLimitStore.set(ip, entry);
     }
     
+    // Check if window has expired; if so, reset
     if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
         entry.count = 0;
         entry.windowStart = now;
     }
     
+    // Increment count
     entry.count++;
     
-    if (entry.count > RESEND_LIMIT_MAX) {
+    // Check if over limit
+    if (entry.count > RESEND_RATE_LIMIT_MAX) {
         console.log('[ResendRateLimit] rate_limited', { ip, count: entry.count });
         return res.status(429).json({
-            error: 'Too many resend attempts. Please try again later.'
+            error: 'Rate limit exceeded. Please try again in a few minutes.'
         });
     }
     
+    // Allowed - proceed
     next();
 }
 
+// Cleanup for resend rate limiter
 setInterval(() => {
     const now = Date.now();
-    for (const [ip, entry] of resendLimitStore.entries()) {
+    for (const [ip, entry] of resendRateLimitStore.entries()) {
         if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
-            resendLimitStore.delete(ip);
+            resendRateLimitStore.delete(ip);
         }
     }
 }, RATE_LIMIT_WINDOW_MS);
@@ -458,6 +486,84 @@ function validateOutput(output) {
     return reasons.length === 0 ? { ok: true } : { ok: false, reasons };
 }
 
+// Deterministic repair step - attempts to fix common validation failures
+// without relaxing safety rules (no banned words, no AI mentions)
+function repairOutput(output, validationReasons) {
+    const repaired = JSON.parse(JSON.stringify(output)); // deep clone
+    let repairsMade = [];
+    
+    // Repair A: Missing reservation line in email_body
+    if (validationReasons.some(r => r.includes('Reservation: [Confirmation Number]'))) {
+        if (typeof repaired.email_body === 'string' && !repaired.email_body.includes('Reservation: [Confirmation Number]')) {
+            // Insert after the greeting (first line)
+            const lines = repaired.email_body.split('\n');
+            if (lines.length > 0) {
+                lines.splice(1, 0, '\nReservation: [Confirmation Number]\n');
+                repaired.email_body = lines.join('\n');
+                repairsMade.push('Added reservation line');
+            }
+        }
+    }
+    
+    // Repair B: Missing "forecasted to remain available" phrase
+    if (validationReasons.some(r => r.includes('forecasted to remain available'))) {
+        if (typeof repaired.email_body === 'string') {
+            const count = countOccurrences(repaired.email_body, 'forecasted to remain available');
+            if (count === 0) {
+                // Find a sentence to modify - look for upgrade request
+                repaired.email_body = repaired.email_body.replace(
+                    /If any (premium|upgraded|higher-category) rooms/i,
+                    'If any $1 rooms are forecasted to remain available'
+                );
+                repairsMade.push('Inserted required phrase');
+            } else if (count > 1) {
+                // Remove duplicates - keep first occurrence
+                let firstFound = false;
+                repaired.email_body = repaired.email_body.replace(/forecasted to remain available/g, (match) => {
+                    if (!firstFound) {
+                        firstFound = true;
+                        return match;
+                    }
+                    return 'expected to be available';
+                });
+                repairsMade.push('Removed duplicate phrase');
+            }
+        }
+    }
+    
+    // Repair C: Word count slightly outside range
+    if (validationReasons.some(r => r.includes('email_body must be 160-210 words'))) {
+        if (typeof repaired.email_body === 'string') {
+            const bodyWords = wordCount(repaired.email_body);
+            if (bodyWords < 160 && bodyWords >= 145) {
+                // Too short by <15 words - add a polite closing sentence
+                repaired.email_body += '\n\nI appreciate your time and consideration in reviewing this request.';
+                repairsMade.push('Added padding sentence for word count');
+            } else if (bodyWords > 210 && bodyWords <= 225) {
+                // Too long by <15 words - trim excess sentences
+                const sentences = repaired.email_body.split(/\.\s+/);
+                if (sentences.length > 3) {
+                    // Remove the second-to-last sentence (usually least critical)
+                    sentences.splice(-2, 1);
+                    repaired.email_body = sentences.join('. ');
+                    repairsMade.push('Trimmed excess sentence for word count');
+                }
+            }
+        }
+    }
+    
+    // Repair D: Subject line missing date token
+    if (validationReasons.some(r => r.includes('must include a date token'))) {
+        if (typeof repaired.email_subject === 'string' && !hasDateToken(repaired.email_subject)) {
+            // Prepend a generic date token
+            repaired.email_subject = 'Upcoming stay — ' + repaired.email_subject;
+            repairsMade.push('Added date placeholder to subject');
+        }
+    }
+    
+    return { repaired, repairsMade };
+}
+
 // Build correction prompt for retry
 function buildCorrectionPrompt(originalPrompt, reasons) {
     return `You previously returned output that violated these constraints:
@@ -544,6 +650,10 @@ function sanitizeInput(body) {
 function buildPrompt(data) {
     const { booking, context } = data;
     
+    // Handle new flexibility fields with backward compatibility
+    const flexPrimary = context.flexibility_primary || context.flexibility || 'any';
+    const flexDetail = context.flexibility_detail || '';
+    
     return `You are an expert in hotel guest relations. Generate a polite, professional, and SPECIFIC hotel upgrade request email.
 
 INPUT DATA:
@@ -558,8 +668,8 @@ INPUT DATA:
 - Preferred check-in time: ${context.checkinTimePref || 'Not specified'}
 - Loyalty status: ${context.loyalty}
 - Occasion: ${context.occasion}
-- Flexibility on room type: ${context.flexibility}
-- Preferred room type (if specific): ${context.preferredRoomType || 'N/A'}
+- Flexibility priority: ${flexPrimary}
+- Flexibility detail: ${flexDetail || 'N/A'}
 - How guest prefers to ask: ${context.askPreference}
 
 ===== SUBJECT LINE RULES =====
@@ -578,10 +688,39 @@ INPUT DATA:
    "Reservation: [Confirmation Number]"
    Keep this placeholder exactly as shown.
 
-3. The Ask: Make ONE clear, specific-but-flexible request:
-   - Request consideration for "any higher-category room" (optionally add "including suites if appropriate")
-   - Do NOT use vague language like "upgrade or perks"
+3. The Ask: CRITICAL - Adapt the request based on flexibility_priority:
+   
+   IF flexibility_priority = "any":
+   - Ask for "any higher-category room" (optionally mention "including suites if appropriate")
+   - State general flexibility on room type
    - Use the phrase "forecasted to remain available" exactly ONCE in the email
+   
+   IF flexibility_priority = "category":
+   - Ask for higher-category room
+   - If flexibility_detail is present, incorporate it as a preference (e.g., "particularly a junior suite")
+   - Still include flexibility language (e.g., "open to similar categories if needed")
+   - Use the phrase "forecasted to remain available" exactly ONCE in the email
+   
+   IF flexibility_priority = "view":
+   - PRIMARY ask must be for "a better located room" - emphasize: higher floor, better view, quieter location, corner room, etc.
+   - If flexibility_detail is present, incorporate it (e.g., "ocean view" or "high floor")
+   - Do NOT focus on category upgrade; view/location is the priority
+   - You MAY lightly mention "if a higher-category room is forecasted to remain available" but the main ask is view/location
+   - Use the phrase "forecasted to remain available" exactly ONCE in the email
+   
+   IF flexibility_priority = "timing":
+   - PRIMARY ask must be late checkout OR early check-in (default to late checkout unless detail suggests otherwise)
+   - If flexibility_detail is present, use it (e.g., "late checkout around 2pm")
+   - Do NOT push hard for category upgrade; timing enhancement is the main request
+   - Keep tone: "If timing flexibility is possible..."
+   - Use the phrase "forecasted to remain available" exactly ONCE (can apply to room inventory context)
+   
+   IF flexibility_priority = "none":
+   - Do NOT ask for an upgrade
+   - Ask only for a small, non-disruptive preference: quiet room, away from elevator, OR a timing perk if harmless
+   - Tone: "If anything small is possible without disruption..."
+   - Keep request minimal and gracious
+   - Use the phrase "forecasted to remain available" exactly ONCE (in minimal context)
 
 4. Specificity: Reference at least TWO of these details from input (if available):
    - Arrival day or check-in date
@@ -589,9 +728,9 @@ INPUT DATA:
    - Booking channel
    - Loyalty status (if any)
    - Occasion (if any)
-   - Flexibility preferences (room type or timing)
+   - Flexibility preferences (adapt based on flexibility_priority)
 
-5. Flexibility Signal: If flexibility info is provided, mention it (e.g., "I'm flexible on room type and check-in timing").
+5. Flexibility Signal: Mention flexibility in a way that matches flexibility_priority (room type for any/category, location for view, timing for timing, minimal for none).
 
 6. Operational Courtesy: Include ONE signal showing hotel-operations awareness:
    - E.g., "I understand availability and demand come first"
@@ -609,6 +748,7 @@ Never use: "free", "guarantee", "hack", "trick", "owed", "must", "demand", "enti
 - Use [Your Name] as the signature placeholder
 - If an occasion is mentioned (birthday, anniversary, honeymoon), weave it in naturally
 - If loyalty status exists, mention membership subtly (not as leverage)
+- If flexibility_priority is not provided or unrecognized, treat it as "any"
 
 ===== GOLD STANDARD EXAMPLE (emulate tone and structure, do NOT copy verbatim) =====
 Subject: Upcoming stay Jan 15–17 — quick note ahead of arrival
@@ -633,9 +773,9 @@ Warm regards,
 Respond with STRICT JSON only. No markdown, no code blocks, no commentary.
 {
   "email_subject": "6-12 word subject including dates (e.g., Jan 15–18), not starting with Reservation Inquiry",
-  "email_body": "Full email text (160-210 words). Must include 'Reservation: [Confirmation Number]' near top and 'forecasted to remain available' exactly once. Use [Your Name] for signature.",
+  "email_body": "Full email text (160-210 words). Must include 'Reservation: [Confirmation Number]' near top and 'forecasted to remain available' exactly once. Use [Your Name] for signature. ADAPT THE ASK based on flexibility_priority.",
   "timing_guidance": ["First timing tip", "Second timing tip", "Third timing tip"],
-  "fallback_script": "One sentence for asking at the front desk in person"
+  "fallback_script": "One sentence for asking at the front desk in person. ALIGN WITH flexibility_priority: any/category = mention upgraded rooms, view = mention room location/view, timing = mention late checkout/early check-in, none = mention quiet room placement"
 }
 
 Generate the JSON response:`;
@@ -713,16 +853,20 @@ async function callGemini(prompt) {
 // Returns the generated payload with quality enforcement
 // ============================================================
 
-async function generateRequestPayload(booking, context) {
+async function generateRequestPayload(booking, context, requestId = null) {
     const sanitizedData = sanitizeInput({ booking, context });
     const prompt = buildPrompt(sanitizedData);
     
     let firstPassValid = false;
     let secondPassAttempted = false;
     let finalSource = 'fallback';
+    const rid = requestId || 'unknown';
+    
+    console.log(`[Generation:${rid}] Starting generation for hotel=${sanitizedData.booking.hotel}`);
     
     try {
         // First pass: Call Gemini
+        console.log(`[Generation:${rid}] Calling Gemini (first pass)`);
         const firstResult = await callGemini(prompt);
         
         // Validate first pass
@@ -731,14 +875,15 @@ async function generateRequestPayload(booking, context) {
         
         if (firstValidation.ok) {
             finalSource = 'first';
-            console.log(`[Generation] hotel=${sanitizedData.booking.hotel} final_source=first`);
-            return firstResult;
+            console.log(`[Generation:${rid}] ✓ First pass valid, final_source=first`);
+            return { result: firstResult, finalSource };
         }
         
         // First pass failed - attempt retry with correction prompt
-        console.log(`[Generation] First pass failed: ${firstValidation.reasons.join('; ')}`);
+        console.log(`[Generation:${rid}] ✗ First pass failed: ${firstValidation.reasons.join('; ')}`);
         secondPassAttempted = true;
         
+        console.log(`[Generation:${rid}] Attempting second pass with corrections`);
         const correctionPrompt = buildCorrectionPrompt(prompt, firstValidation.reasons);
         const secondResult = await callGemini(correctionPrompt);
         
@@ -747,42 +892,96 @@ async function generateRequestPayload(booking, context) {
         
         if (secondValidation.ok) {
             finalSource = 'second';
-            console.log(`[Generation] hotel=${sanitizedData.booking.hotel} final_source=second`);
-            return secondResult;
+            console.log(`[Generation:${rid}] ✓ Second pass valid, final_source=second`);
+            return { result: secondResult, finalSource };
         }
         
-        // Second pass also failed - use fallback
-        console.log(`[Generation] Second pass failed: ${secondValidation.reasons.join('; ')}`);
+        // Second pass also failed - attempt deterministic repair before fallback
+        console.log(`[Generation:${rid}] ✗ Second pass failed: ${secondValidation.reasons.join('; ')}`);
+        console.log(`[Generation:${rid}] Attempting repair step`);
+        
+        const { repaired, repairsMade } = repairOutput(secondResult, secondValidation.reasons);
+        
+        if (repairsMade.length > 0) {
+            console.log(`[Generation:${rid}] Repairs applied: ${repairsMade.join('; ')}`);
+            
+            // Validate repaired output
+            const repairedValidation = validateOutput(repaired);
+            
+            if (repairedValidation.ok) {
+                finalSource = 'repaired';
+                console.log(`[Generation:${rid}] ✓ Repaired output valid, final_source=repaired`);
+                return { result: repaired, finalSource };
+            } else {
+                console.log(`[Generation:${rid}] ✗ Repair failed to fix all issues: ${repairedValidation.reasons.join('; ')}`);
+            }
+        } else {
+            console.log(`[Generation:${rid}] No repairs could be applied`);
+        }
+        
+        // All attempts failed - use fallback
+        console.log(`[Generation:${rid}] Using fallback, first_pass_valid=${firstPassValid}, second_pass_attempted=${secondPassAttempted}`);
         finalSource = 'fallback';
         
     } catch (geminiError) {
-        console.error(`[Generation] Gemini error: ${geminiError.message}`);
+        console.error(`[Generation:${rid}] Gemini error: ${geminiError.message}`);
+        console.log(`[Generation:${rid}] Using fallback due to exception`);
         finalSource = 'fallback';
     }
     
     // Return fallback payload
-    console.log(`[Generation] hotel=${sanitizedData.booking.hotel} final_source=fallback`);
-    return getFallbackPayload();
+    console.log(`[Generation:${rid}] Returning fallback, final_source=fallback`);
+    return { result: getFallbackPayload(), finalSource };
 }
+
+// Handle preflight OPTIONS request for CORS (no rate limiting on OPTIONS)
+app.options('/api/generate-request', (req, res) => {
+    try {
+        console.log('[OPTIONS] /api/generate-request preflight request received');
+        // CORS headers are already set by cors middleware
+        res.status(204).end();
+    } catch (error) {
+        console.error('[OPTIONS] Error handling preflight:', error);
+        res.status(500).json({ error: 'Preflight error' });
+    }
+});
 
 // API endpoint (rate limited)
 app.post('/api/generate-request', rateLimit, async (req, res) => {
+    // Generate correlation ID for tracking
+    const requestId = Math.random().toString(36).substring(2, 9);
+    
+    console.log(`[API:${requestId}] POST /api/generate-request received`);
+    
     try {
         // Validate request
         const errors = validateRequest(req.body);
         if (errors.length > 0) {
+            console.log(`[API:${requestId}] Validation failed: ${errors.join('; ')}`);
             return res.status(400).json({ 
                 error: 'Validation failed', 
                 details: errors 
             });
         }
         
+        console.log(`[API:${requestId}] Request validated, has_booking=${!!req.body.booking}, has_context=${!!req.body.context}`);
+        
         // Generate using reusable function
-        const result = await generateRequestPayload(req.body.booking, req.body.context);
+        const { result, finalSource } = await generateRequestPayload(req.body.booking, req.body.context, requestId);
+        
+        // Add headers for frontend observability
+        res.setHeader('X-Request-Id', requestId);
+        res.setHeader('X-Generation-Source', finalSource);
+        
+        console.log(`[API:${requestId}] Returning response with source=${finalSource}`);
         return res.json(result);
         
     } catch (error) {
-        console.error('Error in request handling:', error.message);
+        console.error(`[API:${requestId}] Unexpected error in request handling:`, error.message);
+        
+        // Set headers even on error for observability
+        res.setHeader('X-Request-Id', requestId || 'error');
+        res.setHeader('X-Generation-Source', 'error');
         
         // Only return 502 for actual server errors (not content quality issues)
         res.status(502).json({
@@ -1066,7 +1265,9 @@ app.post('/api/deliver-request', async (req, res) => {
         try {
             // Generate the request using existing logic
             console.log(`[Delivery] Generating request for ${cleanEmail}`);
-            const generated = await generateRequestPayload(booking, context);
+            const { result: generated, finalSource } = await generateRequestPayload(booking, context);
+            
+            console.log(`[Delivery] Generation complete with source=${finalSource}`);
 
             // Build email content
             const emailText = `Your StayHustler upgrade request is ready!
@@ -1119,16 +1320,14 @@ StayHustler
             await sgMail.send(msg);
             console.log(`[Delivery] Email sent to ${cleanEmail}`);
 
-            // Log to database and get the ID
-            const insertResult = await pool.query(`
+            // Log to database
+            await pool.query(`
                 INSERT INTO request_deliveries (email, booking, context, generated, status)
                 VALUES ($1, $2, $3, $4, 'sent')
-                RETURNING id
             `, [cleanEmail, JSON.stringify(booking), JSON.stringify(context), JSON.stringify(generated)]);
 
-            const deliveryId = insertResult.rows[0].id;
-            console.log(`[Delivery] Success for ${cleanEmail} hotel=${booking.hotel || 'unknown'} delivery_id=${deliveryId}`);
-            res.json({ ok: true, delivery_id: deliveryId });
+            console.log(`[Delivery] Success for ${cleanEmail} hotel=${booking.hotel || 'unknown'}`);
+            res.json({ ok: true });
 
         } catch (sendError) {
             console.error(`[Delivery] SendGrid error for ${cleanEmail}:`, sendError.message);
@@ -1158,122 +1357,192 @@ StayHustler
     }
 });
 
-// POST /api/resend-delivery - Resend a previous delivery without regenerating
+// ===== POST /api/resend-delivery =====
+// Resends a previously generated request email without calling Gemini again
 app.post('/api/resend-delivery', resendRateLimit, async (req, res) => {
     try {
-        // Check if SendGrid is configured
-        if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_FROM_EMAIL) {
-            console.error('[Resend] SendGrid not configured');
-            return res.status(502).json({ error: 'Resend failed.' });
-        }
-
-        // Check if DB is available
-        if (!pool) {
-            console.error('[Resend] Database not configured');
-            return res.status(502).json({ error: 'Resend failed.' });
-        }
-
         const { delivery_id, email } = req.body;
 
-        // Validate delivery_id (basic check for integer)
-        if (!delivery_id || !Number.isInteger(Number(delivery_id))) {
-            return res.status(400).json({ error: 'Valid delivery_id is required.' });
+        // Validate inputs
+        if (!delivery_id || typeof delivery_id !== 'string') {
+            return res.status(400).json({ error: 'Missing delivery_id' });
         }
 
-        // Load delivery from database
-        console.log(`[Resend] Loading delivery ${delivery_id}`);
+        if (!email || typeof email !== 'string') {
+            return res.status(400).json({ error: 'Missing email' });
+        }
+
+        const cleanEmail = email.trim().toLowerCase();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(cleanEmail)) {
+            return res.status(400).json({ error: 'Invalid email format' });
+        }
+
+        console.log(`[Resend] Resending delivery ${delivery_id} to ${cleanEmail}`);
+
+        // Load original delivery from database
         const result = await pool.query(`
             SELECT id, email, booking, context, generated, status 
             FROM request_deliveries 
-            WHERE id = $1
+            WHERE id = $1 
+            ORDER BY created_at DESC 
+            LIMIT 1
         `, [delivery_id]);
 
         if (result.rows.length === 0) {
-            console.log(`[Resend] Delivery ${delivery_id} not found`);
-            return res.status(404).json({ error: 'Delivery not found.' });
+            console.log(`[Resend] Delivery ID not found: ${delivery_id}`);
+            return res.status(404).json({ error: 'Delivery not found' });
         }
 
-        const delivery = result.rows[0];
-        
-        // Determine target email
-        let targetEmail = delivery.email;
-        if (email && typeof email === 'string' && EMAIL_REGEX.test(email)) {
-            targetEmail = email.trim().toLowerCase();
+        const originalDelivery = result.rows[0];
+
+        // Check if original delivery was successful
+        if (originalDelivery.status !== 'sent') {
+            console.log(`[Resend] Original delivery status: ${originalDelivery.status}`);
+            return res.status(400).json({ error: 'Original delivery was not successful' });
         }
 
-        // Parse the generated payload
-        const generated = delivery.generated;
-        const booking = delivery.booking;
+        // Use stored generated content (no Gemini call)
+        const generated = originalDelivery.generated;
+        if (!generated || !generated.email_subject || !generated.email_body) {
+            console.log(`[Resend] No valid generated content in delivery ${delivery_id}`);
+            return res.status(500).json({ error: 'No content to resend' });
+        }
 
-        // Compose email (same format as deliver-request)
-        const emailText = `Your StayHustler upgrade request is ready!
+        console.log(`[Resend] Using stored content from delivery ${delivery_id}`);
 
-Hotel: ${booking.hotel || 'Unknown'}
-Check-in: ${booking.checkin || 'Unknown'}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-EMAIL SUBJECT FOR THE HOTEL:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-${generated.email_subject}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-EMAIL BODY TO SEND TO THE HOTEL:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
+        // Compose email
+        const subject = generated.email_subject;
+        const emailBody = `
 ${generated.email_body}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-TIMING GUIDANCE:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+────────────────────────────────
 
-${generated.timing_guidance.map((tip, i) => `${i + 1}. ${tip}`).join('\n')}
+✓ When to ask (timing matters):
+${(generated.timing_guidance || []).map((tip, i) => `  ${i + 1}. ${tip.replace(/<\/?strong>/g, '')}`).join('\n')}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-FALLBACK SCRIPT (if email doesn't work):
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ At the front desk, say:
+  "${generated.fallback_script || 'If any upgraded rooms are expected to remain available this evening, I\'d be grateful to be considered.'}"
 
-${generated.fallback_script}
+────────────────────────────────
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Upgrades depend on availability and hotel discretion. This guidance improves odds, not guarantees outcomes.
 
-IMPORTANT: You send this to the hotel yourself. We do not contact the hotel on your behalf. Copy the subject and body above, then email them to your hotel's reservations or front desk.
+Best of luck on your stay!
+– StayHustler
 
-Questions? Visit https://stayhustler.com
+────────────────────────────────
+You received this because you purchased insider guidance at stayhustler.com.
+        `.trim();
 
-—
-StayHustler
-`;
-
-        // Send via SendGrid
+        // Send email via SendGrid
         const msg = {
-            to: targetEmail,
-            from: process.env.SENDGRID_FROM_EMAIL,
-            subject: 'Your StayHustler request is ready',
-            text: emailText
+            to: cleanEmail,
+            from: SENDGRID_FROM_EMAIL,
+            subject: `Your StayHustler request: ${subject}`,
+            text: emailBody,
+            html: emailBody.replace(/\n/g, '<br>')
         };
 
-        await sgMail.send(msg);
-        
-        const maskedEmail = targetEmail.replace(/(.{2}).*(@.*)/, '$1***$2');
-        console.log(`[Resend] Email sent to ${maskedEmail} delivery_id=${delivery_id}`);
+        try {
+            await sgMail.send(msg);
+            console.log(`[Resend] Email sent successfully to ${cleanEmail}`);
 
-        // Insert new audit row
-        await pool.query(`
-            INSERT INTO request_deliveries (email, booking, context, generated, status)
-            VALUES ($1, $2, $3, $4, 'sent')
-        `, [targetEmail, JSON.stringify(booking), JSON.stringify(delivery.context), JSON.stringify(generated)]);
+            // Insert new audit row
+            await pool.query(`
+                INSERT INTO request_deliveries (email, booking, context, generated, status)
+                VALUES ($1, $2, $3, $4, 'sent')
+            `, [
+                cleanEmail,
+                originalDelivery.booking,
+                originalDelivery.context,
+                JSON.stringify(generated)
+            ]);
 
-        res.json({ ok: true });
+            res.json({ ok: true });
+
+        } catch (sendError) {
+            console.error(`[Resend] SendGrid error:`, sendError.message);
+
+            // Log failure
+            try {
+                await pool.query(`
+                    INSERT INTO request_deliveries (email, booking, context, generated, status, error)
+                    VALUES ($1, $2, $3, $4, 'failed', $5)
+                `, [
+                    cleanEmail,
+                    originalDelivery.booking,
+                    originalDelivery.context,
+                    JSON.stringify(generated),
+                    sendError.message
+                ]);
+            } catch (dbError) {
+                console.error(`[Resend] Failed to log error:`, dbError.message);
+            }
+
+            return res.status(502).json({ error: 'Failed to send email' });
+        }
 
     } catch (err) {
         console.error('[Resend] Error:', err.message);
-        
-        if (err.code === 403 || err.message.includes('Forbidden')) {
-            console.error('[Resend] SendGrid forbidden - check sender verification');
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// ============================================================
+// STRIPE TEST ENDPOINT
+// ============================================================
+// Creates a test Checkout Session for $7.00 USD
+// Returns checkout_url for redirect
+// ============================================================
+
+app.post('/api/stripe/test', async (req, res) => {
+    try {
+        // Check if Stripe is initialized
+        if (!stripe) {
+            console.error('[Stripe] STRIPE_SECRET_KEY not configured');
+            return res.status(500).json({ 
+                error: 'Missing STRIPE_SECRET_KEY',
+                message: 'Stripe is not configured on the server'
+            });
         }
+
+        console.log('[Stripe] Creating test Checkout Session');
+
+        // Create Checkout Session
+        const session = await stripe.checkout.sessions.create({
+            mode: 'payment',
+            line_items: [
+                {
+                    price_data: {
+                        currency: 'usd',
+                        product_data: {
+                            name: 'StayHustler Test Request',
+                        },
+                        unit_amount: 700, // $7.00 in cents
+                    },
+                    quantity: 1,
+                },
+            ],
+            success_url: `${process.env.PUBLIC_BASE_URL || 'https://stayhustler.com'}/stripe-success.html`,
+            cancel_url: `${process.env.PUBLIC_BASE_URL || 'https://stayhustler.com'}/stripe-cancel.html`,
+        });
+
+        console.log('[Stripe] Checkout Session created:', session.id);
+
+        return res.json({ 
+            ok: true, 
+            checkout_url: session.url 
+        });
+
+    } catch (error) {
+        console.error('[Stripe] Error creating Checkout Session:', error.message);
         
-        res.status(502).json({ error: 'Resend failed.' });
+        // Don't expose Stripe error details to client
+        return res.status(502).json({ 
+            error: 'Stripe test failed',
+            message: 'Unable to create checkout session'
+        });
     }
 });
 
