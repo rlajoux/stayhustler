@@ -2,10 +2,16 @@ const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
 const crypto = require('crypto');
+const Stripe = require('stripe');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Initialize Stripe (will be null if STRIPE_SECRET_KEY not set)
+const stripe = process.env.STRIPE_SECRET_KEY 
+    ? new Stripe(process.env.STRIPE_SECRET_KEY)
+    : null;
 
 // ============================================================
 // POSTGRES DATABASE
@@ -1394,6 +1400,63 @@ You received this because you purchased insider guidance at stayhustler.com.
     } catch (err) {
         console.error('[Resend] Error:', err.message);
         res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// ============================================================
+// STRIPE TEST ENDPOINT
+// ============================================================
+// Creates a test Checkout Session for $7.00 USD
+// Returns checkout_url for redirect
+// ============================================================
+
+app.post('/api/stripe/test', async (req, res) => {
+    try {
+        // Check if Stripe is initialized
+        if (!stripe) {
+            console.error('[Stripe] STRIPE_SECRET_KEY not configured');
+            return res.status(500).json({ 
+                error: 'Missing STRIPE_SECRET_KEY',
+                message: 'Stripe is not configured on the server'
+            });
+        }
+
+        console.log('[Stripe] Creating test Checkout Session');
+
+        // Create Checkout Session
+        const session = await stripe.checkout.sessions.create({
+            mode: 'payment',
+            line_items: [
+                {
+                    price_data: {
+                        currency: 'usd',
+                        product_data: {
+                            name: 'StayHustler Test Request',
+                        },
+                        unit_amount: 700, // $7.00 in cents
+                    },
+                    quantity: 1,
+                },
+            ],
+            success_url: `${process.env.PUBLIC_BASE_URL || 'https://stayhustler.com'}/stripe-success.html`,
+            cancel_url: `${process.env.PUBLIC_BASE_URL || 'https://stayhustler.com'}/stripe-cancel.html`,
+        });
+
+        console.log('[Stripe] Checkout Session created:', session.id);
+
+        return res.json({ 
+            ok: true, 
+            checkout_url: session.url 
+        });
+
+    } catch (error) {
+        console.error('[Stripe] Error creating Checkout Session:', error.message);
+        
+        // Don't expose Stripe error details to client
+        return res.status(502).json({ 
+            error: 'Stripe test failed',
+            message: 'Unable to create checkout session'
+        });
     }
 });
 
