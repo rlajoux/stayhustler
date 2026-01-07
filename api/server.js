@@ -833,6 +833,12 @@ async function generateRequestPayload(booking, context, requestId = null) {
     return { result: getFallbackPayload(), finalSource };
 }
 
+// Handle preflight OPTIONS request for CORS (no rate limiting on OPTIONS)
+app.options('/api/generate-request', (req, res) => {
+    // CORS headers are already set by cors middleware
+    res.status(204).end();
+});
+
 // API endpoint (rate limited)
 app.post('/api/generate-request', rateLimit, async (req, res) => {
     // Generate correlation ID for tracking
