@@ -398,6 +398,55 @@
             margin: 0 auto;
         }
         
+        /* Learn More Section */
+        .learn-more {
+            background: var(--color-bg-warm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .learn-more-title {
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+            color: var(--color-text);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .learn-more-subtitle {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-md);
+        }
+        
+        .learn-more-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .learn-more-links li {
+            margin-bottom: var(--space-sm);
+        }
+        
+        .learn-more-links li:last-child {
+            margin-bottom: 0;
+        }
+        
+        .learn-more-links a {
+            color: var(--color-accent);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color var(--transition);
+            display: inline-block;
+        }
+        
+        .learn-more-links a:hover {
+            color: var(--color-accent-hover);
+            text-decoration: underline;
+        }
+        
         /* Secondary CTAs */
         .secondary-ctas {
             display: grid;
@@ -622,6 +671,17 @@ Warm regards,
             <div class="expectation-note">
                 <p>Upgrades and perks depend on availability and hotel discretion. This guidance improves odds, not guarantees outcomes.</p>
             </div>
+
+            <!-- Learn More Section -->
+            <section class="learn-more">
+                <h3 class="learn-more-title">Want to understand this better?</h3>
+                <p class="learn-more-subtitle">These guides explain how hotels evaluate upgrade requests and timing.</p>
+                <ul class="learn-more-links">
+                    <li><a href="/guides/how-to-ask-for-a-hotel-upgrade">How to ask for a hotel upgrade the right way</a></li>
+                    <li><a href="/guides/best-time-to-ask-for-hotel-upgrade">Best time to ask for a hotel upgrade</a></li>
+                    <li><a href="/guides/late-checkout-vs-room-upgrade">Late checkout vs room upgrade: which is easier?</a></li>
+                </ul>
+            </section>
 
             <!-- Section E: Resend Email -->
             <section class="content-card">
