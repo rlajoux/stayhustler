@@ -87,6 +87,58 @@ function verifyEmailToken(email, token) {
     return crypto.timingSafeEqual(Buffer.from(token, 'hex'), Buffer.from(expected, 'hex'));
 }
 
+// ============================================================
+// HTTP BASIC AUTH MIDDLEWARE FOR ADMIN
+// ============================================================
+// Protects /admin and /admin/api routes with username/password
+// Uses ADMIN_USER and ADMIN_PASS from environment variables
+// ============================================================
+
+function basicAuth(req, res, next) {
+    const authHeader = req.headers.authorization;
+    
+    // Check if credentials are configured
+    if (!process.env.ADMIN_USER || !process.env.ADMIN_PASS) {
+        console.error('[Admin] ADMIN_USER or ADMIN_PASS not configured');
+        return res.status(503).send('Admin access not configured');
+    }
+    
+    // Check if Authorization header exists
+    if (!authHeader || !authHeader.startsWith('Basic ')) {
+        res.setHeader('WWW-Authenticate', 'Basic realm="StayHustler Admin"');
+        return res.status(401).send('Unauthorized');
+    }
+    
+    // Decode and verify credentials
+    try {
+        const base64Credentials = authHeader.slice(6); // Remove 'Basic '
+        const credentials = Buffer.from(base64Credentials, 'base64').toString('utf8');
+        const [username, password] = credentials.split(':');
+        
+        // Constant-time comparison to prevent timing attacks
+        const validUsername = crypto.timingSafeEqual(
+            Buffer.from(username),
+            Buffer.from(process.env.ADMIN_USER)
+        );
+        const validPassword = crypto.timingSafeEqual(
+            Buffer.from(password),
+            Buffer.from(process.env.ADMIN_PASS)
+        );
+        
+        if (validUsername && validPassword) {
+            // Set noindex header for all admin pages
+            res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+            return next();
+        }
+    } catch (err) {
+        // Invalid base64 or other parsing error
+    }
+    
+    // Invalid credentials
+    res.setHeader('WWW-Authenticate', 'Basic realm="StayHustler Admin"');
+    return res.status(401).send('Unauthorized');
+}
+
 // CORS configuration
 // If ALLOWED_ORIGIN env var is set, use only that origin
 // Otherwise, allow default stayhustler.com origins
@@ -182,6 +234,47 @@ setInterval(() => {
     for (const [ip, entry] of rateLimitStore.entries()) {
         if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
             rateLimitStore.delete(ip);
+        }
+    }
+}, RATE_LIMIT_WINDOW_MS);
+
+// Resend rate limiter (stricter: 3 per 10 minutes)
+const RESEND_LIMIT_MAX = 3;
+const resendLimitStore = new Map();
+
+function resendRateLimit(req, res, next) {
+    const ip = getClientIp(req);
+    const now = Date.now();
+    
+    let entry = resendLimitStore.get(ip);
+    
+    if (!entry) {
+        entry = { count: 0, windowStart: now };
+        resendLimitStore.set(ip, entry);
+    }
+    
+    if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+        entry.count = 0;
+        entry.windowStart = now;
+    }
+    
+    entry.count++;
+    
+    if (entry.count > RESEND_LIMIT_MAX) {
+        console.log('[ResendRateLimit] rate_limited', { ip, count: entry.count });
+        return res.status(429).json({
+            error: 'Too many resend attempts. Please try again later.'
+        });
+    }
+    
+    next();
+}
+
+setInterval(() => {
+    const now = Date.now();
+    for (const [ip, entry] of resendLimitStore.entries()) {
+        if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+            resendLimitStore.delete(ip);
         }
     }
 }, RATE_LIMIT_WINDOW_MS);
@@ -1026,14 +1119,16 @@ StayHustler
             await sgMail.send(msg);
             console.log(`[Delivery] Email sent to ${cleanEmail}`);
 
-            // Log to database
-            await pool.query(`
+            // Log to database and get the ID
+            const insertResult = await pool.query(`
                 INSERT INTO request_deliveries (email, booking, context, generated, status)
                 VALUES ($1, $2, $3, $4, 'sent')
+                RETURNING id
             `, [cleanEmail, JSON.stringify(booking), JSON.stringify(context), JSON.stringify(generated)]);
 
-            console.log(`[Delivery] Success for ${cleanEmail} hotel=${booking.hotel || 'unknown'}`);
-            res.json({ ok: true });
+            const deliveryId = insertResult.rows[0].id;
+            console.log(`[Delivery] Success for ${cleanEmail} hotel=${booking.hotel || 'unknown'} delivery_id=${deliveryId}`);
+            res.json({ ok: true, delivery_id: deliveryId });
 
         } catch (sendError) {
             console.error(`[Delivery] SendGrid error for ${cleanEmail}:`, sendError.message);
@@ -1060,6 +1155,751 @@ StayHustler
     } catch (err) {
         console.error('[Delivery] Error:', err.message);
         res.status(502).json({ error: 'Delivery failed.' });
+    }
+});
+
+// POST /api/resend-delivery - Resend a previous delivery without regenerating
+app.post('/api/resend-delivery', resendRateLimit, async (req, res) => {
+    try {
+        // Check if SendGrid is configured
+        if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_FROM_EMAIL) {
+            console.error('[Resend] SendGrid not configured');
+            return res.status(502).json({ error: 'Resend failed.' });
+        }
+
+        // Check if DB is available
+        if (!pool) {
+            console.error('[Resend] Database not configured');
+            return res.status(502).json({ error: 'Resend failed.' });
+        }
+
+        const { delivery_id, email } = req.body;
+
+        // Validate delivery_id (basic check for integer)
+        if (!delivery_id || !Number.isInteger(Number(delivery_id))) {
+            return res.status(400).json({ error: 'Valid delivery_id is required.' });
+        }
+
+        // Load delivery from database
+        console.log(`[Resend] Loading delivery ${delivery_id}`);
+        const result = await pool.query(`
+            SELECT id, email, booking, context, generated, status 
+            FROM request_deliveries 
+            WHERE id = $1
+        `, [delivery_id]);
+
+        if (result.rows.length === 0) {
+            console.log(`[Resend] Delivery ${delivery_id} not found`);
+            return res.status(404).json({ error: 'Delivery not found.' });
+        }
+
+        const delivery = result.rows[0];
+        
+        // Determine target email
+        let targetEmail = delivery.email;
+        if (email && typeof email === 'string' && EMAIL_REGEX.test(email)) {
+            targetEmail = email.trim().toLowerCase();
+        }
+
+        // Parse the generated payload
+        const generated = delivery.generated;
+        const booking = delivery.booking;
+
+        // Compose email (same format as deliver-request)
+        const emailText = `Your StayHustler upgrade request is ready!
+
+Hotel: ${booking.hotel || 'Unknown'}
+Check-in: ${booking.checkin || 'Unknown'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EMAIL SUBJECT FOR THE HOTEL:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${generated.email_subject}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EMAIL BODY TO SEND TO THE HOTEL:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${generated.email_body}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TIMING GUIDANCE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${generated.timing_guidance.map((tip, i) => `${i + 1}. ${tip}`).join('\n')}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FALLBACK SCRIPT (if email doesn't work):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${generated.fallback_script}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+IMPORTANT: You send this to the hotel yourself. We do not contact the hotel on your behalf. Copy the subject and body above, then email them to your hotel's reservations or front desk.
+
+Questions? Visit https://stayhustler.com
+
+—
+StayHustler
+`;
+
+        // Send via SendGrid
+        const msg = {
+            to: targetEmail,
+            from: process.env.SENDGRID_FROM_EMAIL,
+            subject: 'Your StayHustler request is ready',
+            text: emailText
+        };
+
+        await sgMail.send(msg);
+        
+        const maskedEmail = targetEmail.replace(/(.{2}).*(@.*)/, '$1***$2');
+        console.log(`[Resend] Email sent to ${maskedEmail} delivery_id=${delivery_id}`);
+
+        // Insert new audit row
+        await pool.query(`
+            INSERT INTO request_deliveries (email, booking, context, generated, status)
+            VALUES ($1, $2, $3, $4, 'sent')
+        `, [targetEmail, JSON.stringify(booking), JSON.stringify(delivery.context), JSON.stringify(generated)]);
+
+        res.json({ ok: true });
+
+    } catch (err) {
+        console.error('[Resend] Error:', err.message);
+        
+        if (err.code === 403 || err.message.includes('Forbidden')) {
+            console.error('[Resend] SendGrid forbidden - check sender verification');
+        }
+        
+        res.status(502).json({ error: 'Resend failed.' });
+    }
+});
+
+// ============================================================
+// ADMIN ROUTES (HTTP BASIC AUTH PROTECTED)
+// ============================================================
+// Dashboard and data views for newsletter subscribers and deliveries
+// All routes under /admin require authentication
+// ============================================================
+
+const ADMIN_PATH = process.env.ADMIN_PATH || '/admin';
+
+// Helper: Format date for display
+function formatDate(date) {
+    if (!date) return '';
+    return new Date(date).toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// Helper: Truncate text
+function truncateText(text, maxLen = 80) {
+    if (!text) return '';
+    return text.length > maxLen ? text.substring(0, maxLen) + '...' : text;
+}
+
+// Helper: Generate pagination HTML
+function paginationHTML(currentPage, totalPages, baseUrl, queryParams = {}) {
+    if (totalPages <= 1) return '';
+    
+    const params = new URLSearchParams(queryParams);
+    let html = '<div class="pagination">';
+    
+    if (currentPage > 1) {
+        params.set('page', currentPage - 1);
+        html += `<a href="${baseUrl}?${params.toString()}">← Previous</a>`;
+    }
+    
+    html += `<span>Page ${currentPage} of ${totalPages}</span>`;
+    
+    if (currentPage < totalPages) {
+        params.set('page', currentPage + 1);
+        html += `<a href="${baseUrl}?${params.toString()}">Next →</a>`;
+    }
+    
+    html += '</div>';
+    return html;
+}
+
+// Helper: Common admin HTML layout
+function adminLayout(title, content) {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>${title} - StayHustler Admin</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #fafafa;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            margin: 0 0 10px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .breadcrumb {
+            margin-bottom: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+        .breadcrumb a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            margin: 0 0 10px;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            color: #666;
+            letter-spacing: 0.5px;
+        }
+        .card .number {
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .card .meta {
+            font-size: 13px;
+            color: #888;
+        }
+        .card a {
+            display: inline-block;
+            margin-top: 10px;
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .card a:hover {
+            text-decoration: underline;
+        }
+        .filters {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .filters label {
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        .filters select, .filters input {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .filters button {
+            padding: 6px 15px;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .filters button:hover {
+            background: #0052a3;
+        }
+        .filters a {
+            margin-left: 15px;
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .filters a:hover {
+            text-decoration: underline;
+        }
+        table {
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-collapse: collapse;
+        }
+        th {
+            background: #f5f5f5;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            color: #666;
+            letter-spacing: 0.5px;
+        }
+        td {
+            padding: 12px 15px;
+            border-top: 1px solid #eee;
+            font-size: 14px;
+        }
+        tr:hover {
+            background: #fafafa;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .badge-secondary {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .pagination a {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 0 5px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .pagination a:hover {
+            background: #f5f5f5;
+        }
+        .pagination span {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 0 5px;
+        }
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        ${content}
+    </div>
+</body>
+</html>`;
+}
+
+// GET /admin - Dashboard
+app.get(ADMIN_PATH, basicAuth, async (req, res) => {
+    try {
+        if (!pool) {
+            return res.status(503).send('Database not configured');
+        }
+        
+        // Get counts
+        const subscriberStats = await pool.query(`
+            SELECT 
+                COUNT(*)::int as total,
+                SUM(CASE WHEN status = 'subscribed' THEN 1 ELSE 0 END)::int as subscribed,
+                SUM(CASE WHEN status = 'unsubscribed' THEN 1 ELSE 0 END)::int as unsubscribed
+            FROM newsletter_subscribers
+        `);
+        
+        const deliveryStats = await pool.query(`
+            SELECT 
+                COUNT(*)::int as total,
+                SUM(CASE WHEN status = 'sent' THEN 1 ELSE 0 END)::int as sent,
+                SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END)::int as failed
+            FROM request_deliveries
+        `);
+        
+        const subStats = subscriberStats.rows[0];
+        const delStats = deliveryStats.rows[0];
+        
+        const content = `
+            <h1>StayHustler Admin</h1>
+            <p class="breadcrumb">Dashboard</p>
+            
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h2>Newsletter Subscribers</h2>
+                    <div class="number">${subStats.total || 0}</div>
+                    <div class="meta">
+                        ${subStats.subscribed || 0} subscribed · ${subStats.unsubscribed || 0} unsubscribed
+                    </div>
+                    <a href="${ADMIN_PATH}/subscribers">View all subscribers →</a>
+                </div>
+                
+                <div class="card">
+                    <h2>Request Deliveries</h2>
+                    <div class="number">${delStats.total || 0}</div>
+                    <div class="meta">
+                        ${delStats.sent || 0} sent · ${delStats.failed || 0} failed
+                    </div>
+                    <a href="${ADMIN_PATH}/deliveries">View all deliveries →</a>
+                </div>
+            </div>
+        `;
+        
+        res.send(adminLayout('Dashboard', content));
+        
+    } catch (err) {
+        console.error('[Admin] Dashboard error:', err.message);
+        res.status(500).send('Internal server error');
+    }
+});
+
+// GET /admin/subscribers - View subscribers
+app.get(`${ADMIN_PATH}/subscribers`, basicAuth, async (req, res) => {
+    try {
+        if (!pool) {
+            return res.status(503).send('Database not configured');
+        }
+        
+        // Parse query params
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.min(200, Math.max(1, parseInt(req.query.limit) || 50));
+        const statusFilter = req.query.status; // 'subscribed' | 'unsubscribed' | undefined
+        const offset = (page - 1) * limit;
+        
+        // Build query
+        let whereClause = '';
+        let queryParams = [limit, offset];
+        
+        if (statusFilter === 'subscribed' || statusFilter === 'unsubscribed') {
+            whereClause = 'WHERE status = $3';
+            queryParams.push(statusFilter);
+        }
+        
+        // Get total count
+        const countQuery = `SELECT COUNT(*)::int as total FROM newsletter_subscribers ${whereClause}`;
+        const countParams = statusFilter ? [statusFilter] : [];
+        const countResult = await pool.query(countQuery, countParams);
+        const totalCount = countResult.rows[0].total;
+        const totalPages = Math.ceil(totalCount / limit);
+        
+        // Get subscribers
+        const query = `
+            SELECT email, status, source, created_at, unsubscribed_at
+            FROM newsletter_subscribers
+            ${whereClause}
+            ORDER BY created_at DESC
+            LIMIT $1 OFFSET $2
+        `;
+        const result = await pool.query(query, queryParams);
+        
+        // Build table HTML
+        let tableHTML = '';
+        if (result.rows.length === 0) {
+            tableHTML = '<div class="empty">No subscribers found</div>';
+        } else {
+            tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Source</th>
+                            <th>Created</th>
+                            <th>Unsubscribed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${result.rows.map(row => `
+                            <tr>
+                                <td>${row.email}</td>
+                                <td>
+                                    <span class="badge ${row.status === 'subscribed' ? 'badge-success' : 'badge-secondary'}">
+                                        ${row.status}
+                                    </span>
+                                </td>
+                                <td>${row.source}</td>
+                                <td>${formatDate(row.created_at)}</td>
+                                <td>${formatDate(row.unsubscribed_at)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        // Build filter form
+        const queryParams = { limit };
+        if (statusFilter) queryParams.status = statusFilter;
+        
+        const content = `
+            <h1>Newsletter Subscribers</h1>
+            <p class="breadcrumb"><a href="${ADMIN_PATH}">Dashboard</a> / Subscribers</p>
+            
+            <div class="filters">
+                <form method="get" style="display: inline-block;">
+                    <label>Status:</label>
+                    <select name="status" onchange="this.form.submit()">
+                        <option value="">All</option>
+                        <option value="subscribed" ${statusFilter === 'subscribed' ? 'selected' : ''}>Subscribed</option>
+                        <option value="unsubscribed" ${statusFilter === 'unsubscribed' ? 'selected' : ''}>Unsubscribed</option>
+                    </select>
+                    <input type="hidden" name="limit" value="${limit}">
+                </form>
+                <a href="${ADMIN_PATH}/api/subscribers.csv${statusFilter ? '?status=' + statusFilter : ''}">Download CSV</a>
+            </div>
+            
+            ${tableHTML}
+            
+            ${paginationHTML(page, totalPages, `${ADMIN_PATH}/subscribers`, queryParams)}
+        `;
+        
+        res.send(adminLayout('Subscribers', content));
+        
+    } catch (err) {
+        console.error('[Admin] Subscribers error:', err.message);
+        res.status(500).send('Internal server error');
+    }
+});
+
+// GET /admin/deliveries - View request deliveries
+app.get(`${ADMIN_PATH}/deliveries`, basicAuth, async (req, res) => {
+    try {
+        if (!pool) {
+            return res.status(503).send('Database not configured');
+        }
+        
+        // Parse query params
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.min(200, Math.max(1, parseInt(req.query.limit) || 50));
+        const statusFilter = req.query.status; // 'sent' | 'failed' | undefined
+        const offset = (page - 1) * limit;
+        
+        // Build query
+        let whereClause = '';
+        let queryParams = [limit, offset];
+        
+        if (statusFilter === 'sent' || statusFilter === 'failed') {
+            whereClause = 'WHERE status = $3';
+            queryParams.push(statusFilter);
+        }
+        
+        // Get total count
+        const countQuery = `SELECT COUNT(*)::int as total FROM request_deliveries ${whereClause}`;
+        const countParams = statusFilter ? [statusFilter] : [];
+        const countResult = await pool.query(countQuery, countParams);
+        const totalCount = countResult.rows[0].total;
+        const totalPages = Math.ceil(totalCount / limit);
+        
+        // Get deliveries
+        const query = `
+            SELECT id, email, status, error, created_at
+            FROM request_deliveries
+            ${whereClause}
+            ORDER BY created_at DESC
+            LIMIT $1 OFFSET $2
+        `;
+        const result = await pool.query(query, queryParams);
+        
+        // Build table HTML
+        let tableHTML = '';
+        if (result.rows.length === 0) {
+            tableHTML = '<div class="empty">No deliveries found</div>';
+        } else {
+            tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Error</th>
+                            <th>Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${result.rows.map(row => `
+                            <tr>
+                                <td>${row.id}</td>
+                                <td>${row.email}</td>
+                                <td>
+                                    <span class="badge ${row.status === 'sent' ? 'badge-success' : 'badge-danger'}">
+                                        ${row.status}
+                                    </span>
+                                </td>
+                                <td>${truncateText(row.error || '', 80)}</td>
+                                <td>${formatDate(row.created_at)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        // Build filter form
+        const queryParams = { limit };
+        if (statusFilter) queryParams.status = statusFilter;
+        
+        const content = `
+            <h1>Request Deliveries</h1>
+            <p class="breadcrumb"><a href="${ADMIN_PATH}">Dashboard</a> / Deliveries</p>
+            
+            <div class="filters">
+                <form method="get" style="display: inline-block;">
+                    <label>Status:</label>
+                    <select name="status" onchange="this.form.submit()">
+                        <option value="">All</option>
+                        <option value="sent" ${statusFilter === 'sent' ? 'selected' : ''}>Sent</option>
+                        <option value="failed" ${statusFilter === 'failed' ? 'selected' : ''}>Failed</option>
+                    </select>
+                    <input type="hidden" name="limit" value="${limit}">
+                </form>
+                <a href="${ADMIN_PATH}/api/deliveries.csv${statusFilter ? '?status=' + statusFilter : ''}">Download CSV</a>
+            </div>
+            
+            ${tableHTML}
+            
+            ${paginationHTML(page, totalPages, `${ADMIN_PATH}/deliveries`, queryParams)}
+        `;
+        
+        res.send(adminLayout('Deliveries', content));
+        
+    } catch (err) {
+        console.error('[Admin] Deliveries error:', err.message);
+        res.status(500).send('Internal server error');
+    }
+});
+
+// GET /admin/api/subscribers.csv - Export subscribers as CSV
+app.get(`${ADMIN_PATH}/api/subscribers.csv`, basicAuth, async (req, res) => {
+    try {
+        if (!pool) {
+            return res.status(503).send('Database not configured');
+        }
+        
+        const statusFilter = req.query.status;
+        
+        let whereClause = '';
+        let queryParams = [];
+        
+        if (statusFilter === 'subscribed' || statusFilter === 'unsubscribed') {
+            whereClause = 'WHERE status = $1';
+            queryParams.push(statusFilter);
+        }
+        
+        const query = `
+            SELECT email, status, source, created_at, unsubscribed_at
+            FROM newsletter_subscribers
+            ${whereClause}
+            ORDER BY created_at DESC
+        `;
+        
+        const result = await pool.query(query, queryParams);
+        
+        // Build CSV
+        const header = 'email,status,source,created_at,unsubscribed_at\n';
+        const rows = result.rows.map(row => {
+            const email = `"${(row.email || '').replace(/"/g, '""')}"`;
+            const status = row.status || '';
+            const source = `"${(row.source || '').replace(/"/g, '""')}"`;
+            const created = row.created_at ? new Date(row.created_at).toISOString() : '';
+            const unsubscribed = row.unsubscribed_at ? new Date(row.unsubscribed_at).toISOString() : '';
+            return `${email},${status},${source},${created},${unsubscribed}`;
+        }).join('\n');
+        
+        const csv = header + rows;
+        
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', 'attachment; filename="subscribers.csv"');
+        res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+        res.send(csv);
+        
+    } catch (err) {
+        console.error('[Admin] CSV export error:', err.message);
+        res.status(500).send('Export failed');
+    }
+});
+
+// GET /admin/api/deliveries.csv - Export deliveries as CSV
+app.get(`${ADMIN_PATH}/api/deliveries.csv`, basicAuth, async (req, res) => {
+    try {
+        if (!pool) {
+            return res.status(503).send('Database not configured');
+        }
+        
+        const statusFilter = req.query.status;
+        
+        let whereClause = '';
+        let queryParams = [];
+        
+        if (statusFilter === 'sent' || statusFilter === 'failed') {
+            whereClause = 'WHERE status = $1';
+            queryParams.push(statusFilter);
+        }
+        
+        const query = `
+            SELECT id, email, status, error, created_at
+            FROM request_deliveries
+            ${whereClause}
+            ORDER BY created_at DESC
+        `;
+        
+        const result = await pool.query(query, queryParams);
+        
+        // Build CSV
+        const header = 'id,email,status,error,created_at\n';
+        const rows = result.rows.map(row => {
+            const id = row.id || '';
+            const email = `"${(row.email || '').replace(/"/g, '""')}"`;
+            const status = row.status || '';
+            const error = `"${(row.error || '').replace(/"/g, '""')}"`;
+            const created = row.created_at ? new Date(row.created_at).toISOString() : '';
+            return `${id},${email},${status},${error},${created}`;
+        }).join('\n');
+        
+        const csv = header + rows;
+        
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', 'attachment; filename="deliveries.csv"');
+        res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+        res.send(csv);
+        
+    } catch (err) {
+        console.error('[Admin] CSV export error:', err.message);
+        res.status(500).send('Export failed');
     }
 });
 
