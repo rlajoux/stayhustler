@@ -97,23 +97,32 @@ const defaultOrigins = [
 
 app.use(cors({
     origin: function(origin, callback) {
+        console.log(`[CORS] Request from origin: ${origin || 'no-origin'}`);
+        
         // Allow requests with no origin (mobile apps, curl, etc.)
-        if (!origin) return callback(null, true);
+        if (!origin) {
+            console.log('[CORS] Allowing request with no origin');
+            return callback(null, true);
+        }
         
         // If ALLOWED_ORIGIN is set, use only that
         if (process.env.ALLOWED_ORIGIN) {
+            console.log(`[CORS] Checking against ALLOWED_ORIGIN: ${process.env.ALLOWED_ORIGIN}`);
             if (origin === process.env.ALLOWED_ORIGIN) {
+                console.log('[CORS] Origin matches ALLOWED_ORIGIN');
                 return callback(null, true);
             }
+            console.error(`[CORS] Origin rejected: ${origin}`);
             return callback(new Error('Not allowed by CORS'));
         }
         
         // Otherwise allow all origins for now
+        console.log('[CORS] Allowing all origins (no ALLOWED_ORIGIN set)');
         callback(null, true);
     },
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
-    exposedHeaders: ['X-Request-Id', 'X-Generation-Source', 'Retry-After'],  // CRITICAL: Expose custom headers to browser
+    exposedHeaders: ['X-Request-Id', 'X-Generation-Source', 'Retry-After'],
     credentials: false
 }));
 
@@ -835,8 +844,14 @@ async function generateRequestPayload(booking, context, requestId = null) {
 
 // Handle preflight OPTIONS request for CORS (no rate limiting on OPTIONS)
 app.options('/api/generate-request', (req, res) => {
-    // CORS headers are already set by cors middleware
-    res.status(204).end();
+    try {
+        console.log('[OPTIONS] /api/generate-request preflight request received');
+        // CORS headers are already set by cors middleware
+        res.status(204).end();
+    } catch (error) {
+        console.error('[OPTIONS] Error handling preflight:', error);
+        res.status(500).json({ error: 'Preflight error' });
+    }
 });
 
 // API endpoint (rate limited)
