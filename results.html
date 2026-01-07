@@ -607,6 +607,40 @@ Warm regards,
                 <p>Upgrades and perks depend on availability and hotel discretion. This guidance improves odds, not guarantees outcomes.</p>
             </div>
 
+            <!-- Section E: Resend Email -->
+            <section class="content-card">
+                <div class="card-header">
+                    <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <h2 class="card-title">Resend to email</h2>
+                </div>
+                
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: var(--space-md);">
+                    Didn't receive the email? Enter your email address to resend your personalized request.
+                </p>
+                
+                <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap; margin-bottom: var(--space-sm);">
+                    <input 
+                        type="email" 
+                        id="resend-email" 
+                        placeholder="your@email.com"
+                        style="flex: 1; min-width: 200px; padding: 0.75rem 1rem; font-family: var(--font-sans); font-size: 0.9rem; color: var(--color-text); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius);"
+                    >
+                    <button type="button" class="btn btn-primary" id="resend-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14"></polyline>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                        </svg>
+                        Resend
+                    </button>
+                </div>
+                
+                <p id="resend-status" style="font-size: 0.85rem; min-height: 1.2rem;"></p>
+            </section>
+
             <!-- Primary Continue CTA -->
             <div style="text-align: center; margin-bottom: var(--space-lg);">
                 <a href="save.html" class="btn btn-primary" style="display: inline-flex; padding: 1rem 2rem;">Continue</a>
@@ -817,6 +851,91 @@ Warm regards,
 
         // Initialize on page load
         generateRequest();
+
+        // ===== RESEND EMAIL FUNCTIONALITY =====
+        const resendEmailInput = document.getElementById('resend-email');
+        const resendBtn = document.getElementById('resend-btn');
+        const resendStatus = document.getElementById('resend-status');
+
+        // Pre-fill email from localStorage
+        const storedEmail = localStorage.getItem('stayhustler_email');
+        if (storedEmail) {
+            resendEmailInput.value = storedEmail;
+        }
+
+        // Check if delivery_id exists
+        const deliveryId = localStorage.getItem('stayhustler_delivery_id');
+
+        if (!deliveryId) {
+            resendStatus.textContent = 'Complete checkout first to enable resend.';
+            resendStatus.style.color = 'var(--color-text-muted)';
+            resendBtn.disabled = true;
+            resendBtn.style.opacity = '0.5';
+            resendBtn.style.cursor = 'not-allowed';
+        } else {
+            // Resend button click handler
+            resendBtn.addEventListener('click', async () => {
+                const email = resendEmailInput.value.trim();
+
+                // Validate email
+                if (!email) {
+                    resendStatus.textContent = 'Please enter an email address.';
+                    resendStatus.style.color = '#d9534f';
+                    return;
+                }
+
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    resendStatus.textContent = 'Please enter a valid email address.';
+                    resendStatus.style.color = '#d9534f';
+                    return;
+                }
+
+                // Disable button during request
+                resendBtn.disabled = true;
+                resendBtn.style.opacity = '0.5';
+                resendStatus.textContent = 'Sending...';
+                resendStatus.style.color = 'var(--color-text-muted)';
+
+                try {
+                    const response = await fetch(`${API_BASE}/api/resend-delivery`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            delivery_id: deliveryId,
+                            email: email
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.ok) {
+                        resendStatus.textContent = 'Email sent successfully!';
+                        resendStatus.style.color = 'var(--color-success)';
+                        
+                        // Update stored email
+                        localStorage.setItem('stayhustler_email', email);
+                    } else if (response.status === 429) {
+                        resendStatus.textContent = 'Rate limit exceeded. Please try again later.';
+                        resendStatus.style.color = '#d9534f';
+                    } else {
+                        throw new Error(data.error || 'Failed to resend');
+                    }
+                } catch (error) {
+                    console.error('Resend error:', error);
+                    resendStatus.textContent = 'Failed to send. Please try again.';
+                    resendStatus.style.color = '#d9534f';
+                } finally {
+                    // Re-enable button after 2 seconds
+                    setTimeout(() => {
+                        resendBtn.disabled = false;
+                        resendBtn.style.opacity = '1';
+                    }, 2000);
+                }
+            });
+        }
     </script>
 </body>
 </html>

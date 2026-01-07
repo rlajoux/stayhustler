@@ -603,9 +603,11 @@
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email, booking, context, order })
-                    }).then(response => {
-                        if (response.ok) {
-                            console.log('[Delivery] Email delivery initiated');
+                    }).then(response => response.json())
+                      .then(data => {
+                        if (data.ok && data.delivery_id) {
+                            localStorage.setItem('stayhustler_delivery_id', data.delivery_id);
+                            console.log('[Delivery] Email delivery initiated, ID:', data.delivery_id);
                         } else {
                             console.log('[Delivery] Email delivery failed, will show on results page');
                         }

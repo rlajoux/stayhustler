@@ -1063,6 +1063,138 @@ StayHustler
     }
 });
 
+// ===== POST /api/resend-delivery =====
+// Resends a previously generated request email without calling Gemini again
+app.post('/api/resend-delivery', resendRateLimit, async (req, res) => {
+    try {
+        const { delivery_id, email } = req.body;
+
+        // Validate inputs
+        if (!delivery_id || typeof delivery_id !== 'string') {
+            return res.status(400).json({ error: 'Missing delivery_id' });
+        }
+
+        if (!email || typeof email !== 'string') {
+            return res.status(400).json({ error: 'Missing email' });
+        }
+
+        const cleanEmail = email.trim().toLowerCase();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(cleanEmail)) {
+            return res.status(400).json({ error: 'Invalid email format' });
+        }
+
+        console.log(`[Resend] Resending delivery ${delivery_id} to ${cleanEmail}`);
+
+        // Load original delivery from database
+        const result = await pool.query(`
+            SELECT id, email, booking, context, generated, status 
+            FROM request_deliveries 
+            WHERE id = $1 
+            ORDER BY created_at DESC 
+            LIMIT 1
+        `, [delivery_id]);
+
+        if (result.rows.length === 0) {
+            console.log(`[Resend] Delivery ID not found: ${delivery_id}`);
+            return res.status(404).json({ error: 'Delivery not found' });
+        }
+
+        const originalDelivery = result.rows[0];
+
+        // Check if original delivery was successful
+        if (originalDelivery.status !== 'sent') {
+            console.log(`[Resend] Original delivery status: ${originalDelivery.status}`);
+            return res.status(400).json({ error: 'Original delivery was not successful' });
+        }
+
+        // Use stored generated content (no Gemini call)
+        const generated = originalDelivery.generated;
+        if (!generated || !generated.email_subject || !generated.email_body) {
+            console.log(`[Resend] No valid generated content in delivery ${delivery_id}`);
+            return res.status(500).json({ error: 'No content to resend' });
+        }
+
+        console.log(`[Resend] Using stored content from delivery ${delivery_id}`);
+
+        // Compose email
+        const subject = generated.email_subject;
+        const emailBody = `
+${generated.email_body}
+
+────────────────────────────────
+
+✓ When to ask (timing matters):
+${(generated.timing_guidance || []).map((tip, i) => `  ${i + 1}. ${tip.replace(/<\/?strong>/g, '')}`).join('\n')}
+
+✓ At the front desk, say:
+  "${generated.fallback_script || 'If any upgraded rooms are expected to remain available this evening, I\'d be grateful to be considered.'}"
+
+────────────────────────────────
+
+Upgrades depend on availability and hotel discretion. This guidance improves odds, not guarantees outcomes.
+
+Best of luck on your stay!
+– StayHustler
+
+────────────────────────────────
+You received this because you purchased insider guidance at stayhustler.com.
+        `.trim();
+
+        // Send email via SendGrid
+        const msg = {
+            to: cleanEmail,
+            from: SENDGRID_FROM_EMAIL,
+            subject: `Your StayHustler request: ${subject}`,
+            text: emailBody,
+            html: emailBody.replace(/\n/g, '<br>')
+        };
+
+        try {
+            await sgMail.send(msg);
+            console.log(`[Resend] Email sent successfully to ${cleanEmail}`);
+
+            // Insert new audit row
+            await pool.query(`
+                INSERT INTO request_deliveries (email, booking, context, generated, status)
+                VALUES ($1, $2, $3, $4, 'sent')
+            `, [
+                cleanEmail,
+                originalDelivery.booking,
+                originalDelivery.context,
+                JSON.stringify(generated)
+            ]);
+
+            res.json({ ok: true });
+
+        } catch (sendError) {
+            console.error(`[Resend] SendGrid error:`, sendError.message);
+
+            // Log failure
+            try {
+                await pool.query(`
+                    INSERT INTO request_deliveries (email, booking, context, generated, status, error)
+                    VALUES ($1, $2, $3, $4, 'failed', $5)
+                `, [
+                    cleanEmail,
+                    originalDelivery.booking,
+                    originalDelivery.context,
+                    JSON.stringify(generated),
+                    sendError.message
+                ]);
+            } catch (dbError) {
+                console.error(`[Resend] Failed to log error:`, dbError.message);
+            }
+
+            return res.status(502).json({ error: 'Failed to send email' });
+        }
+
+    } catch (err) {
+        console.error('[Resend] Error:', err.message);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 // Health check endpoints (both /health and /api/health)
 app.get('/health', (req, res) => {
     res.json({ ok: true, timestamp: new Date().toISOString() });
