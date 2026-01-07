@@ -186,6 +186,53 @@ setInterval(() => {
     }
 }, RATE_LIMIT_WINDOW_MS);
 
+// Stricter rate limiter for resend endpoint
+// Limit: 3 requests per 10 minutes per IP
+const RESEND_RATE_LIMIT_MAX = 3;
+const resendRateLimitStore = new Map();
+
+function resendRateLimit(req, res, next) {
+    const ip = getClientIp(req);
+    const now = Date.now();
+    
+    let entry = resendRateLimitStore.get(ip);
+    
+    if (!entry) {
+        entry = { count: 0, windowStart: now };
+        resendRateLimitStore.set(ip, entry);
+    }
+    
+    // Check if window has expired; if so, reset
+    if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+        entry.count = 0;
+        entry.windowStart = now;
+    }
+    
+    // Increment count
+    entry.count++;
+    
+    // Check if over limit
+    if (entry.count > RESEND_RATE_LIMIT_MAX) {
+        console.log('[ResendRateLimit] rate_limited', { ip, count: entry.count });
+        return res.status(429).json({
+            error: 'Rate limit exceeded. Please try again in a few minutes.'
+        });
+    }
+    
+    // Allowed - proceed
+    next();
+}
+
+// Cleanup for resend rate limiter
+setInterval(() => {
+    const now = Date.now();
+    for (const [ip, entry] of resendRateLimitStore.entries()) {
+        if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+            resendRateLimitStore.delete(ip);
+        }
+    }
+}, RATE_LIMIT_WINDOW_MS);
+
 // Validation helper
 function validateRequest(body) {
     const errors = [];
