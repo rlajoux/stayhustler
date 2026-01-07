@@ -829,10 +829,18 @@ Warm regards,
                 has_lengthOfStay: !!context.lengthOfStay
             });
 
-            // Check if we have minimum required data
-            if (!booking.hotel || !context.arrivalDay) {
-                console.warn('[Frontend] Missing required fields - hotel or arrivalDay');
-                showFallback();
+            // Validate required fields are present
+            const missingFields = [];
+            if (!booking.hotel) missingFields.push('hotel');
+            if (!booking.city) missingFields.push('city');
+            if (!booking.checkin) missingFields.push('checkin');
+            if (!booking.checkout) missingFields.push('checkout');
+            if (!context.arrivalDay) missingFields.push('arrivalDay');
+            if (!context.lengthOfStay) missingFields.push('lengthOfStay');
+            
+            if (missingFields.length > 0) {
+                console.error('[Frontend] Missing required fields:', missingFields.join(', '));
+                showMissingFieldsError(missingFields);
                 return;
             }
 
@@ -924,6 +932,22 @@ Warm regards,
                     });
                 }
             }, 100);
+        }
+        
+        // Show missing fields error with link to go back
+        function showMissingFieldsError(missingFields) {
+            loadingIndicator.style.display = 'none';
+            fallbackNotice.style.display = 'block';
+            fallbackNotice.innerHTML = `
+                Missing trip details: ${missingFields.join(', ')}. 
+                <a href="booking.html" style="color: var(--color-accent); text-decoration: underline;">Please go back and complete the booking step.</a>
+            `;
+            // Still show default template so page isn't empty
+            emailTextarea.value = defaultContent.email_body;
+            emailTextarea.style.display = 'block';
+            emailSubject.textContent = defaultContent.email_subject;
+            renderTimingList(defaultContent.timing_guidance);
+            scriptBlock.textContent = defaultContent.fallback_script;
         }
 
         // Initialize on page load

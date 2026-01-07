@@ -418,6 +418,84 @@ function validateOutput(output) {
     return reasons.length === 0 ? { ok: true } : { ok: false, reasons };
 }
 
+// Deterministic repair step - attempts to fix common validation failures
+// without relaxing safety rules (no banned words, no AI mentions)
+function repairOutput(output, validationReasons) {
+    const repaired = JSON.parse(JSON.stringify(output)); // deep clone
+    let repairsMade = [];
+    
+    // Repair A: Missing reservation line in email_body
+    if (validationReasons.some(r => r.includes('Reservation: [Confirmation Number]'))) {
+        if (typeof repaired.email_body === 'string' && !repaired.email_body.includes('Reservation: [Confirmation Number]')) {
+            // Insert after the greeting (first line)
+            const lines = repaired.email_body.split('\n');
+            if (lines.length > 0) {
+                lines.splice(1, 0, '\nReservation: [Confirmation Number]\n');
+                repaired.email_body = lines.join('\n');
+                repairsMade.push('Added reservation line');
+            }
+        }
+    }
+    
+    // Repair B: Missing "forecasted to remain available" phrase
+    if (validationReasons.some(r => r.includes('forecasted to remain available'))) {
+        if (typeof repaired.email_body === 'string') {
+            const count = countOccurrences(repaired.email_body, 'forecasted to remain available');
+            if (count === 0) {
+                // Find a sentence to modify - look for upgrade request
+                repaired.email_body = repaired.email_body.replace(
+                    /If any (premium|upgraded|higher-category) rooms/i,
+                    'If any $1 rooms are forecasted to remain available'
+                );
+                repairsMade.push('Inserted required phrase');
+            } else if (count > 1) {
+                // Remove duplicates - keep first occurrence
+                let firstFound = false;
+                repaired.email_body = repaired.email_body.replace(/forecasted to remain available/g, (match) => {
+                    if (!firstFound) {
+                        firstFound = true;
+                        return match;
+                    }
+                    return 'expected to be available';
+                });
+                repairsMade.push('Removed duplicate phrase');
+            }
+        }
+    }
+    
+    // Repair C: Word count slightly outside range
+    if (validationReasons.some(r => r.includes('email_body must be 160-210 words'))) {
+        if (typeof repaired.email_body === 'string') {
+            const bodyWords = wordCount(repaired.email_body);
+            if (bodyWords < 160 && bodyWords >= 145) {
+                // Too short by <15 words - add a polite closing sentence
+                repaired.email_body += '\n\nI appreciate your time and consideration in reviewing this request.';
+                repairsMade.push('Added padding sentence for word count');
+            } else if (bodyWords > 210 && bodyWords <= 225) {
+                // Too long by <15 words - trim excess sentences
+                const sentences = repaired.email_body.split(/\.\s+/);
+                if (sentences.length > 3) {
+                    // Remove the second-to-last sentence (usually least critical)
+                    sentences.splice(-2, 1);
+                    repaired.email_body = sentences.join('. ');
+                    repairsMade.push('Trimmed excess sentence for word count');
+                }
+            }
+        }
+    }
+    
+    // Repair D: Subject line missing date token
+    if (validationReasons.some(r => r.includes('must include a date token'))) {
+        if (typeof repaired.email_subject === 'string' && !hasDateToken(repaired.email_subject)) {
+            // Prepend a generic date token
+            repaired.email_subject = 'Upcoming stay — ' + repaired.email_subject;
+            repairsMade.push('Added date placeholder to subject');
+        }
+    }
+    
+    return { repaired, repairsMade };
+}
+
 // Build correction prompt for retry
 function buildCorrectionPrompt(originalPrompt, reasons) {
     return `You previously returned output that violated these constraints:
@@ -716,8 +794,30 @@ async function generateRequestPayload(booking, context, requestId = null) {
             return { result: secondResult, finalSource };
         }
         
-        // Second pass also failed - use fallback
+        // Second pass also failed - attempt deterministic repair before fallback
         console.log(`[Generation:${rid}] ✗ Second pass failed: ${secondValidation.reasons.join('; ')}`);
+        console.log(`[Generation:${rid}] Attempting repair step`);
+        
+        const { repaired, repairsMade } = repairOutput(secondResult, secondValidation.reasons);
+        
+        if (repairsMade.length > 0) {
+            console.log(`[Generation:${rid}] Repairs applied: ${repairsMade.join('; ')}`);
+            
+            // Validate repaired output
+            const repairedValidation = validateOutput(repaired);
+            
+            if (repairedValidation.ok) {
+                finalSource = 'repaired';
+                console.log(`[Generation:${rid}] ✓ Repaired output valid, final_source=repaired`);
+                return { result: repaired, finalSource };
+            } else {
+                console.log(`[Generation:${rid}] ✗ Repair failed to fix all issues: ${repairedValidation.reasons.join('; ')}`);
+            }
+        } else {
+            console.log(`[Generation:${rid}] No repairs could be applied`);
+        }
+        
+        // All attempts failed - use fallback
         console.log(`[Generation:${rid}] Using fallback, first_pass_valid=${firstPassValid}, second_pass_attempted=${secondPassAttempted}`);
         finalSource = 'fallback';
         
