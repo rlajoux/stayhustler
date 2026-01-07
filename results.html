@@ -875,7 +875,12 @@ Warm regards,
                 }
 
                 if (!response.ok) {
-                    console.error('[Frontend] API error:', response.status);
+                    console.error('[Frontend] API error:', response.status, 'source:', generationSource);
+                    // For 502 errors, show fallback with notice
+                    if (response.status === 502 || response.status === 500) {
+                        showFallback('backend-error-' + response.status);
+                        return;
+                    }
                     throw new Error(`API error: ${response.status}`);
                 }
 
@@ -900,15 +905,23 @@ Warm regards,
                     console.log('[Frontend] Backend used fallback, showing notice');
                     fallbackNotice.style.display = 'block';
                 } else {
-                    console.log('[Frontend] Custom content generated successfully');
+                    console.log('[Frontend] Custom content generated successfully, source:', generationSource || 'unknown');
                     fallbackNotice.style.display = 'none';
                 }
 
-                applyContent(data);
+                // Apply content and catch any errors without showing fallback notice
+                try {
+                    applyContent(data);
+                    console.log('[Frontend] Content applied successfully');
+                } catch (applyError) {
+                    console.error('[Frontend] Error applying content:', applyError);
+                    // Don't show fallback notice - we already have valid data
+                    // Just log the error and continue
+                }
 
             } catch (error) {
-                console.error('[Frontend] Exception caught:', error.message);
-                showFallback();
+                console.error('[Frontend] Exception caught during API call:', error.message, error.stack);
+                showFallback('api-error');
             }
         }
         

@@ -864,7 +864,11 @@ app.post('/api/generate-request', rateLimit, async (req, res) => {
         return res.json(result);
         
     } catch (error) {
-        console.error('Error in request handling:', error.message);
+        console.error(`[API:${requestId}] Unexpected error in request handling:`, error.message);
+        
+        // Set headers even on error for observability
+        res.setHeader('X-Request-Id', requestId || 'error');
+        res.setHeader('X-Generation-Source', 'error');
         
         // Only return 502 for actual server errors (not content quality issues)
         res.status(502).json({
