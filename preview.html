@@ -255,6 +255,16 @@
             font-style: italic;
         }
 
+        .customization-note {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-sm);
+            line-height: 1.5;
+            max-width: 560px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
         .drivers-section {
             margin-top: var(--space-md);
             padding-top: var(--space-md);
@@ -596,6 +606,7 @@
             <section class="outlook-card" id="outlook-card">
                 <div class="outlook-percentage" id="outlook-percentage">--</div>
                 <div class="outlook-label">Estimated upgrade odds</div>
+                <p class="customization-note" id="customization-note">This request is tailored for your specific stay and written to align with how hotels typically handle situations like yours.</p>
                 <p class="estimate-disclaimer">Estimate based on common hotel practices; availability varies.</p>
                 <p class="outlook-explanation">
                     Based on your stay profile and timing, an informed, polite request can improve outcomes. Availability ultimately drives upgrades.
@@ -1123,11 +1134,22 @@
         // Render percentage and drivers
         const oddsResult = computeUpgradeOdds();
         const percentageEl = document.getElementById('outlook-percentage');
+        const customizationNote = document.getElementById('customization-note');
         const driversSection = document.getElementById('drivers-section');
         const driversChips = document.getElementById('drivers-chips');
         const lessPreciseNotice = document.getElementById('less-precise-notice');
 
         percentageEl.textContent = oddsResult.percentage + '%';
+
+        // Update customization note based on odds
+        if (oddsResult.percentage < 35) {
+            customizationNote.textContent = 'These odds reflect typical availability. The request below is designed to reduce friction and emphasize flexibility where it matters most.';
+        } else if (oddsResult.percentage > 55) {
+            customizationNote.textContent = 'This is a strong setup. The request below is written to take advantage of the timing and flexibility in your case.';
+        } else {
+            // Default for middle range (35-55%)
+            customizationNote.textContent = 'This request is tailored for your specific stay and written to align with how hotels typically handle situations like yours.';
+        }
 
         // Show drivers if any (prioritized, max 4)
         if (oddsResult.drivers.length > 0) {
