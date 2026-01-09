@@ -177,83 +177,6 @@
             margin-bottom: var(--space-md);
         }
         
-        /* Divider */
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            margin: var(--space-md) 0;
-            color: var(--color-text-muted);
-            font-size: 0.85rem;
-        }
-        
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--color-border);
-        }
-        
-        /* Upload Area */
-        .upload-area {
-            border: 2px dashed var(--color-border);
-            border-radius: var(--radius);
-            padding: var(--space-lg) var(--space-md);
-            text-align: center;
-            cursor: pointer;
-            transition: all var(--transition);
-            position: relative;
-        }
-        
-        .upload-area:hover {
-            border-color: var(--color-accent);
-            background: var(--color-bg-warm);
-        }
-        
-        .upload-area:focus-within {
-            border-color: var(--color-accent);
-            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.2);
-        }
-        
-        .upload-input {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-        }
-        
-        .upload-icon {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto var(--space-sm);
-            color: var(--color-accent);
-        }
-        
-        .upload-text {
-            font-size: 0.95rem;
-            color: var(--color-text);
-            margin-bottom: var(--space-xs);
-        }
-        
-        .upload-hint {
-            font-size: 0.85rem;
-            color: var(--color-text-muted);
-        }
-        
-        .upload-filename {
-            display: none;
-            margin-top: var(--space-sm);
-            font-size: 0.9rem;
-            color: var(--color-accent);
-        }
-        
-        .upload-filename.show {
-            display: block;
-        }
-        
         /* Booking Notice */
         .booking-notice {
             background: var(--color-bg-warm);
@@ -431,24 +354,6 @@
                 <p class="booking-notice-body">This works best once your hotel is booked. If you're still planning, come back after booking.</p>
             </div>
 
-            <section class="form-section">
-                <h2 class="form-section-title">Upload your booking confirmation</h2>
-                <p class="form-section-helper">Email or PDF is fine.</p>
-                <div class="upload-area" id="upload-area">
-                    <input type="file" class="upload-input" id="file-input" accept=".pdf,.eml,.msg" aria-label="Upload booking confirmation">
-                    <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                    </svg>
-                    <p class="upload-text">Click to upload or drag and drop</p>
-                    <p class="upload-hint">PDF, .eml, or .msg</p>
-                    <p class="upload-filename" id="upload-filename"></p>
-                </div>
-            </section>
-
-            <div class="divider">or enter manually</div>
-
             <form class="form-section" id="booking-form">
                 <h2 class="form-section-title">Booking details</h2>
                 
@@ -514,9 +419,7 @@
     <script>
         const form = document.getElementById('booking-form');
         const submitBtn = document.getElementById('submit-btn');
-        const fileInput = document.getElementById('file-input');
-        const uploadFilename = document.getElementById('upload-filename');
-        
+
         const requiredFields = [
             document.getElementById('hotel-name'),
             document.getElementById('city'),
@@ -535,16 +438,6 @@
         requiredFields.forEach(field => {
             field.addEventListener('input', checkFormValidity);
             field.addEventListener('change', checkFormValidity);
-        });
-
-        // File upload display
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                uploadFilename.textContent = e.target.files[0].name;
-                uploadFilename.classList.add('show');
-            } else {
-                uploadFilename.classList.remove('show');
-            }
         });
 
         // Form submission
