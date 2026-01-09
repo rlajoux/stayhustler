@@ -1592,6 +1592,35 @@ StayHustler
                 VALUES ($1, $2, $3, $4, 'sent')
             `, [cleanEmail, JSON.stringify(booking), JSON.stringify(context), JSON.stringify(generated)]);
 
+            // Send notification to owner
+            try {
+                const notificationMsg = {
+                    to: 'rlajoux@gmail.com',
+                    from: process.env.SENDGRID_FROM_EMAIL,
+                    subject: `New StayHustler payment: ${booking.hotel || 'Unknown hotel'}`,
+                    text: `New payment received!
+
+Customer: ${cleanEmail}
+Hotel: ${booking.hotel || 'Unknown'}
+City: ${booking.city || 'Unknown'}
+Check-in: ${booking.checkin || 'Unknown'}
+Check-out: ${booking.checkout || 'Unknown'}
+Room: ${booking.room || 'Not specified'}
+Channel: ${booking.channel || 'Not specified'}
+
+Request preference: ${context.askPreference || 'Unknown'}
+Generation source: ${finalSource}
+
+Time: ${new Date().toISOString()}
+`
+                };
+                await sgMail.send(notificationMsg);
+                console.log(`[Delivery] Owner notification sent`);
+            } catch (notifyError) {
+                console.error(`[Delivery] Owner notification failed:`, notifyError.message);
+                // Don't fail the request if notification fails
+            }
+
             console.log(`[Delivery] Success for ${cleanEmail} hotel=${booking.hotel || 'unknown'}`);
             res.json({ ok: true });
 
