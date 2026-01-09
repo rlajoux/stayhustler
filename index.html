@@ -243,7 +243,42 @@
             font-size: 0.85rem;
             color: var(--color-text-muted);
         }
-        
+
+        .hero-disqualifier {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-top: var(--space-sm);
+        }
+
+        /* Example Output Preview */
+        .example-preview {
+            margin-top: var(--space-lg);
+            max-width: 480px;
+        }
+
+        .example-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-xs);
+        }
+
+        .example-card {
+            background: var(--color-bg-warm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: var(--space-md);
+        }
+
+        .example-text {
+            font-family: var(--font-serif);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: var(--color-text);
+            white-space: pre-line;
+        }
+
         .hero-decoration {
             position: absolute;
             right: 5%;
@@ -800,13 +835,24 @@
         <section class="hero">
             <div class="container">
                 <div class="hero-content">
-                    <h1>Insider access to better hotel stays</h1>
-                    <p class="hero-subheadline">We help travelers ask for upgrades and perks the way hotels actually expect.</p>
+                    <h1>We generate the exact email hotels expect when considering upgrades.</h1>
+                    <p class="hero-subheadline">Based on your booking, timing, and flexibility — not generic advice.</p>
                     <div class="hero-ctas">
                         <a href="qualify.html" class="btn btn-primary">Improve my stay</a>
                         <a href="#how-it-works" class="btn btn-secondary">See how it works</a>
                     </div>
                     <p class="trust-line">No hotel integrations. No booking changes. Takes under 2 minutes.</p>
+                    <p class="hero-disqualifier">Already booked a hotel? This is for you.</p>
+
+                    <div class="example-preview">
+                        <p class="example-label">Example (what hotels receive)</p>
+                        <div class="example-card">
+                            <p class="example-text">Hello [Hotel Team],
+I'm looking forward to my upcoming stay. If any higher-category rooms are forecasted to remain available around arrival, I'd be grateful to be considered.
+Warm regards,
+[Your Name]</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="hero-decoration" aria-hidden="true"></div>
