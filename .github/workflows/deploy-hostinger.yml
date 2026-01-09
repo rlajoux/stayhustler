@@ -1,0 +1,45 @@
+name: Deploy Frontend to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'api/**'
+      - '*.md'
+      - '.gitignore'
+
+jobs:
+  deploy:
+    name: Deploy to Hostinger
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SFTP
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          server: ${{ secrets.HOSTINGER_HOST }}
+          port: ${{ secrets.HOSTINGER_PORT }}
+          username: ${{ secrets.HOSTINGER_USERNAME }}
+          password: ${{ secrets.HOSTINGER_PASSWORD }}
+          local_path: './'
+          remote_path: '/public_html/'
+          sftpArgs: '-o StrictHostKeyChecking=no'
+          exclude: |
+            .git/**
+            .github/**
+            .claude/**
+            .env*
+            api/**
+            node_modules/**
+            *.md
+            Dockerfile
+            package*.json
+            Archive.zip
+            SSH.md
+            *.sh
+            flexibility-flow.txt
+            seo-metadata.json
