@@ -97,10 +97,15 @@
         
         /* Container */
         .container {
-            width: 100%;
-            max-width: var(--max-width);
-            margin: 0 auto;
-            padding: 0 var(--space-md);
+            width: min(1120px, calc(100% - 64px));
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                width: calc(100% - 40px);
+            }
         }
         
         /* Navigation */
@@ -214,7 +219,9 @@
         }
 
         .hero-content {
-            max-width: 680px;
+            max-width: 46rem;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .hero h1 {
@@ -265,10 +272,6 @@
 
         /* Desktop: tighter hero layout */
         @media (min-width: 900px) {
-            .hero-content {
-                max-width: 46rem;
-            }
-
             .hero h1 {
                 line-height: 1.02;
             }
