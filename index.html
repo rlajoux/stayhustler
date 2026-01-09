@@ -560,47 +560,6 @@
             color: var(--color-text-muted);
         }
         
-        /* How It Works */
-        .how-it-works {
-            background: var(--color-white);
-            padding-top: var(--space-xl);
-        }
-        
-        .steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--space-lg);
-        }
-        
-        .step {
-            text-align: center;
-            padding: var(--space-lg);
-        }
-        
-        .step-number {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 48px;
-            height: 48px;
-            border: 1px solid var(--color-border);
-            border-radius: 50%;
-            font-family: var(--font-serif);
-            font-size: 1.1rem;
-            color: var(--color-accent);
-            margin-bottom: var(--space-md);
-        }
-        
-        .step-title {
-            font-size: 1.2rem;
-            margin-bottom: var(--space-xs);
-        }
-        
-        .step-desc {
-            color: var(--color-text-muted);
-            font-size: 0.95rem;
-        }
-        
         /* What You Get */
         .features-grid {
             display: grid;
@@ -877,15 +836,7 @@
             section {
                 padding: var(--space-xl) 0;
             }
-            
-            .steps {
-                gap: var(--space-md);
-            }
-            
-            .step {
-                padding: var(--space-md);
-            }
-            
+
             .features-grid {
                 grid-template-columns: 1fr;
             }
@@ -946,7 +897,7 @@
                     <p class="trust-line">No hotel integrations. No booking changes. Takes under 2 minutes.</p>
                     <p class="hero-disqualifier">Already booked a hotel? This is for you.</p>
 
-                    <div class="hero-explainer">
+                    <div class="hero-explainer" id="how-it-works">
                         <h2 class="hero-explainer-title">How it works</h2>
                         <div class="hero-steps">
                             <div class="hero-step">
@@ -1010,32 +961,6 @@
                     </form>
                     <p class="newsletter-error" id="newsletter-error"></p>
                     <p class="newsletter-success" id="newsletter-success"></p>
-                </div>
-            </div>
-        </section>
-
-        <section class="how-it-works" id="how-it-works">
-            <div class="container">
-                <header class="section-header">
-                    <h2 class="section-title">How it works</h2>
-                    <p class="section-subtitle">Three simple steps to a better stay</p>
-                </header>
-                <div class="steps">
-                    <div class="step">
-                        <div class="step-number">1</div>
-                        <h3 class="step-title">Add your booking</h3>
-                        <p class="step-desc">Tell us the hotel and your dates. No integrations. We don't change your reservation.</p>
-                    </div>
-                    <div class="step">
-                        <div class="step-number">2</div>
-                        <h3 class="step-title">Answer a few quick questions</h3>
-                        <p class="step-desc">Your booking channel, flexibility, and preferences help us tailor the request to your situation.</p>
-                    </div>
-                    <div class="step">
-                        <div class="step-number">3</div>
-                        <h3 class="step-title">Get a hotel-ready request</h3>
-                        <p class="step-desc">We generate the exact wording, when to send it, and a check-in script — written for how hotels actually decide.</p>
-                    </div>
                 </div>
             </div>
         </section>
