@@ -206,39 +206,45 @@
         
         /* Hero */
         .hero {
-            padding: calc(64px + var(--space-2xl)) 0 var(--space-xl);
-            min-height: 85vh;
+            padding: clamp(5rem, 8vw, 6.5rem) 0 clamp(1.75rem, 3vw, 2.75rem);
+            padding-top: calc(64px + clamp(2.5rem, 4vw, 4rem));
             display: flex;
             align-items: center;
             position: relative;
         }
-        
+
         .hero-content {
             max-width: 680px;
         }
-        
+
         .hero h1 {
             font-size: clamp(2.25rem, 5vw, 3.5rem);
             letter-spacing: -0.02em;
-            margin-bottom: var(--space-md);
+            line-height: 1.08;
+            margin-bottom: 1rem;
             color: var(--color-text);
         }
-        
+
+        /* Desktop line break utility */
+        .br-desktop {
+            display: none;
+        }
+
         .hero-subheadline {
             font-size: 1.2rem;
             color: var(--color-text-muted);
-            margin-bottom: var(--space-lg);
+            margin-bottom: var(--space-md);
             max-width: 540px;
         }
-        
+
         .hero-ctas {
             display: flex;
             align-items: center;
             gap: var(--space-md);
-            margin-bottom: var(--space-md);
+            margin-bottom: var(--space-sm);
             flex-wrap: wrap;
         }
-        
+
         .trust-line {
             font-size: 0.85rem;
             color: var(--color-text-muted);
@@ -247,14 +253,29 @@
         .hero-disqualifier {
             font-size: 0.85rem;
             color: var(--color-text-muted);
-            margin-top: var(--space-sm);
+            margin-top: var(--space-xs);
         }
 
         /* Hero How It Works */
         .hero-explainer {
-            margin-top: var(--space-xl);
-            padding-top: var(--space-lg);
+            margin-top: var(--space-lg);
+            padding-top: var(--space-md);
             border-top: 1px solid var(--color-border);
+        }
+
+        /* Desktop: tighter hero layout */
+        @media (min-width: 900px) {
+            .hero-content {
+                max-width: 46rem;
+            }
+
+            .hero h1 {
+                line-height: 1.02;
+            }
+
+            .br-desktop {
+                display: block;
+            }
         }
 
         .hero-explainer-title {
@@ -385,7 +406,7 @@
         
         /* Trusted By */
         .trusted {
-            padding: var(--space-xl) 0;
+            padding: var(--space-lg) 0;
             border-top: 1px solid var(--color-border);
         }
         
@@ -421,7 +442,7 @@
         
         /* Newsletter */
         .newsletter {
-            padding: var(--space-xl) 0;
+            padding: var(--space-lg) 0;
             background: var(--color-bg-warm);
         }
         
@@ -542,6 +563,7 @@
         /* How It Works */
         .how-it-works {
             background: var(--color-white);
+            padding-top: var(--space-xl);
         }
         
         .steps {
@@ -826,9 +848,8 @@
             }
             
             .hero {
-                min-height: auto;
-                padding-top: calc(64px + var(--space-xl));
-                padding-bottom: var(--space-xl);
+                padding-top: calc(64px + var(--space-lg));
+                padding-bottom: var(--space-md);
             }
             
             .hero-decoration {
@@ -916,7 +937,7 @@
         <section class="hero">
             <div class="container">
                 <div class="hero-content">
-                    <h1>We generate the exact email hotels expect when considering upgrades.</h1>
+                    <h1>We generate the exact email hotels expect<br class="br-desktop"> when considering upgrades.</h1>
                     <p class="hero-subheadline">Based on your booking, timing, and flexibility — not generic advice.</p>
                     <div class="hero-ctas">
                         <a href="qualify.html" class="btn btn-primary">Improve my stay</a>
