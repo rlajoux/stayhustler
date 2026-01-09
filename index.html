@@ -225,22 +225,17 @@
         }
 
         .hero h1 {
-            font-size: clamp(2.25rem, 5vw, 3.5rem);
+            font-size: clamp(2.1rem, 4.5vw, 3.15rem);
             letter-spacing: -0.02em;
             line-height: 1.08;
             margin-bottom: 1rem;
             color: var(--color-text);
         }
 
-        /* Desktop line break utility */
-        .br-desktop {
-            display: none;
-        }
-
         .hero-subheadline {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             color: var(--color-text-muted);
-            margin-bottom: var(--space-md);
+            margin-bottom: 1.35rem;
             max-width: 540px;
         }
 
@@ -268,17 +263,6 @@
             margin-top: var(--space-lg);
             padding-top: var(--space-md);
             border-top: 1px solid var(--color-border);
-        }
-
-        /* Desktop: tighter hero layout */
-        @media (min-width: 900px) {
-            .hero h1 {
-                line-height: 1.02;
-            }
-
-            .br-desktop {
-                display: block;
-            }
         }
 
         .hero-explainer-title {
@@ -891,7 +875,7 @@
         <section class="hero">
             <div class="container">
                 <div class="hero-content">
-                    <h1>We generate the exact email hotels expect<br class="br-desktop"> when considering upgrades.</h1>
+                    <h1>Your best chance at a hotel upgrade.</h1>
                     <p class="hero-subheadline">Based on your booking, timing, and flexibility — not generic advice.</p>
                     <div class="hero-ctas">
                         <a href="booking.html" class="btn btn-primary">Improve my stay</a>
