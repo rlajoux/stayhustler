@@ -254,6 +254,28 @@
             display: block;
         }
         
+        /* Booking Notice */
+        .booking-notice {
+            background: var(--color-bg-warm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: var(--space-sm) var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .booking-notice-title {
+            font-family: var(--font-serif);
+            font-size: 0.95rem;
+            color: var(--color-text);
+            margin-bottom: var(--space-xs);
+        }
+
+        .booking-notice-body {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            line-height: 1.5;
+        }
+
         /* Form Fields */
         .form-grid {
             display: grid;
@@ -393,7 +415,7 @@
     <header class="header">
         <div class="header-inner">
             <a href="index.html" class="logo">StayHustler</a>
-            <a href="qualify.html" class="back-link">Back</a>
+            <a href="index.html" class="back-link">Back</a>
         </div>
     </header>
 
@@ -403,6 +425,11 @@
                 <h1>Add your hotel booking</h1>
                 <p class="page-subheadline">We use this to tailor hotel-appropriate advice. We don't contact the hotel.</p>
             </header>
+
+            <div class="booking-notice">
+                <p class="booking-notice-title">Best used after you book</p>
+                <p class="booking-notice-body">This works best once your hotel is booked. If you're still planning, come back after booking.</p>
+            </div>
 
             <section class="form-section">
                 <h2 class="form-section-title">Upload your booking confirmation</h2>
