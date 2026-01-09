@@ -5,39 +5,29 @@
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-  <url>
-    <loc>https://stayhustler.com/booking.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://stayhustler.com/context.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
   <!-- Guide Articles -->
   <url>
-    <loc>https://stayhustler.com/guides/how-to-ask-for-a-hotel-upgrade</loc>
+    <loc>https://stayhustler.com/guides/how-to-ask-for-a-hotel-upgrade.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://stayhustler.com/guides/best-time-to-ask-for-hotel-upgrade</loc>
+    <loc>https://stayhustler.com/guides/best-time-to-ask-for-hotel-upgrade.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://stayhustler.com/guides/hotel-upgrade-email-template</loc>
+    <loc>https://stayhustler.com/guides/hotel-upgrade-email-template.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://stayhustler.com/guides/independent-vs-chain-hotel-upgrades</loc>
+    <loc>https://stayhustler.com/guides/independent-vs-chain-hotel-upgrades.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://stayhustler.com/guides/late-checkout-vs-room-upgrade</loc>
+    <loc>https://stayhustler.com/guides/late-checkout-vs-room-upgrade.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
