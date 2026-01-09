@@ -1783,7 +1783,7 @@ app.post('/api/stripe/test', async (req, res) => {
                     price_data: {
                         currency: 'usd',
                         product_data: {
-                            name: 'StayHustler Test Request',
+                            name: 'StayHustler Upgrade Request',
                         },
                         unit_amount: 700, // $7.00 in cents
                     },
