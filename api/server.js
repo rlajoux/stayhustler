@@ -1322,6 +1322,30 @@ app.post('/api/subscribe', async (req, res) => {
         `, [cleanEmail, cleanSource, ip, userAgent]);
 
         console.log(`[Subscribe] Success: email=${cleanEmail} source=${cleanSource} id=${result.rows[0]?.id}`);
+
+        // Send notification to owner
+        if (process.env.SENDGRID_API_KEY && process.env.SENDGRID_FROM_EMAIL) {
+            try {
+                await sgMail.send({
+                    to: 'rlajoux@gmail.com',
+                    from: process.env.SENDGRID_FROM_EMAIL,
+                    subject: `New newsletter subscriber: ${cleanEmail}`,
+                    text: `New newsletter subscription!
+
+Email: ${cleanEmail}
+Source: ${cleanSource}
+Time: ${new Date().toISOString()}
+
+—
+StayHustler
+`
+                });
+                console.log(`[Subscribe] Owner notification sent`);
+            } catch (notifyError) {
+                console.error(`[Subscribe] Owner notification failed:`, notifyError.message);
+            }
+        }
+
         res.json({ ok: true });
 
     } catch (err) {
