@@ -339,6 +339,52 @@
             display: block;
         }
         
+        /* Reassurance Block */
+        .reassurance-block {
+            background: var(--color-bg-warm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .reassurance-title {
+            font-family: var(--font-serif);
+            font-size: 0.95rem;
+            color: var(--color-text);
+            margin-bottom: var(--space-sm);
+        }
+
+        .reassurance-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 var(--space-sm) 0;
+        }
+
+        .reassurance-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-xs);
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            padding: 0.25rem 0;
+        }
+
+        .reassurance-list li::before {
+            content: '•';
+            color: var(--color-accent);
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .reassurance-footer {
+            font-size: 0.85rem;
+            color: var(--color-text);
+            font-style: italic;
+            padding-top: var(--space-xs);
+            border-top: 1px solid var(--color-border);
+        }
+
         /* CTA */
         .cta-section {
             margin-top: var(--space-md);
@@ -492,7 +538,17 @@
                         <div class="validation-message" id="validation-message" role="alert" aria-live="polite">
                             Please select a payment method to continue.
                         </div>
-                        
+
+                        <section class="reassurance-block" aria-labelledby="reassurance-heading">
+                            <h3 class="reassurance-title" id="reassurance-heading">What this does — and doesn't do</h3>
+                            <ul class="reassurance-list">
+                                <li>This creates a hotel-ready request, tailored to your booking.</li>
+                                <li>It does not guarantee upgrades.</li>
+                                <li>Hotels decide based on availability, timing, and flexibility.</li>
+                            </ul>
+                            <p class="reassurance-footer">You're paying for execution quality — the part most people get wrong.</p>
+                        </section>
+
                         <div class="cta-section">
                             <button type="submit" class="btn-primary" id="pay-btn" disabled>Pay & unlock</button>
                             
