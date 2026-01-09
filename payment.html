@@ -326,6 +326,43 @@
         }
         
         /* Validation */
+        /* Email Field */
+        .email-field {
+            margin-bottom: var(--space-md);
+        }
+
+        .email-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: var(--space-xs);
+        }
+
+        .email-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            color: var(--color-text);
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+
+        .email-input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.15);
+        }
+
+        .email-helper {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            margin-top: var(--space-xs);
+        }
+
         .validation-message {
             display: none;
             font-size: 0.85rem;
@@ -536,8 +573,14 @@
                             </div>
                         </fieldset>
                         
+                        <div class="email-field">
+                            <label for="email-input" class="email-label">Email address</label>
+                            <input type="email" id="email-input" class="email-input" placeholder="you@example.com" required>
+                            <p class="email-helper">We'll send your upgrade request here.</p>
+                        </div>
+
                         <div class="validation-message" id="validation-message" role="alert" aria-live="polite">
-                            Please select a payment method to continue.
+                            Please enter your email to continue.
                         </div>
 
                         <section class="reassurance-block" aria-labelledby="reassurance-heading">
@@ -603,18 +646,36 @@
         const whyToggle = document.getElementById('why-toggle');
         const whyPanel = document.getElementById('why-panel');
         const paymentInputs = document.querySelectorAll('input[name="payment-method"]');
-        
+        const emailInput = document.getElementById('email-input');
+
         // Stripe is pre-selected, so set it as default
         let selectedMethod = 'stripe';
-        payBtn.disabled = false; // Enable button since Stripe is pre-selected
+
+        // Pre-fill email if already saved
+        const savedEmail = localStorage.getItem('stayhustler_email');
+        if (savedEmail) {
+            emailInput.value = savedEmail;
+        }
+
+        // Check form validity
+        function checkFormValidity() {
+            const emailValid = emailInput.value.trim() && emailInput.checkValidity();
+            payBtn.disabled = !emailValid;
+            if (emailValid) {
+                validationMessage.classList.remove('visible');
+            }
+        }
+
+        // Listen for email input
+        emailInput.addEventListener('input', checkFormValidity);
+        checkFormValidity(); // Initial check
 
         // Enable/disable button based on selection (kept for potential future payment methods)
         paymentInputs.forEach(input => {
             input.addEventListener('change', () => {
                 if (input.checked) {
                     selectedMethod = input.value;
-                    payBtn.disabled = false;
-                    validationMessage.classList.remove('visible');
+                    checkFormValidity();
                 }
             });
         });
@@ -622,11 +683,16 @@
         // Form submission
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            if (!selectedMethod) {
+
+            const email = emailInput.value.trim();
+            if (!email || !emailInput.checkValidity()) {
                 validationMessage.classList.add('visible');
+                emailInput.focus();
                 return;
             }
+
+            // Save email to localStorage
+            localStorage.setItem('stayhustler_email', email);
             
             // Handle Stripe Checkout separately
             if (selectedMethod === 'stripe') {
@@ -676,7 +742,6 @@
             localStorage.setItem('stayhustler_order', JSON.stringify(order));
             
             // Try to deliver via email (non-blocking)
-            const email = localStorage.getItem('stayhustler_email');
             if (email) {
                 try {
                     const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
