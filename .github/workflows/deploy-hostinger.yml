@@ -18,28 +18,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy via SFTP
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.HOSTINGER_HOST }}
-          port: ${{ secrets.HOSTINGER_PORT }}
-          username: ${{ secrets.HOSTINGER_USERNAME }}
-          password: ${{ secrets.HOSTINGER_PASSWORD }}
-          local_path: './'
-          remote_path: '/public_html/'
-          sftpArgs: '-o StrictHostKeyChecking=no'
+          server: ${{ secrets.HOSTINGER_FTP_HOST }}
+          username: ${{ secrets.HOSTINGER_FTP_USERNAME }}
+          password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: /public_html/
           exclude: |
-            .git/**
-            .github/**
-            .claude/**
-            .env*
-            api/**
-            node_modules/**
-            *.md
-            Dockerfile
-            package*.json
-            Archive.zip
-            SSH.md
-            *.sh
-            flexibility-flow.txt
-            seo-metadata.json
+            **/.git*
+            **/.git*/**
+            **/.claude/**
+            **/.env*
+            **/api/**
+            **/node_modules/**
+            **/*.md
+            **/Dockerfile
+            **/package*.json
+            **/Archive.zip
+            **/*.sh
+            **/flexibility-flow.txt
+            **/seo-metadata.json
