@@ -2635,4 +2635,93 @@ app.get('/api/health', (req, res) => {
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://0.0.0.0:${PORT}`);
     console.log(`API endpoint: http://0.0.0.0:${PORT}/api/generate-request`);
+
+    // Automatic hourly funnel report
+    if (process.env.SENDGRID_API_KEY && process.env.SENDGRID_FROM_EMAIL && pool) {
+        console.log('[Cron] Hourly funnel report scheduler started');
+
+        // Run every hour
+        setInterval(async () => {
+            try {
+                console.log('[Cron] Running hourly funnel report...');
+
+                const result = await pool.query(`
+                    SELECT page, COUNT(*) as count
+                    FROM page_views
+                    WHERE created_at > NOW() - INTERVAL '1 hour'
+                    GROUP BY page
+                `);
+
+                const pageViews = {};
+                result.rows.forEach(row => {
+                    pageViews[row.page] = parseInt(row.count);
+                });
+
+                const funnel = {
+                    index: pageViews.index || 0,
+                    booking: pageViews.booking || 0,
+                    context: pageViews.context || 0,
+                    preview: pageViews.preview || 0,
+                    payment: pageViews.payment || 0,
+                    results: pageViews.results || 0
+                };
+
+                const dropoffs = {
+                    'index → booking': funnel.index - funnel.booking,
+                    'booking → context': funnel.booking - funnel.context,
+                    'context → preview': funnel.context - funnel.preview,
+                    'preview → payment': funnel.preview - funnel.payment,
+                    'payment → results': funnel.payment - funnel.results
+                };
+
+                let biggestDrop = { step: 'none', count: 0 };
+                for (const [step, count] of Object.entries(dropoffs)) {
+                    if (count > biggestDrop.count) {
+                        biggestDrop = { step, count };
+                    }
+                }
+
+                const now = new Date();
+                const emailText = `StayHustler Hourly Funnel Report
+${now.toISOString()}
+
+FUNNEL OVERVIEW (Last Hour)
+═══════════════════════════════════════
+
+Homepage visits:     ${funnel.index}
+Started booking:     ${funnel.booking} ${funnel.index > 0 ? `(${Math.round(funnel.booking/funnel.index*100)}%)` : ''}
+Completed context:   ${funnel.context} ${funnel.booking > 0 ? `(${Math.round(funnel.context/funnel.booking*100)}%)` : ''}
+Saw preview:         ${funnel.preview} ${funnel.context > 0 ? `(${Math.round(funnel.preview/funnel.context*100)}%)` : ''}
+Reached payment:     ${funnel.payment} ${funnel.preview > 0 ? `(${Math.round(funnel.payment/funnel.preview*100)}%)` : ''}
+Completed (results): ${funnel.results} ${funnel.payment > 0 ? `(${Math.round(funnel.results/funnel.payment*100)}%)` : ''}
+
+DROP-OFF ANALYSIS
+═══════════════════════════════════════
+
+${Object.entries(dropoffs).map(([step, count]) => `${step}: ${count} dropped`).join('\n')}
+
+Biggest drop-off: ${biggestDrop.step} (${biggestDrop.count} visitors)
+
+CONVERSION
+═══════════════════════════════════════
+
+Overall: ${funnel.index > 0 ? `${Math.round(funnel.results/funnel.index*100)}%` : 'N/A'} (${funnel.results}/${funnel.index})
+
+—
+StayHustler Analytics
+`;
+
+                await sgMail.send({
+                    to: 'rlajoux@gmail.com',
+                    from: process.env.SENDGRID_FROM_EMAIL,
+                    subject: `StayHustler Hourly: ${funnel.index} visits, ${funnel.results} conversions`,
+                    text: emailText
+                });
+
+                console.log('[Cron] Hourly report sent successfully');
+            } catch (err) {
+                console.error('[Cron] Hourly report error:', err.message);
+            }
+        }, 60 * 60 * 1000); // Every hour (60 min * 60 sec * 1000 ms)
+    }
 });
