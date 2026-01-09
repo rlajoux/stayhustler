@@ -14,6 +14,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your insider request – StayHustler</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>">
     <meta name="description" content="Your personalized hotel upgrade request is ready. Use this wording and timing to make a polite, hotel-appropriate request.">
     
     <!-- Open Graph -->
@@ -986,31 +987,15 @@ Warm regards,
 
         // Show fallback content with notice
         function showFallback(reason = 'unknown') {
-            console.log('[Frontend] Showing fallback, reason:', reason);
             fallbackNotice.style.display = 'block';
             applyContent(defaultContent);
         }
 
         // Generate request from API
         async function generateRequest() {
-            console.log('[Frontend] Starting generation request');
-            
             // Parse stored data
             const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
             const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
-
-            // Debug: Log presence of required fields (no PII)
-            console.log('[Frontend] Payload check:', {
-                has_booking: !!booking,
-                has_hotel: !!booking.hotel,
-                has_city: !!booking.city,
-                has_checkin: !!booking.checkin,
-                has_checkout: !!booking.checkout,
-                has_context: !!context,
-                has_arrivalDay: !!context.arrivalDay,
-                has_lengthOfStay: !!context.lengthOfStay,
-                has_askPreference: !!context.askPreference
-            });
 
             // Validate required fields are present
             const missingFields = [];
@@ -1029,7 +1014,6 @@ Warm regards,
             }
 
             try {
-                console.log('[Frontend] Calling API...');
                 const response = await fetch(`${API_BASE}/api/generate-request`, {
                     method: 'POST',
                     headers: {
@@ -1038,18 +1022,9 @@ Warm regards,
                     body: JSON.stringify({ booking, context })
                 });
 
-                // Extract headers for debugging
-                const requestId = response.headers.get('X-Request-Id');
+                // Extract headers
                 const generationSource = response.headers.get('X-Generation-Source');
                 const retryAfter = response.headers.get('Retry-After');
-                
-                console.log('[Frontend] API response:', {
-                    status: response.status,
-                    ok: response.ok,
-                    request_id: requestId,
-                    generation_source: generationSource,
-                    retry_after: retryAfter
-                });
 
                 // Handle rate limiting (429)
                 if (response.status === 429) {
@@ -1069,15 +1044,7 @@ Warm regards,
                 }
 
                 const data = await response.json();
-                
-                console.log('[Frontend] Response data check:', {
-                    has_email_subject: !!data.email_subject,
-                    has_email_body: !!data.email_body,
-                    has_timing_guidance: !!data.timing_guidance,
-                    has_fallback_script: !!data.fallback_script,
-                    generation_source: generationSource
-                });
-                
+
                 // Validate response has required fields
                 if (!data.email_subject || !data.email_body) {
                     console.error('[Frontend] Invalid API response - missing required fields');
@@ -1086,22 +1053,13 @@ Warm regards,
 
                 // Only show fallback notice if source is explicitly 'fallback'
                 if (generationSource === 'fallback') {
-                    console.log('[Frontend] Backend used fallback, showing notice');
                     fallbackNotice.style.display = 'block';
                 } else {
-                    console.log('[Frontend] Custom content generated successfully, source:', generationSource || 'unknown');
                     fallbackNotice.style.display = 'none';
                 }
 
-                // Apply content and catch any errors without showing fallback notice
-                try {
-                    applyContent(data);
-                    console.log('[Frontend] Content applied successfully');
-                } catch (applyError) {
-                    console.error('[Frontend] Error applying content:', applyError);
-                    // Don't show fallback notice - we already have valid data
-                    // Just log the error and continue
-                }
+                // Apply content
+                applyContent(data);
 
             } catch (error) {
                 console.error('[Frontend] Exception caught during API call:', error.message, error.stack);
@@ -1123,7 +1081,6 @@ Warm regards,
                 const retryBtn = document.getElementById('retry-btn');
                 if (retryBtn) {
                     retryBtn.addEventListener('click', () => {
-                        console.log('[Frontend] User clicked retry after rate limit');
                         fallbackNotice.innerHTML = 'Retrying...';
                         generateRequest();
                     });

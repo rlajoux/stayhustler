@@ -14,6 +14,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout – StayHustler</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>">
     <meta name="description" content="Complete your purchase to unlock your personalized hotel upgrade request and timing guidance.">
     
     <!-- Open Graph -->
@@ -629,7 +630,6 @@
             
             // Handle Stripe Checkout separately
             if (selectedMethod === 'stripe') {
-                console.log('[Payment] Redirecting to Stripe Checkout...');
                 payBtn.textContent = 'Redirecting to Stripe...';
                 payBtn.disabled = true;
                 
@@ -691,15 +691,10 @@
                       .then(data => {
                         if (data.ok && data.delivery_id) {
                             localStorage.setItem('stayhustler_delivery_id', data.delivery_id);
-                            console.log('[Delivery] Email delivery initiated, ID:', data.delivery_id);
-                        } else {
-                            console.log('[Delivery] Email delivery failed, will show on results page');
                         }
-                    }).catch(err => {
-                        console.log('[Delivery] Network error, will show on results page');
-                    });
+                    }).catch(() => {});
                 } catch (err) {
-                    console.log('[Delivery] Error preparing delivery:', err);
+                    // Silent fail - will show on results page
                 }
             }
             
