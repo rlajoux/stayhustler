@@ -182,7 +182,67 @@
             width: 16px;
             height: 16px;
         }
-        
+
+        /* Personalization Block */
+        .personalization-block {
+            background: var(--color-bg-warm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: var(--space-sm) var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .personalization-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .personalization-details {
+            font-size: 0.9rem;
+            color: var(--color-text);
+        }
+
+        /* Generation Success Flash */
+        .generation-success {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+            background: rgba(122, 154, 109, 0.1);
+            border: 1px solid rgba(122, 154, 109, 0.3);
+            color: var(--color-success);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius);
+            font-size: 0.9rem;
+            margin-bottom: var(--space-md);
+            animation: fadeInOut 3s ease-in-out forwards;
+        }
+
+        .generation-success svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-10px); }
+            15% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Why This Works Note */
+        .why-this-works {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            font-style: italic;
+            margin-top: var(--space-sm);
+            padding-top: var(--space-sm);
+            border-top: 1px solid var(--color-border);
+        }
+
         /* Content Cards */
         .content-card {
             background: var(--color-white);
@@ -634,8 +694,22 @@
                     Unlocked
                 </div>
                 <h1>Your insider request is ready</h1>
-                <p class="page-subheadline">Use this wording and timing to make a polite, hotel-appropriate request.</p>
+                <p class="page-subheadline">Crafted using hospitality industry language that front-desk staff recognize and respond to.</p>
             </header>
+
+            <!-- Personalization confirmation -->
+            <div class="personalization-block" id="personalization-block">
+                <p class="personalization-label">Tailored for your stay</p>
+                <p class="personalization-details" id="personalization-details"></p>
+            </div>
+
+            <!-- Generation success indicator (shows briefly) -->
+            <div class="generation-success" id="generation-success" style="display: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Personalized for your stay
+            </div>
 
             <!-- Section A: Email Request -->
             <section class="content-card">
@@ -664,7 +738,7 @@ Warm regards,
 [Your name]</textarea>
                 
                 <p id="fallback-notice" style="display: none; font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: var(--space-sm); font-style: italic;">
-                    Couldn't generate a custom request—showing a default template.
+                    Using our proven template — works well for most hotel stays.
                 </p>
                 
                 <div class="button-row">
@@ -683,6 +757,8 @@ Warm regards,
                         <span id="copy-subject-text">Copy subject</span>
                     </button>
                 </div>
+
+                <p class="why-this-works" id="why-this-works">This wording mirrors how hospitality staff are trained to phrase internal upgrade offers — professional, flexible, and easy to approve.</p>
             </section>
 
             <!-- Primary CTA: Send Email -->
@@ -747,7 +823,7 @@ Warm regards,
 
             <!-- Section D: Expectation Setting -->
             <div class="expectation-note">
-                <p>Upgrades and perks depend on availability and hotel discretion. This guidance improves odds, not guarantees outcomes.</p>
+                <p>Based on hospitality industry best practices. Upgrades depend on availability and hotel discretion — this guidance improves your odds, not guarantees outcomes.</p>
             </div>
 
             <!-- Learn More Section -->
@@ -971,8 +1047,42 @@ Warm regards,
             `).join('');
         }
 
+        // Populate personalization block with booking details
+        function showPersonalization(booking, isCustomized) {
+            const block = document.getElementById('personalization-block');
+            const details = document.getElementById('personalization-details');
+
+            if (!booking.hotel) {
+                block.style.display = 'none';
+                return;
+            }
+
+            // Build details string
+            const parts = [];
+            if (booking.hotel) parts.push(booking.hotel);
+            if (booking.checkin && booking.checkout) {
+                const checkin = new Date(booking.checkin);
+                const checkout = new Date(booking.checkout);
+                const options = { month: 'short', day: 'numeric' };
+                parts.push(`${checkin.toLocaleDateString('en-US', options)} – ${checkout.toLocaleDateString('en-US', options)}`);
+            }
+
+            details.textContent = parts.join(' • ');
+            block.style.display = 'block';
+        }
+
+        // Show generation success flash briefly
+        function showSuccessFlash() {
+            const flash = document.getElementById('generation-success');
+            flash.style.display = 'flex';
+            // Animation handles fade out via CSS, then hide element
+            setTimeout(() => {
+                flash.style.display = 'none';
+            }, 3000);
+        }
+
         // Apply content to DOM
-        function applyContent(data) {
+        function applyContent(data, isCustomized = true) {
             emailSubject.textContent = data.email_subject;
             emailTextarea.value = data.email_body;
             emailTextarea.style.display = 'block';
@@ -988,6 +1098,15 @@ Warm regards,
 
             loadingIndicator.style.display = 'none';
 
+            // Show personalization block with booking context
+            const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
+            showPersonalization(booking, isCustomized);
+
+            // Show success flash for customized content
+            if (isCustomized) {
+                showSuccessFlash();
+            }
+
             // Update mailto link with new content
             updateMailtoLink();
         }
@@ -995,7 +1114,7 @@ Warm regards,
         // Show fallback content with notice
         function showFallback(reason = 'unknown') {
             fallbackNotice.style.display = 'block';
-            applyContent(defaultContent);
+            applyContent(defaultContent, false);
         }
 
         // Generate request from API
@@ -1058,15 +1177,18 @@ Warm regards,
                     throw new Error('Invalid API response');
                 }
 
+                // Determine if this is customized content
+                const isCustomized = generationSource !== 'fallback';
+
                 // Only show fallback notice if source is explicitly 'fallback'
-                if (generationSource === 'fallback') {
+                if (!isCustomized) {
                     fallbackNotice.style.display = 'block';
                 } else {
                     fallbackNotice.style.display = 'none';
                 }
 
-                // Apply content
-                applyContent(data);
+                // Apply content with customization flag
+                applyContent(data, isCustomized);
 
             } catch (error) {
                 console.error('[Frontend] Exception caught during API call:', error.message, error.stack);
