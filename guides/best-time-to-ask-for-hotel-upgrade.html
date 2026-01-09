@@ -279,20 +279,49 @@
         
         /* Mobile */
         @media (max-width: 768px) {
+            article {
+                padding-left: var(--space-sm);
+                padding-right: var(--space-sm);
+            }
+
             article h1 {
                 font-size: 2rem;
             }
-            
+
             article h2 {
                 font-size: 1.5rem;
             }
-            
+
             article h3 {
                 font-size: 1.2rem;
             }
-            
+
             .related-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: var(--space-sm);
+            }
+        }
+
+        @media (max-width: 480px) {
+            article h1 {
+                font-size: 1.75rem;
+            }
+
+            article h2 {
+                font-size: 1.35rem;
+            }
+
+            article p {
+                font-size: 1rem;
+            }
+
+            .nav-inner {
+                padding: 0 var(--space-sm);
             }
         }
     </style>
