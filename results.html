@@ -265,15 +265,73 @@
             background: var(--color-text);
             color: var(--color-white);
         }
-        
+
         .btn-primary:hover {
             background: #1a1816;
             transform: translateY(-1px);
         }
-        
+
         .btn-primary:focus {
             outline: 2px solid var(--color-accent);
             outline-offset: 2px;
+        }
+
+        /* Dominant CTA */
+        .btn-dominant {
+            background: var(--color-accent);
+            color: var(--color-text);
+            font-size: 1.1rem;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            box-shadow: 0 4px 14px rgba(201, 169, 98, 0.3);
+        }
+
+        .btn-dominant:hover {
+            background: var(--color-accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(201, 169, 98, 0.4);
+        }
+
+        .btn-dominant:focus {
+            outline: 3px solid var(--color-text);
+            outline-offset: 2px;
+        }
+
+        /* Primary CTA Block */
+        .primary-cta-block {
+            text-align: center;
+            padding: var(--space-lg) 0;
+            margin: var(--space-md) 0;
+        }
+
+        .urgency-nudge {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            margin-top: var(--space-sm);
+        }
+
+        /* Secondary/Tertiary button styles */
+        .btn-tertiary {
+            background: transparent;
+            color: var(--color-text-muted);
+            border: 1px solid var(--color-border);
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .btn-tertiary:hover {
+            border-color: var(--color-text-muted);
+            color: var(--color-text);
+        }
+
+        .btn-tertiary:focus {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+
+        .btn-tertiary svg {
+            width: 14px;
+            height: 14px;
         }
         
         .btn-secondary {
@@ -525,8 +583,10 @@
         @media print {
             .header,
             .button-row,
+            .primary-cta-block,
             .secondary-ctas,
-            .feedback-prompt {
+            .feedback-prompt,
+            details {
                 display: none;
             }
             
@@ -600,24 +660,34 @@ Warm regards,
                 </p>
                 
                 <div class="button-row">
-                    <button type="button" class="btn btn-primary" id="copy-email-btn">
+                    <button type="button" class="btn btn-tertiary" id="copy-email-btn">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                         </svg>
                         <span id="copy-email-text">Copy email</span>
                     </button>
-                    <button type="button" class="btn btn-secondary tooltip" id="download-pdf-btn">
+                    <button type="button" class="btn btn-tertiary" id="copy-subject-btn">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                         </svg>
-                        Download PDF
-                        <span class="tooltip-text">Coming soon</span>
+                        <span id="copy-subject-text">Copy subject</span>
                     </button>
                 </div>
             </section>
+
+            <!-- Primary CTA: Send Email -->
+            <div class="primary-cta-block">
+                <a href="#" class="btn btn-dominant" id="send-email-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; margin-right: 8px;">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    Send this email now
+                </a>
+                <p class="urgency-nudge">Most guests send this within 24–48 hours of arrival, when availability is clearest.</p>
+            </div>
 
             <!-- Section B: Timing Guidance -->
             <section class="content-card">
@@ -683,44 +753,37 @@ Warm regards,
                 </ul>
             </section>
 
-            <!-- Section E: Resend Email -->
-            <section class="content-card">
-                <div class="card-header">
-                    <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                        <polyline points="22,6 12,13 2,6"></polyline>
+            <!-- Section E: Resend Email (Secondary) -->
+            <details class="content-card" style="cursor: pointer;">
+                <summary style="display: flex; align-items: center; gap: var(--space-xs); list-style: none; padding: var(--space-sm) 0;">
+                    <svg style="width: 18px; height: 18px; color: var(--color-text-muted);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
                     </svg>
-                    <h2 class="card-title">Resend to email</h2>
-                </div>
-                
-                <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: var(--space-md);">
-                    Didn't receive the email? Enter your email address to resend your personalized request.
-                </p>
-                
-                <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap; margin-bottom: var(--space-sm);">
-                    <input 
-                        type="email" 
-                        id="resend-email" 
-                        placeholder="your@email.com"
-                        style="flex: 1; min-width: 200px; padding: 0.75rem 1rem; font-family: var(--font-sans); font-size: 0.9rem; color: var(--color-text); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius);"
-                    >
-                    <button type="button" class="btn btn-primary" id="resend-btn">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="23 4 23 10 17 10"></polyline>
-                            <polyline points="1 20 1 14 7 14"></polyline>
-                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-                        </svg>
-                        Resend
-                    </button>
-                </div>
-                
-                <p id="resend-status" style="font-size: 0.85rem; min-height: 1.2rem;"></p>
-            </section>
+                    <span style="font-size: 0.9rem; color: var(--color-text-muted);">Resend to my email</span>
+                </summary>
 
-            <!-- Primary Continue CTA -->
-            <div style="text-align: center; margin-bottom: var(--space-lg);">
-                <a href="save.html" class="btn btn-primary" style="display: inline-flex; padding: 1rem 2rem;">Continue</a>
-            </div>
+                <div style="padding-top: var(--space-sm);">
+                    <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: var(--space-sm);">
+                        Didn't receive it? Enter your email to resend.
+                    </p>
+
+                    <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap; margin-bottom: var(--space-sm);">
+                        <input
+                            type="email"
+                            id="resend-email"
+                            placeholder="your@email.com"
+                            style="flex: 1; min-width: 200px; padding: 0.6rem 0.75rem; font-family: var(--font-sans); font-size: 0.85rem; color: var(--color-text); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius);"
+                        >
+                        <button type="button" class="btn btn-tertiary" id="resend-btn">
+                            Resend
+                        </button>
+                    </div>
+
+                    <p id="resend-status" style="font-size: 0.8rem; min-height: 1rem;"></p>
+                </div>
+            </details>
 
             <!-- Secondary CTAs -->
             <div class="secondary-ctas">
@@ -779,12 +842,12 @@ Warm regards,
         copyBtn.addEventListener('click', async () => {
             try {
                 await navigator.clipboard.writeText(emailTextarea.value);
-                
+
                 // Visual feedback
                 copyBtn.classList.add('copied');
                 copyText.textContent = 'Copied!';
                 ariaLive.textContent = 'Email copied to clipboard';
-                
+
                 // Reset after 2 seconds
                 setTimeout(() => {
                     copyBtn.classList.remove('copied');
@@ -795,10 +858,10 @@ Warm regards,
                 // Fallback for older browsers
                 emailTextarea.select();
                 document.execCommand('copy');
-                
+
                 copyBtn.classList.add('copied');
                 copyText.textContent = 'Copied!';
-                
+
                 setTimeout(() => {
                     copyBtn.classList.remove('copied');
                     copyText.textContent = 'Copy email';
@@ -806,16 +869,56 @@ Warm regards,
             }
         });
 
+        // Copy subject functionality
+        const copySubjectBtn = document.getElementById('copy-subject-btn');
+        const copySubjectText = document.getElementById('copy-subject-text');
+
+        copySubjectBtn.addEventListener('click', async () => {
+            const subject = document.getElementById('email-subject').textContent;
+            try {
+                await navigator.clipboard.writeText(subject);
+                copySubjectBtn.classList.add('copied');
+                copySubjectText.textContent = 'Copied!';
+                ariaLive.textContent = 'Subject copied to clipboard';
+
+                setTimeout(() => {
+                    copySubjectBtn.classList.remove('copied');
+                    copySubjectText.textContent = 'Copy subject';
+                    ariaLive.textContent = '';
+                }, 2000);
+            } catch (err) {
+                copySubjectBtn.classList.add('copied');
+                copySubjectText.textContent = 'Copied!';
+                setTimeout(() => {
+                    copySubjectBtn.classList.remove('copied');
+                    copySubjectText.textContent = 'Copy subject';
+                }, 2000);
+            }
+        });
+
+        // Send email (mailto) functionality
+        const sendEmailBtn = document.getElementById('send-email-btn');
+
+        function updateMailtoLink() {
+            const subject = document.getElementById('email-subject').textContent;
+            const body = document.getElementById('email-request').value;
+            const mailtoUrl = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+            sendEmailBtn.href = mailtoUrl;
+        }
+
+        // Update mailto link when content changes
+        sendEmailBtn.addEventListener('click', function(e) {
+            updateMailtoLink();
+        });
+
+        // Also update on mouseenter for better UX
+        sendEmailBtn.addEventListener('mouseenter', updateMailtoLink);
+        sendEmailBtn.addEventListener('focus', updateMailtoLink);
+
         // Save/Print functionality
         const saveBtn = document.getElementById('save-btn');
         saveBtn.addEventListener('click', () => {
             window.print();
-        });
-
-        // Download PDF button (placeholder)
-        const downloadBtn = document.getElementById('download-pdf-btn');
-        downloadBtn.addEventListener('click', (e) => {
-            // Do nothing - tooltip shows "Coming soon"
         });
 
         // API Integration - Railway backend
@@ -865,17 +968,20 @@ Warm regards,
             emailSubject.textContent = data.email_subject;
             emailTextarea.value = data.email_body;
             emailTextarea.style.display = 'block';
-            
+
             // Handle timing guidance
-            const timingItems = Array.isArray(data.timing_guidance) 
-                ? data.timing_guidance 
+            const timingItems = Array.isArray(data.timing_guidance)
+                ? data.timing_guidance
                 : defaultContent.timing_guidance;
             renderTimingList(timingItems);
-            
+
             // Update fallback script
             scriptBlock.textContent = data.fallback_script || defaultContent.fallback_script;
-            
+
             loadingIndicator.style.display = 'none';
+
+            // Update mailto link with new content
+            updateMailtoLink();
         }
 
         // Show fallback content with notice
