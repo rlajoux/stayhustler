@@ -250,33 +250,114 @@
             margin-top: var(--space-sm);
         }
 
-        /* Example Output Preview */
-        .example-preview {
-            margin-top: var(--space-lg);
-            max-width: 480px;
+        /* Hero How It Works */
+        .hero-explainer {
+            margin-top: var(--space-xl);
+            padding-top: var(--space-lg);
+            border-top: 1px solid var(--color-border);
         }
 
-        .example-label {
-            font-size: 0.75rem;
+        .hero-explainer-title {
+            font-size: 1rem;
             text-transform: uppercase;
             letter-spacing: 0.08em;
             color: var(--color-text-muted);
-            margin-bottom: var(--space-xs);
+            margin-bottom: var(--space-md);
         }
 
-        .example-card {
-            background: var(--color-bg-warm);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius);
-            padding: var(--space-md);
+        .hero-steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
         }
 
-        .example-text {
+        .hero-step {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+
+        .hero-step-num {
             font-family: var(--font-serif);
-            font-size: 0.9rem;
-            line-height: 1.7;
+            font-size: 1.5rem;
+            color: var(--color-accent);
+            line-height: 1;
+        }
+
+        .hero-step-title {
+            font-family: var(--font-serif);
+            font-size: 1rem;
             color: var(--color-text);
-            white-space: pre-line;
+        }
+
+        .hero-step-body {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            line-height: 1.5;
+        }
+
+        .hero-actions {
+            margin-top: var(--space-md);
+        }
+
+        .hero-actions-title {
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            color: var(--color-text);
+            margin-bottom: var(--space-sm);
+        }
+
+        .hero-actions-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 var(--space-md) 0;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+
+        .hero-actions-list li {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-xs);
+        }
+
+        .hero-actions-list li::before {
+            content: '·';
+            color: var(--color-accent);
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .hero-trust-note {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .hero-steps {
+                grid-template-columns: 1fr;
+                gap: var(--space-sm);
+            }
+
+            .hero-step {
+                flex-direction: row;
+                align-items: flex-start;
+                gap: var(--space-sm);
+            }
+
+            .hero-step-num {
+                flex-shrink: 0;
+                width: 24px;
+            }
+
+            .hero-step-content {
+                flex: 1;
+            }
         }
 
         .hero-decoration {
@@ -844,13 +925,40 @@
                     <p class="trust-line">No hotel integrations. No booking changes. Takes under 2 minutes.</p>
                     <p class="hero-disqualifier">Already booked a hotel? This is for you.</p>
 
-                    <div class="example-preview">
-                        <p class="example-label">Example (what hotels receive)</p>
-                        <div class="example-card">
-                            <p class="example-text">Hello [Hotel Team],
-I'm looking forward to my upcoming stay. If any higher-category rooms are forecasted to remain available around arrival, I'd be grateful to be considered.
-Warm regards,
-[Your Name]</p>
+                    <div class="hero-explainer">
+                        <h2 class="hero-explainer-title">How it works</h2>
+                        <div class="hero-steps">
+                            <div class="hero-step">
+                                <span class="hero-step-num">1</span>
+                                <div class="hero-step-content">
+                                    <p class="hero-step-title">Add your booking</p>
+                                    <p class="hero-step-body">Tell us the hotel and your dates. No integrations. We don't change your reservation.</p>
+                                </div>
+                            </div>
+                            <div class="hero-step">
+                                <span class="hero-step-num">2</span>
+                                <div class="hero-step-content">
+                                    <p class="hero-step-title">Answer a few quick questions</p>
+                                    <p class="hero-step-body">Your booking channel, flexibility, and preferences help us tailor the request to your situation.</p>
+                                </div>
+                            </div>
+                            <div class="hero-step">
+                                <span class="hero-step-num">3</span>
+                                <div class="hero-step-content">
+                                    <p class="hero-step-title">Get a hotel-ready request</p>
+                                    <p class="hero-step-body">We generate the exact wording, when to send it, and a check-in script — written for how hotels actually decide.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="hero-actions">
+                            <h3 class="hero-actions-title">What you can do</h3>
+                            <ul class="hero-actions-list">
+                                <li>Request a room upgrade (when it's realistic)</li>
+                                <li>Prioritize a better view / floor / quieter room</li>
+                                <li>Ask for timing perks like late checkout or early check-in</li>
+                            </ul>
+                            <p class="hero-trust-note">Availability always comes first. We focus on timing, tone, and flexibility — not guarantees.</p>
                         </div>
                     </div>
                 </div>
@@ -895,17 +1003,17 @@ Warm regards,
                     <div class="step">
                         <div class="step-number">1</div>
                         <h3 class="step-title">Add your booking</h3>
-                        <p class="step-desc">Share your confirmation details. We never contact your hotel or modify your reservation.</p>
+                        <p class="step-desc">Tell us the hotel and your dates. No integrations. We don't change your reservation.</p>
                     </div>
                     <div class="step">
                         <div class="step-number">2</div>
-                        <h3 class="step-title">Answer a few questions</h3>
-                        <p class="step-desc">Tell us about your trip, preferences, and any special occasions worth mentioning.</p>
+                        <h3 class="step-title">Answer a few quick questions</h3>
+                        <p class="step-desc">Your booking channel, flexibility, and preferences help us tailor the request to your situation.</p>
                     </div>
                     <div class="step">
                         <div class="step-number">3</div>
-                        <h3 class="step-title">Send a hotel-ready request</h3>
-                        <p class="step-desc">Receive a polished, informed request written in hotel-native language.</p>
+                        <h3 class="step-title">Get a hotel-ready request</h3>
+                        <p class="step-desc">We generate the exact wording, when to send it, and a check-in script — written for how hotels actually decide.</p>
                     </div>
                 </div>
             </div>
