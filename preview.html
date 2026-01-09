@@ -10,6 +10,13 @@
 
       gtag('config', 'G-H8G7MYD59K');
     </script>
+    <script>
+      fetch('https://stayhustler-production.up.railway.app/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ page: 'preview', referrer: document.referrer })
+      }).catch(() => {});
+    </script>
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

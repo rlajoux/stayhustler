@@ -61,6 +61,18 @@ if (process.env.DATABASE_URL) {
                 )
             `);
             console.log('[DB] request_deliveries table ready');
+
+            // Page views table for funnel tracking
+            await pool.query(`
+                CREATE TABLE IF NOT EXISTS page_views (
+                    id SERIAL PRIMARY KEY,
+                    page TEXT NOT NULL,
+                    session_id TEXT,
+                    referrer TEXT,
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+                )
+            `);
+            console.log('[DB] page_views table ready');
         } catch (err) {
             console.error('[DB] Error initializing tables:', err.message);
         }
@@ -2464,6 +2476,149 @@ app.get(`${ADMIN_PATH}/api/deliveries.csv`, basicAuth, async (req, res) => {
     } catch (err) {
         console.error('[Admin] CSV export error:', err.message);
         res.status(500).send('Export failed');
+    }
+});
+
+// ============================================================
+// FUNNEL TRACKING
+// ============================================================
+
+// Track page view
+app.post('/api/track', async (req, res) => {
+    try {
+        if (!pool) {
+            return res.status(200).json({ ok: true });
+        }
+
+        const { page, session_id, referrer } = req.body;
+
+        if (!page || typeof page !== 'string') {
+            return res.status(200).json({ ok: true });
+        }
+
+        const validPages = ['index', 'booking', 'context', 'preview', 'payment', 'results'];
+        if (!validPages.includes(page)) {
+            return res.status(200).json({ ok: true });
+        }
+
+        await pool.query(
+            'INSERT INTO page_views (page, session_id, referrer) VALUES ($1, $2, $3)',
+            [page, session_id || null, referrer || null]
+        );
+
+        res.json({ ok: true });
+    } catch (err) {
+        console.error('[Track] Error:', err.message);
+        res.status(200).json({ ok: true });
+    }
+});
+
+// Hourly funnel report (called by cron)
+app.get('/api/cron/hourly-report', async (req, res) => {
+    try {
+        const cronSecret = req.query.secret || req.headers['x-cron-secret'];
+        if (cronSecret !== process.env.CRON_SECRET && process.env.CRON_SECRET) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        if (!pool) {
+            return res.status(500).json({ error: 'Database not configured' });
+        }
+
+        if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_FROM_EMAIL) {
+            return res.status(500).json({ error: 'SendGrid not configured' });
+        }
+
+        const result = await pool.query(`
+            SELECT page, COUNT(*) as count
+            FROM page_views
+            WHERE created_at > NOW() - INTERVAL '1 hour'
+            GROUP BY page
+            ORDER BY
+                CASE page
+                    WHEN 'index' THEN 1
+                    WHEN 'booking' THEN 2
+                    WHEN 'context' THEN 3
+                    WHEN 'preview' THEN 4
+                    WHEN 'payment' THEN 5
+                    WHEN 'results' THEN 6
+                END
+        `);
+
+        const pageViews = {};
+        result.rows.forEach(row => {
+            pageViews[row.page] = parseInt(row.count);
+        });
+
+        const funnel = {
+            index: pageViews.index || 0,
+            booking: pageViews.booking || 0,
+            context: pageViews.context || 0,
+            preview: pageViews.preview || 0,
+            payment: pageViews.payment || 0,
+            results: pageViews.results || 0
+        };
+
+        const dropoffs = {
+            'index → booking': funnel.index - funnel.booking,
+            'booking → context': funnel.booking - funnel.context,
+            'context → preview': funnel.context - funnel.preview,
+            'preview → payment': funnel.preview - funnel.payment,
+            'payment → results': funnel.payment - funnel.results
+        };
+
+        let biggestDrop = { step: 'none', count: 0 };
+        for (const [step, count] of Object.entries(dropoffs)) {
+            if (count > biggestDrop.count) {
+                biggestDrop = { step, count };
+            }
+        }
+
+        const now = new Date();
+        const emailText = `StayHustler Hourly Funnel Report
+${now.toISOString()}
+
+FUNNEL OVERVIEW (Last Hour)
+═══════════════════════════════════════
+
+Homepage visits:     ${funnel.index}
+Started booking:     ${funnel.booking} ${funnel.index > 0 ? `(${Math.round(funnel.booking/funnel.index*100)}%)` : ''}
+Completed context:   ${funnel.context} ${funnel.booking > 0 ? `(${Math.round(funnel.context/funnel.booking*100)}%)` : ''}
+Saw preview:         ${funnel.preview} ${funnel.context > 0 ? `(${Math.round(funnel.preview/funnel.context*100)}%)` : ''}
+Reached payment:     ${funnel.payment} ${funnel.preview > 0 ? `(${Math.round(funnel.payment/funnel.preview*100)}%)` : ''}
+Completed (results): ${funnel.results} ${funnel.payment > 0 ? `(${Math.round(funnel.results/funnel.payment*100)}%)` : ''}
+
+DROP-OFF ANALYSIS
+═══════════════════════════════════════
+
+${Object.entries(dropoffs).map(([step, count]) => `${step}: ${count} dropped`).join('\n')}
+
+Biggest drop-off: ${biggestDrop.step} (${biggestDrop.count} visitors)
+
+CONVERSION
+═══════════════════════════════════════
+
+Overall: ${funnel.index > 0 ? `${Math.round(funnel.results/funnel.index*100)}%` : 'N/A'} (${funnel.results}/${funnel.index})
+
+—
+StayHustler Analytics
+`;
+
+        const msg = {
+            to: 'rlajoux@gmail.com',
+            from: process.env.SENDGRID_FROM_EMAIL,
+            subject: `StayHustler Hourly: ${funnel.index} visits, ${funnel.results} conversions`,
+            text: emailText
+        };
+
+        await sgMail.send(msg);
+        console.log('[Cron] Hourly report sent');
+
+        res.json({ ok: true, funnel, dropoffs });
+
+    } catch (err) {
+        console.error('[Cron] Hourly report error:', err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
