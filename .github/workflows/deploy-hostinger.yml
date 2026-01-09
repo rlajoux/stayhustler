@@ -18,25 +18,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.HOSTINGER_FTP_HOST }}
-          username: ${{ secrets.HOSTINGER_FTP_USERNAME }}
-          password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
-          local-dir: ./
-          server-dir: /public_html/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/.claude/**
-            **/.env*
-            **/api/**
-            **/node_modules/**
-            **/*.md
-            **/Dockerfile
-            **/package*.json
-            **/Archive.zip
-            **/*.sh
-            **/flexibility-flow.txt
-            **/seo-metadata.json
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p 65002 145.79.4.36 >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Deploy via rsync
+        run: |
+          rsync -avz --delete \
+            -e "ssh -p 65002 -o StrictHostKeyChecking=no -o ConnectTimeout=30" \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.claude' \
+            --exclude='.env*' \
+            --exclude='api' \
+            --exclude='node_modules' \
+            --exclude='*.md' \
+            --exclude='Dockerfile' \
+            --exclude='package*.json' \
+            --exclude='Archive.zip' \
+            --exclude='*.sh' \
+            --exclude='flexibility-flow.txt' \
+            --exclude='seo-metadata.json' \
+            ./ u837303424@145.79.4.36:/home/u837303424/domains/stayhustler.com/public_html/
