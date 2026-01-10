@@ -186,6 +186,28 @@
             height: 16px;
         }
 
+        .free-request-badge {
+            display: none;
+            align-items: center;
+            gap: var(--space-xs);
+            background: rgba(99, 145, 182, 0.1);
+            border: 1px solid rgba(99, 145, 182, 0.3);
+            color: #5a8ab5;
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin-left: var(--space-sm);
+        }
+
+        .free-request-badge.visible {
+            display: inline-flex;
+        }
+
+        .free-request-badge svg {
+            width: 14px;
+            height: 14px;
+        }
+
         /* Personalization Block */
         .personalization-block {
             background: var(--color-bg-warm);
@@ -696,6 +718,14 @@
                     </svg>
                     Unlocked
                 </div>
+                <div class="free-request-badge" id="free-request-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5"></path>
+                        <path d="M2 12l10 5 10-5"></path>
+                    </svg>
+                    <span id="free-request-badge-text">Free request</span>
+                </div>
                 <h1>Your insider request is ready</h1>
                 <p class="page-subheadline">Crafted using hospitality industry language that front-desk staff recognize and respond to.</p>
             </header>
@@ -919,6 +949,19 @@ Warm regards,
             const orderRaw = localStorage.getItem('stayhustler_order');
             if (orderRaw) orderData = JSON.parse(orderRaw);
         } catch (e) {}
+
+        // Show free request badge if applicable
+        if (orderData && orderData.is_free_request) {
+            const freeRequestBadge = document.getElementById('free-request-badge');
+            const freeRequestBadgeText = document.getElementById('free-request-badge-text');
+            if (freeRequestBadge) {
+                freeRequestBadge.classList.add('visible');
+                // Set dynamic text based on coupon used
+                if (freeRequestBadgeText && orderData.coupon) {
+                    freeRequestBadgeText.textContent = `Free request (${orderData.coupon})`;
+                }
+            }
+        }
 
         // Copy email functionality
         const copyBtn = document.getElementById('copy-email-btn');

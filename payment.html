@@ -916,12 +916,29 @@
             try {
                 const saved = localStorage.getItem('stayhustler_coupon');
                 if (saved) {
-                    activeCoupon = JSON.parse(saved);
+                    const parsed = JSON.parse(saved);
+                    // Don't restore TRYITFREE if it's already been used
+                    if (parsed.code === 'TRYITFREE' && isTryItFreeUsed()) {
+                        localStorage.removeItem('stayhustler_coupon');
+                        return;
+                    }
+                    activeCoupon = parsed;
                     updatePriceDisplay();
+                    updatePayButton();
                 }
             } catch (e) {
                 localStorage.removeItem('stayhustler_coupon');
             }
+        }
+
+        // Check if TRYITFREE has been used
+        function isTryItFreeUsed() {
+            return localStorage.getItem('stayhustler_tryitfree_used') === 'true';
+        }
+
+        // Mark TRYITFREE as used
+        function markTryItFreeUsed() {
+            localStorage.setItem('stayhustler_tryitfree_used', 'true');
         }
 
         // Apply coupon via API
@@ -929,6 +946,13 @@
             const trimmed = code.trim();
             if (!trimmed) {
                 showCouponFeedback('Enter a code', 'error');
+                return;
+            }
+
+            // Check if TRYITFREE has already been used
+            const normalizedCode = trimmed.toUpperCase();
+            if (normalizedCode === 'TRYITFREE' && isTryItFreeUsed()) {
+                showCouponFeedback('This code has already been used', 'error');
                 return;
             }
 
@@ -954,6 +978,7 @@
                     };
                     saveCoupon();
                     updatePriceDisplay();
+                    updatePayButton();
                     showCouponFeedback('', '');
                     couponInput.value = '';
 
@@ -970,11 +995,21 @@
             }
         }
 
+        // Update pay button based on price
+        function updatePayButton() {
+            if (activeCoupon && activeCoupon.final_cents === 0) {
+                payBtn.textContent = 'Get my request';
+            } else {
+                payBtn.textContent = 'Pay & unlock';
+            }
+        }
+
         // Remove coupon
         function removeCoupon() {
             activeCoupon = null;
             saveCoupon();
             updatePriceDisplay();
+            updatePayButton();
             couponForm.classList.remove('visible');
         }
 
@@ -1001,6 +1036,20 @@
                 gtag('event', 'coupon_applied', eventData);
             } else {
                 console.log('[Analytics] coupon_applied', eventData);
+            }
+        }
+
+        // Track free request used event
+        function trackFreeRequestUsed(couponCode) {
+            const eventData = {
+                code: couponCode || 'UNKNOWN'
+            };
+
+            // GA4 event
+            if (typeof gtag === 'function') {
+                gtag('event', 'free_request_used', eventData);
+            } else {
+                console.log('[Analytics] free_request_used', eventData);
             }
         }
 
@@ -1074,7 +1123,45 @@
             // Save email to localStorage
             localStorage.setItem('stayhustler_email', email);
 
-            // Handle Stripe Checkout separately
+            // Check if this is a free request (100% discount)
+            const isFreeRequest = activeCoupon && activeCoupon.final_cents === 0;
+
+            if (isFreeRequest) {
+                // Free request flow - skip payment entirely
+                payBtn.textContent = 'Processing...';
+                payBtn.disabled = true;
+
+                // Handle one-time vs unlimited free coupons
+                if (activeCoupon.code === 'TRYITFREE') {
+                    // TRYITFREE is one-time use - mark as used
+                    markTryItFreeUsed();
+                    trackFreeRequestUsed('TRYITFREE');
+                } else if (activeCoupon.code === 'ADMINFREE100') {
+                    // ADMINFREE100 is unlimited - just track analytics
+                    trackFreeRequestUsed('ADMINFREE100');
+                }
+
+                // Save order as free request
+                localStorage.setItem('stayhustler_paid', 'true');
+                const order = {
+                    price: 0,
+                    currency: 'USD',
+                    ts: Date.now(),
+                    method: 'free',
+                    coupon: activeCoupon.code,
+                    is_free_request: true
+                };
+                localStorage.setItem('stayhustler_order', JSON.stringify(order));
+
+                // Clear the coupon from storage after use
+                localStorage.removeItem('stayhustler_coupon');
+
+                // Navigate to results
+                window.location.href = 'results.html';
+                return;
+            }
+
+            // Handle Stripe Checkout for paid requests
             if (selectedMethod === 'stripe') {
                 payBtn.textContent = 'Redirecting to Stripe...';
                 payBtn.disabled = true;

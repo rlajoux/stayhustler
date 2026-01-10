@@ -1826,8 +1826,10 @@ You received this because you purchased insider guidance at stayhustler.com.
 // COUPON DEFINITIONS (server-side source of truth)
 // ============================================================
 const COUPONS = {
-    'UPGRADE10': { type: 'percent', value: 10 },  // 10% off
-    'WELCOME5': { type: 'fixed', value: 500 }     // $5 off (in cents)
+    'UPGRADE10': { type: 'percent', value: 10 },   // 10% off
+    'WELCOME5': { type: 'fixed', value: 500 },     // $5 off (in cents)
+    'TRYITFREE': { type: 'percent', value: 100 },  // 100% off (free trial, one-time)
+    'ADMINFREE100': { type: 'percent', value: 100 } // 100% off (unlimited admin use)
 };
 
 const BASE_PRICE_CENTS = 700; // $7.00
