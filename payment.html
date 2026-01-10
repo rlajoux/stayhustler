@@ -213,7 +213,176 @@
             color: var(--color-accent);
             flex-shrink: 0;
         }
-        
+
+        /* Price Display */
+        .price-breakdown {
+            margin-bottom: var(--space-md);
+        }
+
+        .price-original {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            color: var(--color-text-muted);
+            text-decoration: line-through;
+            margin-bottom: 0.25rem;
+        }
+
+        .price-original.hidden {
+            display: none;
+        }
+
+        .price-discount {
+            font-size: 0.9rem;
+            color: #2a7d4f;
+            margin-bottom: 0.25rem;
+        }
+
+        .price-discount.hidden {
+            display: none;
+        }
+
+        .price-final {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            color: var(--color-text);
+        }
+
+        /* Coupon Section */
+        .coupon-section {
+            border-top: 1px solid var(--color-border);
+            padding-top: var(--space-md);
+            margin-top: var(--space-sm);
+        }
+
+        .coupon-toggle {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            transition: color var(--transition);
+        }
+
+        .coupon-toggle:hover {
+            color: var(--color-text);
+        }
+
+        .coupon-form {
+            display: none;
+            margin-top: var(--space-sm);
+        }
+
+        .coupon-form.visible {
+            display: block;
+        }
+
+        .coupon-input-row {
+            display: flex;
+            gap: var(--space-xs);
+        }
+
+        .coupon-input {
+            flex: 1;
+            padding: 0.5rem 0.75rem;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: var(--color-text);
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            transition: border-color var(--transition);
+        }
+
+        .coupon-input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+
+        .coupon-input::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        .coupon-btn {
+            padding: 0.5rem 1rem;
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--color-text);
+            background: var(--color-bg-warm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+            white-space: nowrap;
+        }
+
+        .coupon-btn:hover:not(:disabled) {
+            background: var(--color-border);
+        }
+
+        .coupon-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .coupon-feedback {
+            font-size: 0.8rem;
+            margin-top: var(--space-xs);
+            min-height: 1.2em;
+        }
+
+        .coupon-feedback.error {
+            color: var(--color-error);
+        }
+
+        .coupon-feedback.success {
+            color: #2a7d4f;
+        }
+
+        .coupon-applied {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-xs) var(--space-sm);
+            background: rgba(42, 125, 79, 0.08);
+            border-radius: var(--radius);
+            margin-top: var(--space-sm);
+        }
+
+        .coupon-applied.visible {
+            display: flex;
+        }
+
+        .coupon-applied-text {
+            font-size: 0.85rem;
+            color: #2a7d4f;
+        }
+
+        .coupon-remove {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .coupon-remove:hover {
+            color: var(--color-error);
+        }
+
+        @media (max-width: 400px) {
+            .coupon-input-row {
+                flex-direction: column;
+            }
+
+            .coupon-btn {
+                width: 100%;
+            }
+        }
+
         /* Payment Section */
         .payment-section {
             background: var(--color-white);
@@ -619,7 +788,11 @@
 
                 <aside class="order-summary">
                     <p class="order-title">Per stay</p>
-                    <p class="order-price">$7</p>
+                    <div class="price-breakdown">
+                        <p class="price-original hidden" id="price-original">$7</p>
+                        <p class="price-discount hidden" id="price-discount"></p>
+                        <p class="price-final" id="price-final">$7</p>
+                    </div>
                     <ul class="order-list">
                         <li>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -640,6 +813,21 @@
                             Includes: request + timing + fallback script
                         </li>
                     </ul>
+
+                    <div class="coupon-section">
+                        <button type="button" class="coupon-toggle" id="coupon-toggle">Have a promo code?</button>
+                        <div class="coupon-form" id="coupon-form">
+                            <div class="coupon-input-row">
+                                <input type="text" class="coupon-input" id="coupon-input" placeholder="Enter code" autocomplete="off">
+                                <button type="button" class="coupon-btn" id="coupon-apply-btn">Apply</button>
+                            </div>
+                            <p class="coupon-feedback" id="coupon-feedback"></p>
+                        </div>
+                        <div class="coupon-applied" id="coupon-applied">
+                            <span class="coupon-applied-text" id="coupon-applied-text"></span>
+                            <button type="button" class="coupon-remove" id="coupon-remove">Remove</button>
+                        </div>
+                    </div>
                 </aside>
             </div>
 
@@ -658,8 +846,190 @@
         const paymentInputs = document.querySelectorAll('input[name="payment-method"]');
         const emailInput = document.getElementById('email-input');
 
+        // Coupon elements
+        const couponToggle = document.getElementById('coupon-toggle');
+        const couponForm = document.getElementById('coupon-form');
+        const couponInput = document.getElementById('coupon-input');
+        const couponApplyBtn = document.getElementById('coupon-apply-btn');
+        const couponFeedback = document.getElementById('coupon-feedback');
+        const couponApplied = document.getElementById('coupon-applied');
+        const couponAppliedText = document.getElementById('coupon-applied-text');
+        const couponRemove = document.getElementById('coupon-remove');
+        const priceOriginal = document.getElementById('price-original');
+        const priceDiscount = document.getElementById('price-discount');
+        const priceFinal = document.getElementById('price-final');
+
+        // Price constants
+        const BASE_PRICE_CENTS = 700;
+        const API_BASE = 'https://stayhustler-production.up.railway.app';
+
         // Stripe is pre-selected, so set it as default
         let selectedMethod = 'stripe';
+        let activeCoupon = null;
+
+        // Format cents to USD string
+        function formatPrice(cents) {
+            return '$' + (cents / 100).toFixed(cents % 100 === 0 ? 0 : 2);
+        }
+
+        // Update price display based on active coupon
+        function updatePriceDisplay() {
+            if (activeCoupon) {
+                priceOriginal.textContent = formatPrice(BASE_PRICE_CENTS);
+                priceOriginal.classList.remove('hidden');
+
+                const discountText = activeCoupon.type === 'percent'
+                    ? `Promo (${activeCoupon.code}): −${activeCoupon.value}%`
+                    : `Promo (${activeCoupon.code}): −${formatPrice(activeCoupon.discount_cents)}`;
+                priceDiscount.textContent = discountText;
+                priceDiscount.classList.remove('hidden');
+
+                priceFinal.textContent = formatPrice(activeCoupon.final_cents);
+
+                // Show applied state, hide form
+                couponAppliedText.textContent = `${activeCoupon.code} applied`;
+                couponApplied.classList.add('visible');
+                couponForm.classList.remove('visible');
+                couponToggle.style.display = 'none';
+            } else {
+                priceOriginal.classList.add('hidden');
+                priceDiscount.classList.add('hidden');
+                priceFinal.textContent = formatPrice(BASE_PRICE_CENTS);
+
+                // Show toggle, hide applied state
+                couponApplied.classList.remove('visible');
+                couponToggle.style.display = '';
+            }
+        }
+
+        // Save coupon to localStorage
+        function saveCoupon() {
+            if (activeCoupon) {
+                localStorage.setItem('stayhustler_coupon', JSON.stringify(activeCoupon));
+            } else {
+                localStorage.removeItem('stayhustler_coupon');
+            }
+        }
+
+        // Load coupon from localStorage
+        function loadCoupon() {
+            try {
+                const saved = localStorage.getItem('stayhustler_coupon');
+                if (saved) {
+                    activeCoupon = JSON.parse(saved);
+                    updatePriceDisplay();
+                }
+            } catch (e) {
+                localStorage.removeItem('stayhustler_coupon');
+            }
+        }
+
+        // Apply coupon via API
+        async function applyCoupon(code) {
+            const trimmed = code.trim();
+            if (!trimmed) {
+                showCouponFeedback('Enter a code', 'error');
+                return;
+            }
+
+            couponApplyBtn.disabled = true;
+            couponApplyBtn.textContent = '...';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/validate-coupon`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: trimmed })
+                });
+
+                const data = await response.json();
+
+                if (data.valid) {
+                    activeCoupon = {
+                        code: data.code,
+                        type: data.type,
+                        value: data.value,
+                        discount_cents: data.discount_cents,
+                        final_cents: data.final_cents
+                    };
+                    saveCoupon();
+                    updatePriceDisplay();
+                    showCouponFeedback('', '');
+                    couponInput.value = '';
+
+                    // Track analytics
+                    trackCouponApplied();
+                } else {
+                    showCouponFeedback('Invalid code', 'error');
+                }
+            } catch (error) {
+                showCouponFeedback('Could not verify code', 'error');
+            } finally {
+                couponApplyBtn.disabled = false;
+                couponApplyBtn.textContent = 'Apply';
+            }
+        }
+
+        // Remove coupon
+        function removeCoupon() {
+            activeCoupon = null;
+            saveCoupon();
+            updatePriceDisplay();
+            couponForm.classList.remove('visible');
+        }
+
+        // Show feedback message
+        function showCouponFeedback(message, type) {
+            couponFeedback.textContent = message;
+            couponFeedback.className = 'coupon-feedback';
+            if (type) {
+                couponFeedback.classList.add(type);
+            }
+        }
+
+        // Track coupon applied event
+        function trackCouponApplied() {
+            const eventData = {
+                code: activeCoupon.code,
+                discount_type: activeCoupon.type,
+                discount_value: activeCoupon.value,
+                final_price: activeCoupon.final_cents / 100
+            };
+
+            // GA4 event
+            if (typeof gtag === 'function') {
+                gtag('event', 'coupon_applied', eventData);
+            } else {
+                console.log('[Analytics] coupon_applied', eventData);
+            }
+        }
+
+        // Coupon toggle
+        couponToggle.addEventListener('click', () => {
+            couponForm.classList.toggle('visible');
+            if (couponForm.classList.contains('visible')) {
+                couponInput.focus();
+            }
+        });
+
+        // Apply button
+        couponApplyBtn.addEventListener('click', () => {
+            applyCoupon(couponInput.value);
+        });
+
+        // Enter key in input
+        couponInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                applyCoupon(couponInput.value);
+            }
+        });
+
+        // Remove coupon
+        couponRemove.addEventListener('click', removeCoupon);
+
+        // Load saved coupon on page load
+        loadCoupon();
 
         // Pre-fill email if already saved
         const savedEmail = localStorage.getItem('stayhustler_email');
@@ -703,62 +1073,71 @@
 
             // Save email to localStorage
             localStorage.setItem('stayhustler_email', email);
-            
+
             // Handle Stripe Checkout separately
             if (selectedMethod === 'stripe') {
                 payBtn.textContent = 'Redirecting to Stripe...';
                 payBtn.disabled = true;
-                
+
                 try {
-                    const response = await fetch('https://stayhustler-production.up.railway.app/api/stripe/test', {
+                    // Include coupon code if applied
+                    const requestBody = {};
+                    if (activeCoupon) {
+                        requestBody.coupon_code = activeCoupon.code;
+                    }
+
+                    const response = await fetch(`${API_BASE}/api/stripe/test`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestBody)
                     });
-                    
+
                     const data = await response.json();
-                    
+
                     if (data.ok && data.checkout_url) {
                         // Save that we initiated Stripe payment
                         localStorage.setItem('stayhustler_stripe_initiated', 'true');
                         localStorage.setItem('stayhustler_payment_method', 'stripe');
-                        
+
                         // Redirect to Stripe Checkout
                         window.location.href = data.checkout_url;
                         return; // Don't continue to results page
                     } else {
-                        console.error('[Payment] Stripe error:', data);
                         alert('Failed to create Stripe checkout session. Please try another payment method.');
                         payBtn.textContent = 'Pay & unlock';
                         payBtn.disabled = false;
                         return;
                     }
                 } catch (error) {
-                    console.error('[Payment] Stripe exception:', error);
                     alert('Failed to connect to payment processor. Please try again.');
                     payBtn.textContent = 'Pay & unlock';
                     payBtn.disabled = false;
                     return;
                 }
             }
-            
+
+            // Calculate final price for non-Stripe methods
+            const finalPriceCents = activeCoupon ? activeCoupon.final_cents : BASE_PRICE_CENTS;
+
             // Simulate successful payment (for non-Stripe methods)
             localStorage.setItem('stayhustler_paid', 'true');
             const order = {
-                price: 7,
+                price: finalPriceCents / 100,
                 currency: 'USD',
                 ts: Date.now(),
-                method: selectedMethod
+                method: selectedMethod,
+                coupon: activeCoupon ? activeCoupon.code : null
             };
             localStorage.setItem('stayhustler_order', JSON.stringify(order));
-            
+
             // Try to deliver via email (non-blocking)
             if (email) {
                 try {
                     const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
                     const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
-                    
+
                     // POST to delivery endpoint (don't block navigation on failure)
-                    fetch('https://stayhustler-production.up.railway.app/api/deliver-request', {
+                    fetch(`${API_BASE}/api/deliver-request`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email, booking, context, order })
@@ -772,7 +1151,7 @@
                     // Silent fail - will show on results page
                 }
             }
-            
+
             // Navigate to results immediately (don't wait for email)
             window.location.href = 'results.html';
         });

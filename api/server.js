@@ -1823,7 +1823,42 @@ You received this because you purchased insider guidance at stayhustler.com.
 // ============================================================
 // STRIPE TEST ENDPOINT
 // ============================================================
-// Creates a test Checkout Session for $7.00 USD
+// COUPON DEFINITIONS (server-side source of truth)
+// ============================================================
+const COUPONS = {
+    'UPGRADE10': { type: 'percent', value: 10 },  // 10% off
+    'WELCOME5': { type: 'fixed', value: 500 }     // $5 off (in cents)
+};
+
+const BASE_PRICE_CENTS = 700; // $7.00
+
+// Validate and calculate discount for a coupon code
+function validateCoupon(code) {
+    if (!code) return null;
+    const normalized = code.toUpperCase().trim();
+    const coupon = COUPONS[normalized];
+    if (!coupon) return null;
+
+    let discountCents = 0;
+    if (coupon.type === 'percent') {
+        discountCents = Math.round(BASE_PRICE_CENTS * (coupon.value / 100));
+    } else if (coupon.type === 'fixed') {
+        discountCents = coupon.value;
+    }
+
+    const finalCents = Math.max(0, BASE_PRICE_CENTS - discountCents);
+
+    return {
+        code: normalized,
+        type: coupon.type,
+        value: coupon.value,
+        discount_cents: discountCents,
+        final_cents: finalCents
+    };
+}
+
+// ============================================================
+// Creates a Checkout Session with optional coupon support
 // Returns checkout_url for redirect
 // ============================================================
 
@@ -1832,13 +1867,36 @@ app.post('/api/stripe/test', async (req, res) => {
         // Check if Stripe is initialized
         if (!stripe) {
             console.error('[Stripe] STRIPE_SECRET_KEY not configured');
-            return res.status(500).json({ 
+            return res.status(500).json({
                 error: 'Missing STRIPE_SECRET_KEY',
                 message: 'Stripe is not configured on the server'
             });
         }
 
-        console.log('[Stripe] Creating test Checkout Session');
+        // Extract coupon code from request body
+        const { coupon_code } = req.body || {};
+
+        // Validate coupon and calculate final amount
+        let finalAmountCents = BASE_PRICE_CENTS;
+        let appliedCoupon = null;
+
+        if (coupon_code) {
+            appliedCoupon = validateCoupon(coupon_code);
+            if (appliedCoupon) {
+                finalAmountCents = appliedCoupon.final_cents;
+                console.log(`[Stripe] Coupon ${appliedCoupon.code} applied: $${(appliedCoupon.discount_cents / 100).toFixed(2)} off`);
+            } else {
+                console.log(`[Stripe] Invalid coupon code: ${coupon_code}`);
+            }
+        }
+
+        console.log(`[Stripe] Creating Checkout Session for $${(finalAmountCents / 100).toFixed(2)}`);
+
+        // Build product name with coupon info
+        let productName = 'StayHustler Upgrade Request';
+        if (appliedCoupon) {
+            productName += ` (${appliedCoupon.code} applied)`;
+        }
 
         // Create Checkout Session
         const session = await stripe.checkout.sessions.create({
@@ -1848,9 +1906,9 @@ app.post('/api/stripe/test', async (req, res) => {
                     price_data: {
                         currency: 'usd',
                         product_data: {
-                            name: 'StayHustler Upgrade Request',
+                            name: productName,
                         },
-                        unit_amount: 700, // $7.00 in cents
+                        unit_amount: finalAmountCents,
                     },
                     quantity: 1,
                 },
@@ -1861,20 +1919,51 @@ app.post('/api/stripe/test', async (req, res) => {
 
         console.log('[Stripe] Checkout Session created:', session.id);
 
-        return res.json({ 
-            ok: true, 
-            checkout_url: session.url 
+        return res.json({
+            ok: true,
+            checkout_url: session.url,
+            applied_coupon: appliedCoupon
         });
 
     } catch (error) {
         console.error('[Stripe] Error creating Checkout Session:', error.message);
-        
+
         // Don't expose Stripe error details to client
-        return res.status(502).json({ 
+        return res.status(502).json({
             error: 'Stripe test failed',
             message: 'Unable to create checkout session'
         });
     }
+});
+
+// ============================================================
+// COUPON VALIDATION ENDPOINT
+// ============================================================
+// Validates a coupon code and returns discount info
+// ============================================================
+
+app.post('/api/validate-coupon', (req, res) => {
+    const { code } = req.body || {};
+
+    if (!code) {
+        return res.json({ valid: false, error: 'No code provided' });
+    }
+
+    const result = validateCoupon(code);
+
+    if (!result) {
+        return res.json({ valid: false, error: 'Invalid code' });
+    }
+
+    return res.json({
+        valid: true,
+        code: result.code,
+        type: result.type,
+        value: result.value,
+        discount_cents: result.discount_cents,
+        final_cents: result.final_cents,
+        base_cents: BASE_PRICE_CENTS
+    });
 });
 
 // ============================================================
