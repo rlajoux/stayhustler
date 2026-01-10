@@ -2262,7 +2262,7 @@ app.post('/api/grant-free-access', async (req, res) => {
 
     return res.json({
         ok: true,
-        redirect_url: '/results'
+        redirect_url: `${API_BASE_URL}/results`
     });
 });
 
