@@ -1210,10 +1210,11 @@
                 // Clear the coupon from storage after use
                 localStorage.removeItem('stayhustler_coupon');
 
-                // Trigger email delivery (fire and forget)
+                // Get booking and context data
                 const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
                 const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
 
+                // Trigger email delivery (fire and forget)
                 fetch(`${API_BASE}/api/deliver-request`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1225,9 +1226,12 @@
                     }
                 }).catch(() => {});
 
+                // Encode booking and context data for cross-domain transfer
+                const dataPayload = btoa(JSON.stringify({ booking, context, order }));
+
                 // Redirect to API server to set cookie (avoids third-party cookie issues)
                 // The server will validate the coupon, set the cookie, and redirect to /results
-                const redirectUrl = `${API_BASE}/free-access?code=${encodeURIComponent(activeCoupon.code)}&email=${encodeURIComponent(email)}`;
+                const redirectUrl = `${API_BASE}/free-access?code=${encodeURIComponent(activeCoupon.code)}&email=${encodeURIComponent(email)}&data=${encodeURIComponent(dataPayload)}`;
                 window.location.href = redirectUrl;
                 return;
             }

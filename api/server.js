@@ -2269,7 +2269,7 @@ app.post('/api/grant-free-access', async (req, res) => {
 
 // GET endpoint for free access - browser redirect (avoids third-party cookie issues)
 app.get('/free-access', (req, res) => {
-    const { code, email } = req.query;
+    const { code, email, data } = req.query;
 
     console.log('[Free Access GET] Request with coupon:', code);
 
@@ -2294,8 +2294,9 @@ app.get('/free-access', (req, res) => {
 
     console.log('[Free Access GET] Granted, redirecting to results');
 
-    // Redirect to results page (same domain, cookie will be sent)
-    return res.redirect('/results');
+    // Redirect to results page with data payload (for cross-domain localStorage transfer)
+    const redirectUrl = data ? `/results?data=${encodeURIComponent(data)}` : '/results';
+    return res.redirect(redirectUrl);
 });
 
 // ============================================================

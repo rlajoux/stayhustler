@@ -932,6 +932,22 @@ Warm regards,
         // No client-side access check needed - server already verified.
         // ============================================================
 
+        // Check for data in URL params (cross-domain transfer from stayhustler.com)
+        const urlParams = new URLSearchParams(window.location.search);
+        const dataParam = urlParams.get('data');
+        if (dataParam) {
+            try {
+                const decoded = JSON.parse(atob(dataParam));
+                if (decoded.booking) localStorage.setItem('stayhustler_booking', JSON.stringify(decoded.booking));
+                if (decoded.context) localStorage.setItem('stayhustler_context', JSON.stringify(decoded.context));
+                if (decoded.order) localStorage.setItem('stayhustler_order', JSON.stringify(decoded.order));
+                // Clean URL after storing data
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } catch (e) {
+                console.error('Failed to parse data from URL:', e);
+            }
+        }
+
         // Read stored data from localStorage (for content personalization)
         let contextData = {};
         let bookingData = {};
