@@ -1,8 +1,11 @@
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 const crypto = require('crypto');
 const Stripe = require('stripe');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -193,10 +196,75 @@ app.use(cors({
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
     exposedHeaders: ['X-Request-Id', 'X-Generation-Source', 'Retry-After'],
-    credentials: false
+    credentials: true // Enable cookies for access control
 }));
 
 app.use(express.json());
+app.use(cookieParser());
+
+// ============================================================
+// RESULTS ACCESS CONTROL (JWT-BASED)
+// ============================================================
+// Uses HttpOnly, Secure, SameSite=Lax cookies with JWT to verify
+// that a user has completed Stripe Checkout before viewing results.
+// ============================================================
+
+const RESULTS_COOKIE_SECRET = process.env.RESULTS_COOKIE_SECRET || 'change-me-in-production';
+const RESULTS_COOKIE_NAME = 'sh_access';
+const RESULTS_COOKIE_MAX_AGE_MS = 60 * 60 * 1000; // 60 minutes
+const isProd = process.env.NODE_ENV === 'production';
+const BASE_URL = process.env.PUBLIC_BASE_URL || 'https://stayhustler.com';
+// API_BASE_URL is where the API server is hosted (for Stripe redirects)
+// In production on Railway, this should be set to the Railway URL
+const API_BASE_URL = process.env.API_BASE_URL || (process.env.RAILWAY_PUBLIC_DOMAIN
+    ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+    : 'https://stayhustler-production.up.railway.app');
+
+// Middleware: Verify sh_access cookie contains valid JWT
+function requireAccess(req, res, next) {
+    const token = req.cookies[RESULTS_COOKIE_NAME];
+
+    if (!token) {
+        console.log('[Access] No access cookie found, redirecting to pricing');
+        return res.redirect('/?error=unauthorized');
+    }
+
+    try {
+        const decoded = jwt.verify(token, RESULTS_COOKIE_SECRET);
+        // Token is valid, attach session info to request
+        req.paidSession = decoded;
+        next();
+    } catch (err) {
+        console.log('[Access] Invalid or expired token:', err.message);
+        // Clear the invalid cookie
+        res.clearCookie(RESULTS_COOKIE_NAME, { path: '/' });
+        return res.redirect('/?error=session_expired');
+    }
+}
+
+// Helper: Create signed JWT for results access
+function createAccessToken(stripeSessionId, email = null) {
+    const payload = {
+        sid: stripeSessionId,
+        email: email,
+        iat: Math.floor(Date.now() / 1000)
+    };
+
+    return jwt.sign(payload, RESULTS_COOKIE_SECRET, {
+        expiresIn: '60m' // 60 minutes
+    });
+}
+
+// Helper: Set the access cookie
+function setAccessCookie(res, token) {
+    res.cookie(RESULTS_COOKIE_NAME, token, {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: 'lax',
+        maxAge: RESULTS_COOKIE_MAX_AGE_MS,
+        path: '/'
+    });
+}
 
 // ============================================================
 // RATE LIMITING
@@ -1915,8 +1983,8 @@ app.post('/api/stripe/test', async (req, res) => {
                     quantity: 1,
                 },
             ],
-            success_url: `${process.env.PUBLIC_BASE_URL || 'https://stayhustler.com'}/stripe-success.html`,
-            cancel_url: `${process.env.PUBLIC_BASE_URL || 'https://stayhustler.com'}/stripe-cancel.html`,
+            success_url: `${API_BASE_URL}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${BASE_URL}/payment.html`,
         });
 
         console.log('[Stripe] Checkout Session created:', session.id);
@@ -1966,6 +2034,156 @@ app.post('/api/validate-coupon', (req, res) => {
         final_cents: result.final_cents,
         base_cents: BASE_PRICE_CENTS
     });
+});
+
+// ============================================================
+// POST-CHECKOUT: VERIFY STRIPE PAYMENT & SET ACCESS COOKIE
+// ============================================================
+// After Stripe redirects back, verify the session is paid,
+// set an HttpOnly cookie with JWT, then redirect to /results.
+// ============================================================
+
+app.get('/post-checkout', async (req, res) => {
+    const { session_id } = req.query;
+
+    console.log('[Post-Checkout] Processing session:', session_id);
+
+    // Validate session_id is present
+    if (!session_id) {
+        console.error('[Post-Checkout] No session_id provided');
+        return res.redirect('/?error=missing_session');
+    }
+
+    // Check Stripe is configured
+    if (!stripe) {
+        console.error('[Post-Checkout] Stripe not configured');
+        return res.redirect('/?error=payment_not_configured');
+    }
+
+    try {
+        // Retrieve the Checkout Session from Stripe
+        const session = await stripe.checkout.sessions.retrieve(session_id);
+
+        console.log('[Post-Checkout] Session status:', session.payment_status);
+
+        // Verify payment was successful
+        if (session.payment_status !== 'paid') {
+            console.error('[Post-Checkout] Payment not completed:', session.payment_status);
+            return res.redirect('/payment.html?error=payment_not_completed');
+        }
+
+        // Payment verified - create access token
+        const email = session.customer_details?.email || null;
+        const token = createAccessToken(session_id, email);
+
+        // Set the access cookie
+        setAccessCookie(res, token);
+
+        console.log('[Post-Checkout] Access granted, redirecting to results');
+
+        // Redirect to results page
+        return res.redirect('/results');
+
+    } catch (err) {
+        console.error('[Post-Checkout] Stripe error:', err.message);
+
+        // Handle specific Stripe errors
+        if (err.type === 'StripeInvalidRequestError') {
+            return res.redirect('/?error=invalid_session');
+        }
+
+        return res.redirect('/?error=verification_failed');
+    }
+});
+
+// ============================================================
+// FREE ACCESS GRANT (FOR FREE COUPONS)
+// ============================================================
+// When a 100% discount coupon is applied, skip Stripe and grant access directly.
+// This is called by the frontend when final_cents === 0.
+// ============================================================
+
+app.post('/api/grant-free-access', async (req, res) => {
+    const { coupon_code, email } = req.body || {};
+
+    console.log('[Free Access] Request with coupon:', coupon_code);
+
+    // Validate the coupon gives 100% off
+    const result = validateCoupon(coupon_code);
+
+    if (!result || result.final_cents !== 0) {
+        console.error('[Free Access] Invalid or non-free coupon:', coupon_code);
+        return res.status(400).json({
+            error: 'Invalid coupon',
+            message: 'This coupon does not qualify for free access'
+        });
+    }
+
+    // Create a pseudo-session ID for free access
+    const freeSessionId = `free_${coupon_code}_${Date.now()}`;
+    const token = createAccessToken(freeSessionId, email || null);
+
+    // Set the access cookie
+    setAccessCookie(res, token);
+
+    console.log('[Free Access] Granted for coupon:', coupon_code);
+
+    return res.json({
+        ok: true,
+        redirect_url: '/results'
+    });
+});
+
+// ============================================================
+// RESULTS PAGE (PROTECTED)
+// ============================================================
+// Serves the results page. Requires valid sh_access cookie.
+// Returns HTML that fetches actual content from /api/results.
+// ============================================================
+
+app.get('/results', requireAccess, (req, res) => {
+    console.log('[Results] Serving results page for session:', req.paidSession.sid);
+
+    // Send the results shell page
+    // The shell will call /api/results to get the actual content
+    res.sendFile(path.join(__dirname, '../results-shell.html'));
+});
+
+// ============================================================
+// API RESULTS (PROTECTED)
+// ============================================================
+// Returns the results data as JSON. Requires valid sh_access cookie.
+// Frontend fetches this to populate the results page.
+// ============================================================
+
+app.get('/api/results', requireAccess, (req, res) => {
+    console.log('[API Results] Serving results data for session:', req.paidSession.sid);
+
+    // Return confirmation that access is valid
+    // The actual content is rendered client-side using localStorage data
+    // (This could be enhanced to store/retrieve data server-side in the future)
+    return res.json({
+        ok: true,
+        access_granted: true,
+        session_id: req.paidSession.sid,
+        email: req.paidSession.email,
+        expires_at: new Date(req.paidSession.exp * 1000).toISOString(),
+        // TODO: In a future enhancement, store the generated request server-side
+        // and return it here instead of relying on localStorage
+        message: 'Access verified. Content loaded from localStorage.'
+    });
+});
+
+// ============================================================
+// BLOCK DIRECT ACCESS TO results.html
+// ============================================================
+// Redirect any direct access to /results.html to the protected /results route.
+// This ensures users can't bypass the access control.
+// ============================================================
+
+app.get('/results.html', (req, res) => {
+    console.log('[Access] Blocked direct access to results.html, redirecting');
+    return res.redirect('/results');
 });
 
 // ============================================================

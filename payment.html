@@ -1180,7 +1180,7 @@
             const isFreeRequest = activeCoupon && activeCoupon.final_cents === 0;
 
             if (isFreeRequest) {
-                // Free request flow - skip payment entirely
+                // Free request flow - get server-side access token
                 payBtn.textContent = 'Processing...';
                 payBtn.disabled = true;
 
@@ -1194,8 +1194,7 @@
                     trackFreeRequestUsed('ADMINFREE100');
                 }
 
-                // Save order as free request
-                localStorage.setItem('stayhustler_paid', 'true');
+                // Save order as free request (for localStorage-based content)
                 const order = {
                     price: 0,
                     currency: 'USD',
@@ -1209,25 +1208,45 @@
                 // Clear the coupon from storage after use
                 localStorage.removeItem('stayhustler_coupon');
 
-                // Deliver email (same as paid flow)
                 try {
-                    const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
-                    const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
-
-                    fetch(`${API_BASE}/api/deliver-request`, {
+                    // Request server-side access token for free coupon
+                    const response = await fetch(`${API_BASE}/api/grant-free-access`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, booking, context, order })
-                    }).then(response => response.json())
-                      .then(data => {
-                        if (data.ok && data.delivery_id) {
-                            localStorage.setItem('stayhustler_delivery_id', data.delivery_id);
-                        }
-                    }).catch(() => {});
-                } catch (err) {}
+                        credentials: 'include', // Important: include cookies
+                        body: JSON.stringify({ coupon_code: activeCoupon.code, email })
+                    });
 
-                // Navigate to results
-                window.location.href = 'results.html';
+                    const data = await response.json();
+
+                    if (data.ok && data.redirect_url) {
+                        // Deliver email (same as paid flow)
+                        const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
+                        const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
+
+                        fetch(`${API_BASE}/api/deliver-request`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email, booking, context, order })
+                        }).then(response => response.json())
+                          .then(data => {
+                            if (data.ok && data.delivery_id) {
+                                localStorage.setItem('stayhustler_delivery_id', data.delivery_id);
+                            }
+                        }).catch(() => {});
+
+                        // Navigate to results (server will verify cookie)
+                        window.location.href = data.redirect_url;
+                    } else {
+                        alert('Failed to process free request. Please try again.');
+                        payBtn.textContent = 'Get my request';
+                        payBtn.disabled = false;
+                    }
+                } catch (err) {
+                    alert('Failed to process request. Please try again.');
+                    payBtn.textContent = 'Get my request';
+                    payBtn.disabled = false;
+                }
                 return;
             }
 
