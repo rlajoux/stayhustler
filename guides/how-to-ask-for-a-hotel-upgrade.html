@@ -333,6 +333,63 @@
                 padding: 0 var(--space-sm);
             }
         }
+
+        /* Guide CTA */
+        .guide-cta {
+            margin-top: var(--space-xl);
+            padding: var(--space-lg);
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        .guide-cta-headline {
+            font-family: var(--font-serif);
+            font-size: 1.35rem;
+            font-weight: 400;
+            color: var(--color-text);
+            margin: 0 0 var(--space-xs);
+        }
+
+        .guide-cta-body {
+            font-size: 0.95rem;
+            color: var(--color-text-muted);
+            margin: 0 0 var(--space-md);
+            line-height: 1.6;
+        }
+
+        .guide-cta-btn {
+            display: inline-block;
+            padding: 0.875rem 1.75rem;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--color-white);
+            background: var(--color-text);
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            text-decoration: none;
+            transition: background var(--transition), transform var(--transition);
+        }
+
+        .guide-cta-btn:hover {
+            background: #1a1816;
+            transform: translateY(-1px);
+            color: var(--color-white);
+        }
+
+        @media (max-width: 480px) {
+            .guide-cta {
+                padding: var(--space-md);
+            }
+
+            .guide-cta-btn {
+                display: block;
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -579,7 +636,14 @@
 <p>Tools like StayHustler help travelers phrase requests the way hotels actually expect—not by gaming the system, but by using the operational language that makes requests easier to process and more likely to succeed.</p>
 
 <p>The goal isn't to manipulate or outsmart hotels. It's to communicate clearly, respectfully, and operationally—so that when flexibility exists, you're positioned to benefit from it.</p>
-            
+
+            <!-- Guide CTA -->
+            <div class="guide-cta">
+                <h3 class="guide-cta-headline">Checking into a hotel soon?</h3>
+                <p class="guide-cta-body">StayHustler helps you ask the right way before check-in — based on your stay.</p>
+                <a href="../booking.html" class="guide-cta-btn">Generate my request</a>
+            </div>
+
             <section class="related-guides">
                 <h2>Related Guides</h2>
                 <div class="related-grid">

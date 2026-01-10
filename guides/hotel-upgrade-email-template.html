@@ -350,6 +350,63 @@
                 padding: 0 var(--space-sm);
             }
         }
+
+        /* Guide CTA */
+        .guide-cta {
+            margin-top: var(--space-xl);
+            padding: var(--space-lg);
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        .guide-cta-headline {
+            font-family: var(--font-serif);
+            font-size: 1.35rem;
+            font-weight: 400;
+            color: var(--color-text);
+            margin: 0 0 var(--space-xs);
+        }
+
+        .guide-cta-body {
+            font-size: 0.95rem;
+            color: var(--color-text-muted);
+            margin: 0 0 var(--space-md);
+            line-height: 1.6;
+        }
+
+        .guide-cta-btn {
+            display: inline-block;
+            padding: 0.875rem 1.75rem;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--color-white);
+            background: var(--color-text);
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            text-decoration: none;
+            transition: background var(--transition), transform var(--transition);
+        }
+
+        .guide-cta-btn:hover {
+            background: #1a1816;
+            transform: translateY(-1px);
+            color: var(--color-white);
+        }
+
+        @media (max-width: 480px) {
+            .guide-cta {
+                padding: var(--space-md);
+            }
+
+            .guide-cta-btn {
+                display: block;
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -536,7 +593,14 @@
             <p>That means timing it well (24–36 hours before arrival), phrasing it flexibly (open to any higher-category room), acknowledging constraints (availability and demand come first), and making it low-pressure (happy with existing booking if not possible).</p>
             
             <p>Get those four elements right, and you've created the best possible conditions for an upgrade—without sounding entitled, pushy, or naive about how hotels actually work.</p>
-            
+
+            <!-- Guide CTA -->
+            <div class="guide-cta">
+                <h3 class="guide-cta-headline">Checking into a hotel soon?</h3>
+                <p class="guide-cta-body">StayHustler helps you ask the right way before check-in — based on your stay.</p>
+                <a href="../booking.html" class="guide-cta-btn">Generate my request</a>
+            </div>
+
             <section class="related-guides">
                 <h2>Related Guides</h2>
                 <div class="related-grid">
