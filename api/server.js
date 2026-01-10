@@ -2053,6 +2053,179 @@ function validateCoupon(code) {
 }
 
 // ============================================================
+// DESK-ASK COPY GENERATION (Gemini-powered)
+// ============================================================
+// Generates the "If you ask at the desk" content block
+// Uses a dedicated prompt with strict JSON schema
+// ============================================================
+
+// Hardcoded fallback for desk-ask content (used if Gemini fails)
+const DESK_ASK_FALLBACK = {
+    title: "If you ask at the desk",
+    sections: [
+        {
+            heading: "When to ask",
+            bullets: [
+                "Ask during check-in, before handing over your ID or credit card",
+                "Mid-afternoon arrivals often have better availability",
+                "Avoid asking when the lobby is busy or staff seem rushed"
+            ]
+        },
+        {
+            heading: "How to reference the email",
+            bullets: [
+                "Mention you sent an email ahead of time, but don't push",
+                "Say something like: 'I reached out earlier about availability'",
+                "If they haven't seen it, move on gracefully"
+            ]
+        },
+        {
+            heading: "What to say",
+            bullets: [
+                "Ask if any upgraded rooms happen to be available tonight",
+                "Express flexibility: 'I'm happy with whatever works best'",
+                "Thank them regardless of the outcome"
+            ]
+        }
+    ],
+    script: {
+        intro: "Here's a natural way to ask at check-in:",
+        line1: "Hi, I sent an email earlier about my stay. If any upgraded rooms are expected to be available this evening, I'd be grateful to be considered.",
+        line2: "I completely understand if not — just thought I'd ask."
+    },
+    tone_reminders: [
+        "Smile and make eye contact",
+        "Keep a calm, unhurried demeanor",
+        "Avoid sounding entitled or demanding"
+    ]
+};
+
+// Validate desk-ask copy structure
+function validateDeskAskCopy(data) {
+    if (!data || typeof data !== 'object') return false;
+    if (typeof data.title !== 'string') return false;
+    if (!Array.isArray(data.sections) || data.sections.length !== 3) return false;
+
+    const requiredHeadings = ['When to ask', 'How to reference the email', 'What to say'];
+    for (let i = 0; i < 3; i++) {
+        const section = data.sections[i];
+        if (!section || typeof section.heading !== 'string') return false;
+        if (section.heading !== requiredHeadings[i]) return false;
+        if (!Array.isArray(section.bullets) || section.bullets.length < 2 || section.bullets.length > 3) return false;
+        for (const bullet of section.bullets) {
+            if (typeof bullet !== 'string' || bullet.length > 120) return false;
+        }
+    }
+
+    if (!data.script || typeof data.script !== 'object') return false;
+    if (typeof data.script.intro !== 'string') return false;
+    if (typeof data.script.line1 !== 'string') return false;
+    if (typeof data.script.line2 !== 'string') return false;
+
+    if (!Array.isArray(data.tone_reminders) || data.tone_reminders.length !== 3) return false;
+    for (const reminder of data.tone_reminders) {
+        if (typeof reminder !== 'string') return false;
+    }
+
+    return true;
+}
+
+// Call Gemini specifically for desk-ask content (lower temperature, stricter prompt)
+async function callGeminiDeskAsk() {
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
+        throw new Error('GEMINI_API_KEY not configured');
+    }
+
+    const systemInstruction = "You write concise, high-converting UI microcopy for a travel product. Output MUST be valid JSON only, matching the provided schema exactly. No extra keys. No markdown. No commentary.";
+
+    const userPrompt = `Generate content for a UI card titled 'If you ask at the desk' that helps a hotel guest ask politely for an upgrade or flexibility.
+Return JSON matching this schema exactly:
+{title:string, sections:[{heading:string, bullets:string[]}], script:{intro:string, line1:string, line2:string}, tone_reminders:string[]}
+Rules:
+- title must be exactly "If you ask at the desk"
+- sections headings must be exactly: 'When to ask', 'How to reference the email', 'What to say' (in that order)
+- 2-3 bullets per section, each bullet <= 120 characters
+- script.intro 1 sentence max; script.line1 and script.line2 each 1 sentence max
+- tone_reminders must contain exactly 3 items and include: smile, calm demeanor, and avoiding entitlement
+- Keep it practical: recommend timing during check-in and how to mention you emailed earlier without pressure.
+- Output JSON only.`;
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            systemInstruction: {
+                parts: [{ text: systemInstruction }]
+            },
+            contents: [{
+                parts: [{
+                    text: userPrompt
+                }]
+            }],
+            generationConfig: {
+                temperature: 0.3,
+                maxOutputTokens: 800,
+                responseMimeType: "application/json"
+            }
+        })
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[DeskAsk] Gemini API error:', response.status, errorText);
+        throw new Error(`Gemini API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!generatedText) {
+        throw new Error('No content generated');
+    }
+
+    // Parse and clean JSON
+    let cleanedText = generatedText.trim();
+    if (cleanedText.startsWith('```json')) cleanedText = cleanedText.slice(7);
+    if (cleanedText.startsWith('```')) cleanedText = cleanedText.slice(3);
+    if (cleanedText.endsWith('```')) cleanedText = cleanedText.slice(0, -3);
+
+    return JSON.parse(cleanedText.trim());
+}
+
+// GET /api/desk-ask-copy - Returns Gemini-generated desk-ask content
+app.get('/api/desk-ask-copy', async (req, res) => {
+    const requestId = Math.random().toString(36).substring(2, 9);
+    console.log(`[DeskAsk:${requestId}] GET /api/desk-ask-copy`);
+
+    // Set cache headers (1 hour)
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+
+    try {
+        const result = await callGeminiDeskAsk();
+
+        // Validate the response structure
+        if (!validateDeskAskCopy(result)) {
+            console.warn(`[DeskAsk:${requestId}] Invalid Gemini response structure, using fallback`);
+            return res.json(DESK_ASK_FALLBACK);
+        }
+
+        console.log(`[DeskAsk:${requestId}] ✓ Gemini response valid`);
+        return res.json(result);
+
+    } catch (error) {
+        console.error(`[DeskAsk:${requestId}] Error: ${error.message}`);
+        // Return fallback on any error
+        return res.json(DESK_ASK_FALLBACK);
+    }
+});
+
+// ============================================================
 // Creates a Checkout Session with optional coupon support
 // Returns checkout_url for redirect
 // ============================================================

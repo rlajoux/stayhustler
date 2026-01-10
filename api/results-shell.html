@@ -514,22 +514,78 @@
             color: var(--color-text);
         }
 
-        /* Fallback Script */
-        .script-block {
-            background: var(--color-bg-warm);
-            border-left: 3px solid var(--color-accent);
-            padding: var(--space-md);
-            font-family: var(--font-serif);
-            font-size: 1rem;
-            line-height: 1.7;
-            color: var(--color-text);
-            font-style: italic;
+        /* Desk-Ask Sections */
+        .desk-ask-section {
+            margin-bottom: var(--space-md);
+        }
+
+        .desk-ask-section:last-of-type {
             margin-bottom: var(--space-sm);
         }
 
-        .script-note {
+        .desk-ask-heading {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: var(--space-xs);
+        }
+
+        .desk-ask-bullets {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .desk-ask-bullets li {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            padding-left: 1.25rem;
+            position: relative;
+            margin-bottom: 0.25rem;
+        }
+
+        .desk-ask-bullets li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--color-accent);
+        }
+
+        .desk-ask-script {
+            background: var(--color-bg-warm);
+            border-left: 3px solid var(--color-accent);
+            padding: var(--space-sm) var(--space-md);
+            margin: var(--space-md) 0 var(--space-sm);
+        }
+
+        .desk-ask-script-intro {
             font-size: 0.85rem;
             color: var(--color-text-muted);
+            margin-bottom: var(--space-xs);
+        }
+
+        .desk-ask-script-lines {
+            font-family: var(--font-serif);
+            font-size: 0.95rem;
+            font-style: italic;
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        .desk-ask-tone {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+            margin-top: var(--space-sm);
+        }
+
+        .desk-ask-tone-item {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            background: var(--color-bg);
+            padding: 0.25rem 0.6rem;
+            border-radius: 50px;
+            border: 1px solid var(--color-border);
         }
 
         /* Expectation Note */
@@ -838,20 +894,30 @@ Warm regards,
                 </ul>
             </section>
 
-            <!-- Section C: Fallback Script -->
-            <section class="content-card">
+            <!-- Section C: Desk-Ask Playbook (Gemini-generated) -->
+            <section class="content-card" id="desk-ask-card">
                 <div class="card-header">
                     <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                     </svg>
-                    <h2 class="card-title">If you ask at the desk</h2>
+                    <h2 class="card-title" id="desk-ask-title">If you ask at the desk</h2>
                 </div>
 
-                <blockquote class="script-block">
-                    "If any upgraded rooms are expected to remain available this evening, I'd be grateful to be considered."
-                </blockquote>
+                <!-- Dynamic content container -->
+                <div id="desk-ask-content">
+                    <!-- Sections will be rendered here -->
+                </div>
 
-                <p class="script-note">Tone matters more than wording.</p>
+                <!-- Script block -->
+                <div class="desk-ask-script" id="desk-ask-script">
+                    <p class="desk-ask-script-intro" id="desk-ask-script-intro"></p>
+                    <p class="desk-ask-script-lines" id="desk-ask-script-lines"></p>
+                </div>
+
+                <!-- Tone reminders -->
+                <div class="desk-ask-tone" id="desk-ask-tone">
+                    <!-- Tone items will be rendered here -->
+                </div>
             </section>
 
             <!-- Section D: Expectation Setting -->
@@ -1160,7 +1226,6 @@ Warm regards,
         const fallbackNotice = document.getElementById('fallback-notice');
         const emailSubject = document.getElementById('email-subject');
         const timingList = document.getElementById('timing-list');
-        const scriptBlock = document.querySelector('.script-block');
 
         // Default fallback content
         const defaultContent = {
@@ -1177,8 +1242,7 @@ Warm regards,
                 '<strong>Email:</strong> 24-36 hours before arrival',
                 '<strong>In person:</strong> At check-in, before ID is handed over',
                 'Be polite, specific, and flexible'
-            ],
-            fallback_script: 'If any upgraded rooms are expected to remain available this evening, I\'d be grateful to be considered.'
+            ]
         };
 
         // Render timing guidance list
@@ -1240,9 +1304,6 @@ Warm regards,
                 ? data.timing_guidance
                 : defaultContent.timing_guidance;
             renderTimingList(timingItems);
-
-            // Update fallback script
-            scriptBlock.textContent = data.fallback_script || defaultContent.fallback_script;
 
             loadingIndicator.style.display = 'none';
 
@@ -1378,11 +1439,107 @@ Warm regards,
             emailTextarea.style.display = 'block';
             emailSubject.textContent = defaultContent.email_subject;
             renderTimingList(defaultContent.timing_guidance);
-            scriptBlock.textContent = defaultContent.fallback_script;
         }
 
         // Initialize on page load
         generateRequest();
+
+        // ===== DESK-ASK CONTENT (Gemini-generated) =====
+        const DESK_ASK_FALLBACK = {
+            title: "If you ask at the desk",
+            sections: [
+                {
+                    heading: "When to ask",
+                    bullets: [
+                        "Ask during check-in, before handing over your ID or credit card",
+                        "Mid-afternoon arrivals often have better availability",
+                        "Avoid asking when the lobby is busy or staff seem rushed"
+                    ]
+                },
+                {
+                    heading: "How to reference the email",
+                    bullets: [
+                        "Mention you sent an email ahead of time, but don't push",
+                        "Say something like: 'I reached out earlier about availability'",
+                        "If they haven't seen it, move on gracefully"
+                    ]
+                },
+                {
+                    heading: "What to say",
+                    bullets: [
+                        "Ask if any upgraded rooms happen to be available tonight",
+                        "Express flexibility: 'I'm happy with whatever works best'",
+                        "Thank them regardless of the outcome"
+                    ]
+                }
+            ],
+            script: {
+                intro: "Here's a natural way to ask at check-in:",
+                line1: "Hi, I sent an email earlier about my stay. If any upgraded rooms are expected to be available this evening, I'd be grateful to be considered.",
+                line2: "I completely understand if not — just thought I'd ask."
+            },
+            tone_reminders: [
+                "Smile and make eye contact",
+                "Keep a calm, unhurried demeanor",
+                "Avoid sounding entitled or demanding"
+            ]
+        };
+
+        function renderDeskAskContent(data) {
+            // Render title
+            const titleEl = document.getElementById('desk-ask-title');
+            if (titleEl && data.title) {
+                titleEl.textContent = data.title;
+            }
+
+            // Render sections
+            const contentEl = document.getElementById('desk-ask-content');
+            if (contentEl && data.sections) {
+                contentEl.innerHTML = data.sections.map(section => `
+                    <div class="desk-ask-section">
+                        <h3 class="desk-ask-heading">${section.heading}</h3>
+                        <ul class="desk-ask-bullets">
+                            ${section.bullets.map(bullet => `<li>${bullet}</li>`).join('')}
+                        </ul>
+                    </div>
+                `).join('');
+            }
+
+            // Render script
+            const scriptIntroEl = document.getElementById('desk-ask-script-intro');
+            const scriptLinesEl = document.getElementById('desk-ask-script-lines');
+            if (scriptIntroEl && data.script?.intro) {
+                scriptIntroEl.textContent = data.script.intro;
+            }
+            if (scriptLinesEl && data.script) {
+                scriptLinesEl.innerHTML = `"${data.script.line1}"<br><br>"${data.script.line2}"`;
+            }
+
+            // Render tone reminders
+            const toneEl = document.getElementById('desk-ask-tone');
+            if (toneEl && data.tone_reminders) {
+                toneEl.innerHTML = data.tone_reminders.map(reminder =>
+                    `<span class="desk-ask-tone-item">${reminder}</span>`
+                ).join('');
+            }
+        }
+
+        async function fetchDeskAskContent() {
+            try {
+                const response = await fetch(`${API_BASE}/api/desk-ask-copy`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const data = await response.json();
+                renderDeskAskContent(data);
+            } catch (error) {
+                console.error('[DeskAsk] Failed to fetch, using fallback:', error.message);
+                renderDeskAskContent(DESK_ASK_FALLBACK);
+            }
+        }
+
+        // Fetch desk-ask content on page load
+        fetchDeskAskContent();
 
         // ===== RESEND EMAIL FUNCTIONALITY =====
         const resendEmailInput = document.getElementById('resend-email');
