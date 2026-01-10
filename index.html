@@ -270,6 +270,33 @@
             margin-top: var(--space-xs);
         }
 
+        .hero-qualifier {
+            font-size: 0.95rem;
+            color: var(--color-text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-explanation {
+            font-size: 1.05rem;
+            color: var(--color-text);
+            margin-bottom: 1.35rem;
+            max-width: 540px;
+            line-height: 1.5;
+        }
+
+        .hero-meta {
+            margin-top: var(--space-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .hero-hint {
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: var(--color-text-muted);
+        }
+
         /* Hero How It Works */
         .hero-explainer {
             margin-top: var(--space-lg);
@@ -888,13 +915,17 @@
             <div class="container">
                 <div class="hero-content">
                     <h1>Your best chance at a hotel upgrade.</h1>
-                    <p class="hero-subheadline">Based on your booking, timing, and flexibility — not generic advice.</p>
+                    <p class="hero-qualifier">For travelers checking into a hotel in the next few days</p>
+                    <p class="hero-explanation">Tell us about your stay, and we generate the exact request hotels expect—before check-in.</p>
                     <div class="hero-ctas">
                         <a href="booking.html" class="btn btn-primary">Improve my stay</a>
                         <a href="#how-it-works" class="btn btn-secondary">See how it works</a>
                     </div>
-                    <p class="trust-line">No hotel integrations. No booking changes. Takes under 2 minutes.</p>
-                    <p class="hero-disqualifier">Already booked a hotel? This is for you.</p>
+                    <div class="hero-meta">
+                        <p class="hero-hint">Best used 24–72 hours before check-in</p>
+                        <p class="hero-hint">Not a template. Not a loyalty trick. No guarantees.</p>
+                        <p class="hero-hint">We don't contact hotels or access reservations.</p>
+                    </div>
 
                     <div class="hero-explainer" id="how-it-works">
                         <h2 class="hero-explainer-title">How it works</h2>
