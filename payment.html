@@ -502,12 +502,13 @@
         /* Trust Note */
         .trust-note {
             font-size: 0.8rem;
+            line-height: 1.45;
             color: var(--color-text-muted);
-            background: var(--color-bg-warm);
-            padding: var(--space-xs) var(--space-sm);
-            border-radius: var(--radius);
-            margin-bottom: var(--space-md);
             text-align: center;
+            margin: var(--space-sm) 0;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         /* Validation */
@@ -795,7 +796,9 @@
 
                         <div class="cta-section">
                             <button type="submit" class="btn-primary" id="pay-btn" disabled>Pay & unlock</button>
-                            
+
+                            <p class="trust-note">We can't access or change your reservation.<br>We don't contact hotels or booking systems.<br>Your details are used only to generate your request.</p>
+
                             <button type="button" class="why-link" id="why-toggle" aria-expanded="false">Why we charge</button>
                             
                             <div class="why-panel" id="why-panel">
