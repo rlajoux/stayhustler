@@ -978,6 +978,7 @@
                     activeCoupon = parsed;
                     updatePriceDisplay();
                     updatePayButton();
+                    // Note: checkFormValidity will be called after this in the init flow
                 }
             } catch (e) {
                 localStorage.removeItem('stayhustler_coupon');
@@ -1032,6 +1033,7 @@
                     saveCoupon();
                     updatePriceDisplay();
                     updatePayButton();
+                    checkFormValidity(); // Re-check form validity after coupon applied
                     showCouponFeedback('', '');
                     couponInput.value = '';
 
