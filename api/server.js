@@ -205,8 +205,9 @@ app.use(cookieParser());
 // ============================================================
 // RESULTS ACCESS CONTROL (JWT-BASED)
 // ============================================================
-// Uses HttpOnly, Secure, SameSite=Lax cookies with JWT to verify
+// Uses HttpOnly, Secure, SameSite=None cookies with JWT to verify
 // that a user has completed Stripe Checkout before viewing results.
+// SameSite=None is required for cross-origin cookie setting.
 // ============================================================
 
 const RESULTS_COOKIE_SECRET = process.env.RESULTS_COOKIE_SECRET || 'change-me-in-production';
@@ -259,8 +260,8 @@ function createAccessToken(stripeSessionId, email = null) {
 function setAccessCookie(res, token) {
     res.cookie(RESULTS_COOKIE_NAME, token, {
         httpOnly: true,
-        secure: isProd,
-        sameSite: 'lax',
+        secure: true, // Always secure for cross-origin cookies
+        sameSite: 'none', // Required for cross-origin cookie setting
         maxAge: RESULTS_COOKIE_MAX_AGE_MS,
         path: '/'
     });
