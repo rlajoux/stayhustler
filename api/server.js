@@ -2267,6 +2267,37 @@ app.post('/api/grant-free-access', async (req, res) => {
     });
 });
 
+// GET endpoint for free access - browser redirect (avoids third-party cookie issues)
+app.get('/free-access', (req, res) => {
+    const { code, email } = req.query;
+
+    console.log('[Free Access GET] Request with coupon:', code);
+
+    if (!code) {
+        return res.redirect(`${BASE_URL}/?error=missing_code`);
+    }
+
+    // Validate the coupon gives 100% off
+    const result = validateCoupon(code);
+
+    if (!result || result.final_cents !== 0) {
+        console.error('[Free Access GET] Invalid or non-free coupon:', code);
+        return res.redirect(`${BASE_URL}/?error=invalid_coupon`);
+    }
+
+    // Create a pseudo-session ID for free access
+    const freeSessionId = `free_${code}_${Date.now()}`;
+    const token = createAccessToken(freeSessionId, email || null);
+
+    // Set the access cookie (same-origin, so it will work)
+    setAccessCookie(res, token);
+
+    console.log('[Free Access GET] Granted, redirecting to results');
+
+    // Redirect to results page (same domain, cookie will be sent)
+    return res.redirect('/results');
+});
+
 // ============================================================
 // RESULTS PAGE (PROTECTED)
 // ============================================================
