@@ -971,6 +971,18 @@ const REQUEST_TYPE_CONFIG = {
             'Special occasions make this request more natural',
             'Shows you value the property\'s amenities'
         ]
+    },
+    any_upgrade: {
+        label: 'Any enhancement',
+        emailGoal: 'Request any available enhancement or upgrade',
+        subjectPrefix: 'Upcoming stay',
+        askDescription: 'any available enhancement — whether a room upgrade, better view, late checkout, or other amenity',
+        fallbackAsk: 'any small touch that might enhance my stay',
+        whyItWorks: [
+            'Maximum flexibility gives the hotel more options',
+            'Hotels appreciate guests who are easy to please',
+            'Opens the door to whatever is most available'
+        ]
     }
 };
 

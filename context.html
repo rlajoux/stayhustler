@@ -715,6 +715,21 @@
                                     </span>
                                 </label>
                             </div>
+                            <div class="request-type-option">
+                                <input type="radio" id="type-any" name="request-type" value="any_upgrade" class="radio-input">
+                                <label for="type-any" class="request-type-label">
+                                    <span class="request-type-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                    </span>
+                                    <span class="request-type-content">
+                                        <span class="request-type-title">Any enhancement</span>
+                                        <span class="request-type-desc">I'm flexible — any improvement works</span>
+                                        <span class="request-type-hint">Best when: you want to maximize chances</span>
+                                    </span>
+                                </label>
+                            </div>
                         </div>
                     </fieldset>
                 </div>
@@ -829,46 +844,6 @@
 
                 <div class="form-section">
                     <fieldset class="form-group">
-                        <legend>If an enhancement is possible, what are you most flexible on? <span class="required">*</span></legend>
-                        <div class="radio-group" id="flexibility-group">
-                            <div class="radio-option">
-                                <input type="radio" id="flex-any" name="flexibility" value="any" class="radio-input" required>
-                                <label for="flex-any" class="radio-label">Any better room is fine</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="flex-category" name="flexibility" value="category" class="radio-input">
-                                <label for="flex-category" class="radio-label">Room category matters most</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="flex-view" name="flexibility" value="view" class="radio-input">
-                                <label for="flex-view" class="radio-label">View / floor / location matters most</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="flex-timing" name="flexibility" value="timing" class="radio-input">
-                                <label for="flex-timing" class="radio-label">Timing matters more than room</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="flex-none" name="flexibility" value="none" class="radio-input">
-                                <label for="flex-none" class="radio-label">I prefer to keep my booked room</label>
-                            </div>
-                        </div>
-                        <div class="conditional-field" id="category-detail-field">
-                            <label for="category-detail" class="form-label" style="font-size: 0.85rem; margin-bottom: var(--space-xs);">Preferred room category (optional)</label>
-                            <input type="text" id="category-detail" placeholder="e.g., junior suite" tabindex="-1">
-                        </div>
-                        <div class="conditional-field" id="view-detail-field">
-                            <label for="view-detail" class="form-label" style="font-size: 0.85rem; margin-bottom: var(--space-xs);">Preferred view or location (optional)</label>
-                            <input type="text" id="view-detail" placeholder="e.g., high floor, ocean view" tabindex="-1">
-                        </div>
-                        <div class="conditional-field" id="timing-detail-field">
-                            <label for="timing-detail" class="form-label" style="font-size: 0.85rem; margin-bottom: var(--space-xs);">Preferred timing (optional)</label>
-                            <input type="text" id="timing-detail" placeholder="e.g., late checkout" tabindex="-1">
-                        </div>
-                    </fieldset>
-                </div>
-
-                <div class="form-section">
-                    <fieldset class="form-group">
                         <legend>How do you prefer to ask? <span class="required">*</span></legend>
                         <div class="radio-group" id="ask-preference-group">
                             <div class="radio-option">
@@ -923,17 +898,10 @@
         const arrivalDayManual = document.getElementById('arrival-day-manual');
         
         const checkinTime = document.getElementById('checkin-time');
-        const flexibilityInputs = document.querySelectorAll('input[name="flexibility"]');
         const askPreferenceInputs = document.querySelectorAll('input[name="ask-preference"]');
         const requestTypeInputs = document.querySelectorAll('input[name="request-type"]');
-        
+
         // Conditional elements
-        const categoryDetailField = document.getElementById('category-detail-field');
-        const categoryDetailInput = document.getElementById('category-detail');
-        const viewDetailField = document.getElementById('view-detail-field');
-        const viewDetailInput = document.getElementById('view-detail');
-        const timingDetailField = document.getElementById('timing-detail-field');
-        const timingDetailInput = document.getElementById('timing-detail');
         const emailNote = document.getElementById('email-note');
         
         // Track if fields were derived
@@ -1066,11 +1034,10 @@
             }
 
             const hasCheckinTime = checkinTime.value !== '';
-            const hasFlexibility = Array.from(flexibilityInputs).some(input => input.checked);
             const hasAskPreference = Array.from(askPreferenceInputs).some(input => input.checked);
             const hasRequestType = Array.from(requestTypeInputs).some(input => input.checked);
 
-            const isValid = hasLengthOfStay && hasArrivalDay && hasCheckinTime && hasFlexibility && hasAskPreference && hasRequestType;
+            const isValid = hasLengthOfStay && hasArrivalDay && hasCheckinTime && hasAskPreference && hasRequestType;
             submitBtn.disabled = !isValid;
         }
 
@@ -1093,36 +1060,7 @@
         [lengthOfStayManual, arrivalDayManual, checkinTime].forEach(select => {
             select.addEventListener('change', checkFormValidity);
         });
-        
-        // Flexibility radio handling
-        flexibilityInputs.forEach(input => {
-            input.addEventListener('change', () => {
-                checkFormValidity();
-                
-                // Hide all conditional fields first
-                categoryDetailField.classList.remove('visible');
-                categoryDetailInput.tabIndex = -1;
-                viewDetailField.classList.remove('visible');
-                viewDetailInput.tabIndex = -1;
-                timingDetailField.classList.remove('visible');
-                timingDetailInput.tabIndex = -1;
-                
-                // Show relevant field based on selection
-                if (input.checked) {
-                    if (input.value === 'category') {
-                        categoryDetailField.classList.add('visible');
-                        categoryDetailInput.tabIndex = 0;
-                    } else if (input.value === 'view') {
-                        viewDetailField.classList.add('visible');
-                        viewDetailInput.tabIndex = 0;
-                    } else if (input.value === 'timing') {
-                        timingDetailField.classList.add('visible');
-                        timingDetailInput.tabIndex = 0;
-                    }
-                }
-            });
-        });
-        
+
         // Ask preference radio handling
         askPreferenceInputs.forEach(input => {
             input.addEventListener('change', () => {
@@ -1152,29 +1090,14 @@
                 finalArrivalDay = arrivalDayManual.value;
             }
             
-            // Get flexibility data
-            const flexibilityPrimary = document.querySelector('input[name="flexibility"]:checked')?.value || '';
-            let flexibilityDetail = '';
-            
-            // Get the appropriate detail based on selection
-            if (flexibilityPrimary === 'category') {
-                flexibilityDetail = categoryDetailInput.value;
-            } else if (flexibilityPrimary === 'view') {
-                flexibilityDetail = viewDetailInput.value;
-            } else if (flexibilityPrimary === 'timing') {
-                flexibilityDetail = timingDetailInput.value;
-            }
-            
-            // Backward compatibility: map new values to old flexibility field
-            let legacyFlexibility = 'no';
-            if (flexibilityPrimary === 'any') legacyFlexibility = 'any';
-            else if (flexibilityPrimary === 'category') legacyFlexibility = 'specific';
-            else if (flexibilityPrimary === 'view') legacyFlexibility = 'specific';
-            else if (flexibilityPrimary === 'timing') legacyFlexibility = 'specific';
-            else if (flexibilityPrimary === 'none') legacyFlexibility = 'no';
-            
             // Get request type (default to 'upgrade' for backward compatibility)
             const requestType = document.querySelector('input[name="request-type"]:checked')?.value || 'upgrade';
+
+            // Derive flexibility from request type for backward compatibility
+            let legacyFlexibility = 'any';
+            if (requestType === 'better_view') legacyFlexibility = 'view';
+            else if (requestType === 'late_checkout') legacyFlexibility = 'timing';
+            else if (requestType === 'any_upgrade') legacyFlexibility = 'any';
 
             // Gather form data
             const contextData = {
@@ -1184,10 +1107,8 @@
                 loyaltyStatus: document.getElementById('loyalty-status').value,
                 occasion: document.getElementById('occasion').value,
                 flexibility: legacyFlexibility, // Backward compatibility
-                flexibility_primary: flexibilityPrimary, // New field
-                flexibility_detail: flexibilityDetail, // New field
                 askPreference: document.querySelector('input[name="ask-preference"]:checked')?.value || '',
-                requestType: requestType // NEW: Request type (upgrade, late_checkout, breakfast_lounge, better_view, credit_spa_fb)
+                requestType: requestType // Request type (upgrade, late_checkout, breakfast_lounge, better_view, credit_spa_fb, any_upgrade)
             };
             
             // Store to localStorage
