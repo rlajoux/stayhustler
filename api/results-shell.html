@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-H8G7MYD59K');
+    </script>
+    <script>
+      fetch('/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ page: 'results', referrer: document.referrer })
+      }).catch(() => {});
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your insider request – StayHustler</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>">
+    <meta name="description" content="Your personalized hotel upgrade request is ready. Use this wording and timing to make a polite, hotel-appropriate request.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Your insider request – StayHustler">
+    <meta property="og:description" content="Your personalized hotel upgrade request is ready.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stayhustler.com/results">
+    <meta property="og:image" content="https://stayhustler.com/og-image.png">
+    <meta property="og:site_name" content="StayHustler">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://stayhustler.com/results">
+
+    <!-- Robots meta -->
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Crazy Egg -->
+    <script type="text/javascript" src="//script.crazyegg.com/pages/scripts/0131/7760.js" async="async"></script>
+
+    <style>
+        :root {
+            --color-bg: #faf9f7;
+            --color-bg-warm: #f5f3ef;
+            --color-text: #2d2a26;
+            --color-text-muted: #6b6560;
+            --color-accent: #c9a962;
+            --color-accent-hover: #b8963f;
+            --color-border: #e8e4de;
+            --color-white: #ffffff;
+            --color-success: #7a9a6d;
+
+            --font-serif: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2.5rem;
+            --space-xl: 4rem;
+
+            --max-width: 820px;
+            --radius: 6px;
+            --radius-lg: 10px;
+            --shadow-soft: 0 2px 16px rgba(45, 42, 38, 0.06);
+            --shadow-hover: 0 4px 24px rgba(45, 42, 38, 0.1);
+            --transition: 0.2s ease;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100%;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            line-height: 1.25;
+            margin: 0;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Header */
+        .header {
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            letter-spacing: -0.01em;
+            color: var(--color-text);
+        }
+
+        .start-over-link {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            transition: color var(--transition);
+        }
+
+        .start-over-link:hover,
+        .start-over-link:focus {
+            color: var(--color-text);
+        }
+
+        /* Main */
+        main {
+            padding: var(--space-lg) var(--space-md) var(--space-xl);
+        }
+
+        .container {
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: var(--space-lg);
+        }
+
+        .page-header h1 {
+            font-size: clamp(1.75rem, 4vw, 2.25rem);
+            margin-bottom: var(--space-sm);
+            color: var(--color-text);
+        }
+
+        .page-subheadline {
+            font-size: 1.05rem;
+            color: var(--color-text-muted);
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        /* Success Badge */
+        .success-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            background: rgba(122, 154, 109, 0.1);
+            border: 1px solid rgba(122, 154, 109, 0.3);
+            color: var(--color-success);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            margin-bottom: var(--space-md);
+        }
+
+        .success-badge svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .free-request-badge {
+            display: none;
+            align-items: center;
+            gap: var(--space-xs);
+            background: rgba(99, 145, 182, 0.1);
+            border: 1px solid rgba(99, 145, 182, 0.3);
+            color: #5a8ab5;
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin-left: var(--space-sm);
+        }
+
+        .free-request-badge.visible {
+            display: inline-flex;
+        }
+
+        .free-request-badge svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Personalization Block */
+        .personalization-block {
+            background: var(--color-bg-warm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: var(--space-sm) var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .personalization-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .personalization-details {
+            font-size: 0.9rem;
+            color: var(--color-text);
+        }
+
+        /* Generation Success Flash */
+        .generation-success {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+            background: rgba(122, 154, 109, 0.1);
+            border: 1px solid rgba(122, 154, 109, 0.3);
+            color: var(--color-success);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius);
+            font-size: 0.9rem;
+            margin-bottom: var(--space-md);
+            animation: fadeInOut 3s ease-in-out forwards;
+        }
+
+        .generation-success svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-10px); }
+            15% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Why This Works Note */
+        .why-this-works {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            font-style: italic;
+            margin-top: var(--space-sm);
+            padding-top: var(--space-sm);
+            border-top: 1px solid var(--color-border);
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-sm);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .card-icon {
+            width: 24px;
+            height: 24px;
+            color: var(--color-accent);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            color: var(--color-text);
+        }
+
+        /* Email Request Section */
+        .timing-line {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-sm);
+        }
+
+        .timing-line strong {
+            color: var(--color-accent);
+        }
+
+        .request-textarea {
+            width: 100%;
+            min-height: 180px;
+            padding: var(--space-md);
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--color-text);
+            background: var(--color-bg-warm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            resize: none;
+        }
+
+        .request-textarea:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+
+        .button-row {
+            display: flex;
+            gap: var(--space-xs);
+            margin-top: var(--space-md);
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: 0.75rem 1.25rem;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+            border: none;
+        }
+
+        .btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .btn-primary {
+            background: var(--color-text);
+            color: var(--color-white);
+        }
+
+        .btn-primary:hover {
+            background: #1a1816;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:focus {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+
+        /* Dominant CTA */
+        .btn-dominant {
+            background: var(--color-accent);
+            color: var(--color-text);
+            font-size: 1.1rem;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            box-shadow: 0 4px 14px rgba(201, 169, 98, 0.3);
+        }
+
+        .btn-dominant:hover {
+            background: var(--color-accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(201, 169, 98, 0.4);
+        }
+
+        .btn-dominant:focus {
+            outline: 3px solid var(--color-text);
+            outline-offset: 2px;
+        }
+
+        /* Primary CTA Block */
+        .primary-cta-block {
+            text-align: center;
+            padding: var(--space-lg) 0;
+            margin: var(--space-md) 0;
+        }
+
+        .urgency-nudge {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            margin-top: var(--space-sm);
+        }
+
+        /* Secondary/Tertiary button styles */
+        .btn-tertiary {
+            background: transparent;
+            color: var(--color-text-muted);
+            border: 1px solid var(--color-border);
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .btn-tertiary:hover {
+            border-color: var(--color-text-muted);
+            color: var(--color-text);
+        }
+
+        .btn-tertiary:focus {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+
+        .btn-tertiary svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .btn-secondary {
+            background: var(--color-bg);
+            color: var(--color-text-muted);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--color-text-muted);
+            color: var(--color-text);
+        }
+
+        .btn-secondary:focus {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+
+        .btn.copied {
+            background: var(--color-success);
+            color: var(--color-white);
+        }
+
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip-text {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-text);
+            color: var(--color-white);
+            font-size: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius);
+            white-space: nowrap;
+            margin-bottom: 6px;
+        }
+
+        .tooltip-text::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--color-text);
+        }
+
+        .tooltip:hover .tooltip-text,
+        .tooltip:focus .tooltip-text {
+            display: block;
+        }
+
+        /* Timing Section */
+        .timing-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .timing-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .timing-list li:last-child {
+            border-bottom: none;
+        }
+
+        .timing-list svg {
+            width: 18px;
+            height: 18px;
+            color: var(--color-accent);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .timing-list span {
+            font-size: 0.95rem;
+            color: var(--color-text);
+        }
+
+        /* Fallback Script */
+        .script-block {
+            background: var(--color-bg-warm);
+            border-left: 3px solid var(--color-accent);
+            padding: var(--space-md);
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--color-text);
+            font-style: italic;
+            margin-bottom: var(--space-sm);
+        }
+
+        .script-note {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+        }
+
+        /* Expectation Note */
+        .expectation-note {
+            background: var(--color-bg-warm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: var(--space-md);
+            text-align: center;
+            margin-bottom: var(--space-lg);
+        }
+
+        .expectation-note p {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        /* Learn More Section */
+        .learn-more {
+            background: var(--color-bg-warm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-lg);
+        }
+
+        .learn-more-title {
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+            color: var(--color-text);
+            margin-bottom: var(--space-xs);
+        }
+
+        .learn-more-subtitle {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-md);
+        }
+
+        .learn-more-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .learn-more-links li {
+            margin-bottom: var(--space-sm);
+        }
+
+        .learn-more-links li:last-child {
+            margin-bottom: 0;
+        }
+
+        .learn-more-links a {
+            color: var(--color-accent);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color var(--transition);
+            display: inline-block;
+        }
+
+        .learn-more-links a:hover {
+            color: var(--color-accent-hover);
+            text-decoration: underline;
+        }
+
+        /* Secondary CTAs */
+        .secondary-ctas {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+        }
+
+        .secondary-cta {
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: var(--space-md);
+            text-align: center;
+            transition: all var(--transition);
+            cursor: pointer;
+        }
+
+        .secondary-cta:hover {
+            border-color: var(--color-accent);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .secondary-cta-title {
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            color: var(--color-text);
+            margin-bottom: var(--space-xs);
+        }
+
+        .secondary-cta-helper {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+        }
+
+        a.secondary-cta {
+            display: block;
+            text-decoration: none;
+        }
+
+        button.secondary-cta {
+            width: 100%;
+            font-family: inherit;
+            border: 1px solid var(--color-border);
+        }
+
+        button.secondary-cta:focus {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+
+        /* Feedback Prompt */
+        .feedback-prompt {
+            text-align: center;
+            padding-top: var(--space-lg);
+            border-top: 1px solid var(--color-border);
+        }
+
+        .feedback-prompt p {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+        }
+
+        /* Desktop */
+        @media (min-width: 600px) {
+            .content-card {
+                padding: var(--space-lg);
+            }
+
+            .secondary-ctas {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .header,
+            .button-row,
+            .primary-cta-block,
+            .secondary-ctas,
+            .feedback-prompt,
+            details {
+                display: none;
+            }
+
+            body {
+                background: white;
+                padding: 20px;
+            }
+
+            .content-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                page-break-inside: avoid;
+            }
+
+            .request-textarea {
+                border: none;
+                background: #f9f9f9;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="https://stayhustler.com" class="logo">StayHustler</a>
+            <a href="https://stayhustler.com" class="start-over-link">Start over</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <header class="page-header">
+                <div class="success-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    Unlocked
+                </div>
+                <div class="free-request-badge" id="free-request-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5"></path>
+                        <path d="M2 12l10 5 10-5"></path>
+                    </svg>
+                    <span id="free-request-badge-text">Free request</span>
+                </div>
+                <h1>Your insider request is ready</h1>
+                <p class="page-subheadline">Crafted using hospitality industry language that front-desk staff recognize and respond to.</p>
+            </header>
+
+            <!-- Personalization confirmation -->
+            <div class="personalization-block" id="personalization-block">
+                <p class="personalization-label">Tailored for your stay</p>
+                <p class="personalization-details" id="personalization-details"></p>
+            </div>
+
+            <!-- Generation success indicator (shows briefly) -->
+            <div class="generation-success" id="generation-success" style="display: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Personalized for your stay
+            </div>
+
+            <!-- Section A: Email Request -->
+            <section class="content-card">
+                <div class="card-header">
+                    <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <h2 class="card-title">Email request</h2>
+                </div>
+
+                <p class="timing-line"><strong>Subject:</strong> <span id="email-subject">Upcoming stay inquiry</span></p>
+                <p class="timing-line"><strong>When to send:</strong> 24–36 hours before arrival</p>
+
+                <div id="loading-indicator" style="text-align: center; padding: var(--space-lg); color: var(--color-text-muted);">
+                    Generating your personalized request...
+                </div>
+
+                <textarea class="request-textarea" id="email-request" readonly style="display: none;">Hello,
+
+I'm very much looking forward to my upcoming stay at your property. If any premium rooms or suites are forecasted to remain available around my arrival, I would be grateful to be considered for an upgrade.
+
+I understand availability drives these decisions and appreciate any consideration.
+
+Warm regards,
+[Your name]</textarea>
+
+                <p id="fallback-notice" style="display: none; font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: var(--space-sm); font-style: italic;">
+                    Using our proven template — works well for most hotel stays.
+                </p>
+
+                <div class="button-row">
+                    <button type="button" class="btn btn-tertiary" id="copy-email-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <span id="copy-email-text">Copy email</span>
+                    </button>
+                    <button type="button" class="btn btn-tertiary" id="copy-subject-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <span id="copy-subject-text">Copy subject</span>
+                    </button>
+                </div>
+
+                <p class="why-this-works" id="why-this-works">This wording mirrors how hospitality staff are trained to phrase internal upgrade offers — professional, flexible, and easy to approve.</p>
+            </section>
+
+            <!-- Primary CTA: Send Email -->
+            <div class="primary-cta-block">
+                <a href="#" class="btn btn-dominant" id="send-email-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; margin-right: 8px;">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    Send this email now
+                </a>
+                <p class="urgency-nudge">Most guests send this within 24–48 hours of arrival, when availability is clearest.</p>
+            </div>
+
+            <!-- Section B: Timing Guidance -->
+            <section class="content-card">
+                <div class="card-header">
+                    <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <h2 class="card-title">When to ask</h2>
+                </div>
+
+                <ul class="timing-list" id="timing-list">
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span><strong>Email:</strong> 24–36 hours before arrival</span>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span><strong>In person:</strong> At check-in, before ID is handed over</span>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>Be polite, specific, and flexible</span>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Section C: Fallback Script -->
+            <section class="content-card">
+                <div class="card-header">
+                    <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <h2 class="card-title">If you ask at the desk</h2>
+                </div>
+
+                <blockquote class="script-block">
+                    "If any upgraded rooms are expected to remain available this evening, I'd be grateful to be considered."
+                </blockquote>
+
+                <p class="script-note">Tone matters more than wording.</p>
+            </section>
+
+            <!-- Section D: Expectation Setting -->
+            <div class="expectation-note">
+                <p>Based on hospitality industry best practices. Upgrades depend on availability and hotel discretion — this guidance improves your odds, not guarantees outcomes.</p>
+            </div>
+
+            <!-- Learn More Section -->
+            <section class="learn-more">
+                <h3 class="learn-more-title">Want to understand this better?</h3>
+                <p class="learn-more-subtitle">These guides explain how hotels evaluate upgrade requests and timing.</p>
+                <ul class="learn-more-links">
+                    <li><a href="https://stayhustler.com/guides/how-to-ask-for-a-hotel-upgrade.html">How to ask for a hotel upgrade the right way</a></li>
+                    <li><a href="https://stayhustler.com/guides/best-time-to-ask-for-hotel-upgrade.html">Best time to ask for a hotel upgrade</a></li>
+                    <li><a href="https://stayhustler.com/guides/late-checkout-vs-room-upgrade.html">Late checkout vs room upgrade: which is easier?</a></li>
+                </ul>
+            </section>
+
+            <!-- Section E: Resend Email (Secondary) -->
+            <details class="content-card" style="cursor: pointer;">
+                <summary style="display: flex; align-items: center; gap: var(--space-xs); list-style: none; padding: var(--space-sm) 0;">
+                    <svg style="width: 18px; height: 18px; color: var(--color-text-muted);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                    <span style="font-size: 0.9rem; color: var(--color-text-muted);">Resend to my email</span>
+                </summary>
+
+                <div style="padding-top: var(--space-sm);">
+                    <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: var(--space-sm);">
+                        Didn't receive it? Enter your email to resend.
+                    </p>
+
+                    <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap; margin-bottom: var(--space-sm);">
+                        <input
+                            type="email"
+                            id="resend-email"
+                            placeholder="your@email.com"
+                            style="flex: 1; min-width: 200px; padding: 0.6rem 0.75rem; font-family: var(--font-sans); font-size: 0.85rem; color: var(--color-text); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius);"
+                        >
+                        <button type="button" class="btn btn-tertiary" id="resend-btn">
+                            Resend
+                        </button>
+                    </div>
+
+                    <p id="resend-status" style="font-size: 0.8rem; min-height: 1rem;"></p>
+                </div>
+            </details>
+
+            <!-- Secondary CTAs -->
+            <div class="secondary-ctas">
+                <button type="button" class="secondary-cta" id="save-btn">
+                    <p class="secondary-cta-title">Save this for my trip</p>
+                    <p class="secondary-cta-helper">Print or save as PDF for offline access.</p>
+                </button>
+                <a href="https://stayhustler.com" class="secondary-cta">
+                    <p class="secondary-cta-title">Get insider access next time</p>
+                    <p class="secondary-cta-helper">Multi-stay options coming soon.</p>
+                </a>
+            </div>
+
+            <!-- Feedback Prompt -->
+            <div class="feedback-prompt">
+                <p>We'll ask one quick question after your stay to help improve future guidance.</p>
+            </div>
+        </div>
+    </main>
+
+    <div aria-live="polite" id="aria-live" style="position: absolute; left: -9999px;"></div>
+
+    <script>
+        // ============================================================
+        // SECURE RESULTS PAGE
+        // ============================================================
+        // This page is served by the API server only after verifying
+        // the sh_access cookie (set after Stripe payment verification).
+        // No client-side access check needed - server already verified.
+        // ============================================================
+
+        // Read stored data from localStorage (for content personalization)
+        let contextData = {};
+        let bookingData = {};
+        let orderData = {};
+
+        try {
+            const contextRaw = localStorage.getItem('stayhustler_context');
+            if (contextRaw) contextData = JSON.parse(contextRaw);
+        } catch (e) {}
+
+        try {
+            const bookingRaw = localStorage.getItem('stayhustler_booking');
+            if (bookingRaw) bookingData = JSON.parse(bookingRaw);
+        } catch (e) {}
+
+        try {
+            const orderRaw = localStorage.getItem('stayhustler_order');
+            if (orderRaw) orderData = JSON.parse(orderRaw);
+        } catch (e) {}
+
+        // Show free request badge if applicable
+        if (orderData && orderData.is_free_request) {
+            const freeRequestBadge = document.getElementById('free-request-badge');
+            const freeRequestBadgeText = document.getElementById('free-request-badge-text');
+            if (freeRequestBadge) {
+                freeRequestBadge.classList.add('visible');
+                // Set dynamic text based on coupon used
+                if (freeRequestBadgeText && orderData.coupon) {
+                    freeRequestBadgeText.textContent = `Free request (${orderData.coupon})`;
+                }
+            }
+        }
+
+        // Copy email functionality
+        const copyBtn = document.getElementById('copy-email-btn');
+        const copyText = document.getElementById('copy-email-text');
+        const emailTextarea = document.getElementById('email-request');
+        const ariaLive = document.getElementById('aria-live');
+
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(emailTextarea.value);
+
+                // Visual feedback
+                copyBtn.classList.add('copied');
+                copyText.textContent = 'Copied!';
+                ariaLive.textContent = 'Email copied to clipboard';
+
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    copyBtn.classList.remove('copied');
+                    copyText.textContent = 'Copy email';
+                    ariaLive.textContent = '';
+                }, 2000);
+            } catch (err) {
+                // Fallback for older browsers
+                emailTextarea.select();
+                document.execCommand('copy');
+
+                copyBtn.classList.add('copied');
+                copyText.textContent = 'Copied!';
+
+                setTimeout(() => {
+                    copyBtn.classList.remove('copied');
+                    copyText.textContent = 'Copy email';
+                }, 2000);
+            }
+        });
+
+        // Copy subject functionality
+        const copySubjectBtn = document.getElementById('copy-subject-btn');
+        const copySubjectText = document.getElementById('copy-subject-text');
+
+        copySubjectBtn.addEventListener('click', async () => {
+            const subject = document.getElementById('email-subject').textContent;
+            try {
+                await navigator.clipboard.writeText(subject);
+                copySubjectBtn.classList.add('copied');
+                copySubjectText.textContent = 'Copied!';
+                ariaLive.textContent = 'Subject copied to clipboard';
+
+                setTimeout(() => {
+                    copySubjectBtn.classList.remove('copied');
+                    copySubjectText.textContent = 'Copy subject';
+                    ariaLive.textContent = '';
+                }, 2000);
+            } catch (err) {
+                copySubjectBtn.classList.add('copied');
+                copySubjectText.textContent = 'Copied!';
+                setTimeout(() => {
+                    copySubjectBtn.classList.remove('copied');
+                    copySubjectText.textContent = 'Copy subject';
+                }, 2000);
+            }
+        });
+
+        // Send email (mailto) functionality
+        const sendEmailBtn = document.getElementById('send-email-btn');
+
+        function updateMailtoLink() {
+            const subject = document.getElementById('email-subject').textContent;
+            const body = document.getElementById('email-request').value;
+            const mailtoUrl = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+            sendEmailBtn.href = mailtoUrl;
+        }
+
+        // Update mailto link when content changes
+        sendEmailBtn.addEventListener('click', function(e) {
+            updateMailtoLink();
+        });
+
+        // Also update on mouseenter for better UX
+        sendEmailBtn.addEventListener('mouseenter', updateMailtoLink);
+        sendEmailBtn.addEventListener('focus', updateMailtoLink);
+
+        // Save/Print functionality
+        const saveBtn = document.getElementById('save-btn');
+        saveBtn.addEventListener('click', () => {
+            window.print();
+        });
+
+        // API Integration - use relative URLs since we're on the same origin
+        const API_BASE = "";
+
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const fallbackNotice = document.getElementById('fallback-notice');
+        const emailSubject = document.getElementById('email-subject');
+        const timingList = document.getElementById('timing-list');
+        const scriptBlock = document.querySelector('.script-block');
+
+        // Default fallback content
+        const defaultContent = {
+            email_subject: 'Upcoming stay inquiry',
+            email_body: `Hello,
+
+I'm very much looking forward to my upcoming stay at your property. If any premium rooms or suites are forecasted to remain available around my arrival, I would be grateful to be considered for an upgrade.
+
+I understand availability drives these decisions and appreciate any consideration.
+
+Warm regards,
+[Your Name]`,
+            timing_guidance: [
+                '<strong>Email:</strong> 24-36 hours before arrival',
+                '<strong>In person:</strong> At check-in, before ID is handed over',
+                'Be polite, specific, and flexible'
+            ],
+            fallback_script: 'If any upgraded rooms are expected to remain available this evening, I\'d be grateful to be considered.'
+        };
+
+        // Render timing guidance list
+        function renderTimingList(timingItems) {
+            const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>`;
+
+            timingList.innerHTML = timingItems.map(item => `
+                <li>
+                    ${checkIcon}
+                    <span>${item}</span>
+                </li>
+            `).join('');
+        }
+
+        // Populate personalization block with booking details
+        function showPersonalization(booking, isCustomized) {
+            const block = document.getElementById('personalization-block');
+            const details = document.getElementById('personalization-details');
+
+            if (!booking.hotel) {
+                block.style.display = 'none';
+                return;
+            }
+
+            // Build details string
+            const parts = [];
+            if (booking.hotel) parts.push(booking.hotel);
+            if (booking.checkin && booking.checkout) {
+                const checkin = new Date(booking.checkin);
+                const checkout = new Date(booking.checkout);
+                const options = { month: 'short', day: 'numeric' };
+                parts.push(`${checkin.toLocaleDateString('en-US', options)} – ${checkout.toLocaleDateString('en-US', options)}`);
+            }
+
+            details.textContent = parts.join(' • ');
+            block.style.display = 'block';
+        }
+
+        // Show generation success flash briefly
+        function showSuccessFlash() {
+            const flash = document.getElementById('generation-success');
+            flash.style.display = 'flex';
+            // Animation handles fade out via CSS, then hide element
+            setTimeout(() => {
+                flash.style.display = 'none';
+            }, 3000);
+        }
+
+        // Apply content to DOM
+        function applyContent(data, isCustomized = true) {
+            emailSubject.textContent = data.email_subject;
+            emailTextarea.value = data.email_body;
+            emailTextarea.style.display = 'block';
+
+            // Handle timing guidance
+            const timingItems = Array.isArray(data.timing_guidance)
+                ? data.timing_guidance
+                : defaultContent.timing_guidance;
+            renderTimingList(timingItems);
+
+            // Update fallback script
+            scriptBlock.textContent = data.fallback_script || defaultContent.fallback_script;
+
+            loadingIndicator.style.display = 'none';
+
+            // Show personalization block with booking context
+            const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
+            showPersonalization(booking, isCustomized);
+
+            // Show success flash for customized content
+            if (isCustomized) {
+                showSuccessFlash();
+            }
+
+            // Update mailto link with new content
+            updateMailtoLink();
+        }
+
+        // Show fallback content with notice
+        function showFallback(reason = 'unknown') {
+            fallbackNotice.style.display = 'block';
+            applyContent(defaultContent, false);
+        }
+
+        // Generate request from API
+        async function generateRequest() {
+            // Parse stored data
+            const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
+            const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
+
+            // Validate required fields are present
+            const missingFields = [];
+            if (!booking.hotel) missingFields.push('hotel');
+            if (!booking.city) missingFields.push('city');
+            if (!booking.checkin) missingFields.push('checkin');
+            if (!booking.checkout) missingFields.push('checkout');
+            if (!context.arrivalDay) missingFields.push('arrivalDay');
+            if (!context.lengthOfStay) missingFields.push('lengthOfStay');
+            if (!context.askPreference) missingFields.push('askPreference');  // Backend requires this!
+
+            if (missingFields.length > 0) {
+                console.error('[Frontend] Missing required fields:', missingFields.join(', '));
+                showMissingFieldsError(missingFields);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/generate-request`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ booking, context })
+                });
+
+                // Extract headers
+                const generationSource = response.headers.get('X-Generation-Source');
+                const retryAfter = response.headers.get('Retry-After');
+
+                // Handle rate limiting (429)
+                if (response.status === 429) {
+                    console.warn('[Frontend] Rate limited, retry_after:', retryAfter);
+                    showRateLimitError(retryAfter);
+                    return;
+                }
+
+                if (!response.ok) {
+                    console.error('[Frontend] API error:', response.status, 'source:', generationSource);
+                    // For 502 errors, show fallback with notice
+                    if (response.status === 502 || response.status === 500) {
+                        showFallback('backend-error-' + response.status);
+                        return;
+                    }
+                    throw new Error(`API error: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Validate response has required fields
+                if (!data.email_subject || !data.email_body) {
+                    console.error('[Frontend] Invalid API response - missing required fields');
+                    throw new Error('Invalid API response');
+                }
+
+                // Determine if this is customized content
+                const isCustomized = generationSource !== 'fallback';
+
+                // Only show fallback notice if source is explicitly 'fallback'
+                if (!isCustomized) {
+                    fallbackNotice.style.display = 'block';
+                } else {
+                    fallbackNotice.style.display = 'none';
+                }
+
+                // Apply content with customization flag
+                applyContent(data, isCustomized);
+
+            } catch (error) {
+                console.error('[Frontend] Exception caught during API call:', error.message, error.stack);
+                showFallback('api-error');
+            }
+        }
+
+        // Show rate limit error with retry option
+        function showRateLimitError(retryAfter) {
+            loadingIndicator.style.display = 'none';
+            fallbackNotice.style.display = 'block';
+            fallbackNotice.innerHTML = `
+                Temporarily rate-limited. Please retry in ${retryAfter || 60} seconds.
+                <button id="retry-btn" style="margin-left: 10px; padding: 5px 10px; cursor: pointer;">Retry Now</button>
+            `;
+
+            // Add retry button handler
+            setTimeout(() => {
+                const retryBtn = document.getElementById('retry-btn');
+                if (retryBtn) {
+                    retryBtn.addEventListener('click', () => {
+                        fallbackNotice.innerHTML = 'Retrying...';
+                        generateRequest();
+                    });
+                }
+            }, 100);
+        }
+
+        // Show missing fields error with link to go back
+        function showMissingFieldsError(missingFields) {
+            loadingIndicator.style.display = 'none';
+            fallbackNotice.style.display = 'block';
+            fallbackNotice.innerHTML = `
+                Missing trip details: ${missingFields.join(', ')}.
+                <a href="https://stayhustler.com/booking.html" style="color: var(--color-accent); text-decoration: underline;">Please go back and complete the booking step.</a>
+            `;
+            // Still show default template so page isn't empty
+            emailTextarea.value = defaultContent.email_body;
+            emailTextarea.style.display = 'block';
+            emailSubject.textContent = defaultContent.email_subject;
+            renderTimingList(defaultContent.timing_guidance);
+            scriptBlock.textContent = defaultContent.fallback_script;
+        }
+
+        // Initialize on page load
+        generateRequest();
+
+        // ===== RESEND EMAIL FUNCTIONALITY =====
+        const resendEmailInput = document.getElementById('resend-email');
+        const resendBtn = document.getElementById('resend-btn');
+        const resendStatus = document.getElementById('resend-status');
+
+        // Pre-fill email from localStorage
+        const storedEmail = localStorage.getItem('stayhustler_email');
+        if (storedEmail) {
+            resendEmailInput.value = storedEmail;
+        }
+
+        // Check if delivery_id exists
+        const deliveryId = localStorage.getItem('stayhustler_delivery_id');
+
+        if (!deliveryId) {
+            resendStatus.textContent = 'Complete checkout first to enable resend.';
+            resendStatus.style.color = 'var(--color-text-muted)';
+            resendBtn.disabled = true;
+            resendBtn.style.opacity = '0.5';
+            resendBtn.style.cursor = 'not-allowed';
+        } else {
+            // Resend button click handler
+            resendBtn.addEventListener('click', async () => {
+                const email = resendEmailInput.value.trim();
+
+                // Validate email
+                if (!email) {
+                    resendStatus.textContent = 'Please enter an email address.';
+                    resendStatus.style.color = '#d9534f';
+                    return;
+                }
+
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    resendStatus.textContent = 'Please enter a valid email address.';
+                    resendStatus.style.color = '#d9534f';
+                    return;
+                }
+
+                // Disable button during request
+                resendBtn.disabled = true;
+                resendBtn.style.opacity = '0.5';
+                resendStatus.textContent = 'Sending...';
+                resendStatus.style.color = 'var(--color-text-muted)';
+
+                try {
+                    const response = await fetch(`${API_BASE}/api/resend-delivery`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            delivery_id: deliveryId,
+                            email: email
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.ok) {
+                        resendStatus.textContent = 'Email sent successfully!';
+                        resendStatus.style.color = 'var(--color-success)';
+
+                        // Update stored email
+                        localStorage.setItem('stayhustler_email', email);
+                    } else if (response.status === 429) {
+                        resendStatus.textContent = 'Rate limit exceeded. Please try again later.';
+                        resendStatus.style.color = '#d9534f';
+                    } else {
+                        throw new Error(data.error || 'Failed to resend');
+                    }
+                } catch (error) {
+                    console.error('Resend error:', error);
+                    resendStatus.textContent = 'Failed to send. Please try again.';
+                    resendStatus.style.color = '#d9534f';
+                } finally {
+                    // Re-enable button after 2 seconds
+                    setTimeout(() => {
+                        resendBtn.disabled = false;
+                        resendBtn.style.opacity = '1';
+                    }, 2000);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

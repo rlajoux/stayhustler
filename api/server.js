@@ -2146,7 +2146,7 @@ app.get('/results', requireAccess, (req, res) => {
 
     // Send the results shell page
     // The shell will call /api/results to get the actual content
-    res.sendFile(path.join(__dirname, '../results-shell.html'));
+    res.sendFile(path.join(__dirname, 'results-shell.html'));
 });
 
 // ============================================================
