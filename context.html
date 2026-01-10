@@ -323,7 +323,105 @@
             background: var(--color-accent);
             box-shadow: inset 0 0 0 3px var(--color-white);
         }
-        
+
+        /* Request Type Grid */
+        .request-type-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-sm);
+        }
+
+        @media (min-width: 500px) {
+            .request-type-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .request-type-option {
+            position: relative;
+        }
+
+        .request-type-option .radio-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .request-type-label {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            background: var(--color-bg);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition);
+            height: 100%;
+        }
+
+        .request-type-label:hover {
+            border-color: var(--color-accent);
+            background: var(--color-bg-warm);
+        }
+
+        .request-type-option .radio-input:focus-visible + .request-type-label {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.15);
+        }
+
+        .request-type-option .radio-input:checked + .request-type-label {
+            border-color: var(--color-accent);
+            background: rgba(201, 169, 98, 0.08);
+            box-shadow: 0 0 0 1px var(--color-accent);
+        }
+
+        .request-type-icon {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-muted);
+            transition: color var(--transition);
+        }
+
+        .request-type-option .radio-input:checked + .request-type-label .request-type-icon {
+            color: var(--color-accent);
+        }
+
+        .request-type-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .request-type-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .request-type-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--color-text);
+        }
+
+        .request-type-desc {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            line-height: 1.4;
+        }
+
+        .request-type-hint {
+            font-size: 0.75rem;
+            color: var(--color-accent);
+            font-style: italic;
+            margin-top: 2px;
+        }
+
         /* Conditional Fields */
         .conditional-field {
             max-height: 0;
@@ -529,6 +627,98 @@
             </header>
 
             <form class="form-card" id="context-form">
+                <!-- Request Type Selection (NEW) -->
+                <div class="form-section">
+                    <fieldset class="form-group">
+                        <legend>What do you want to request? <span class="required">*</span></legend>
+                        <div class="request-type-grid" id="request-type-group">
+                            <div class="request-type-option">
+                                <input type="radio" id="type-upgrade" name="request-type" value="upgrade" class="radio-input" required checked>
+                                <label for="type-upgrade" class="request-type-label">
+                                    <span class="request-type-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                        </svg>
+                                    </span>
+                                    <span class="request-type-content">
+                                        <span class="request-type-title">Room upgrade</span>
+                                        <span class="request-type-desc">Ask for a better room category</span>
+                                        <span class="request-type-hint">Best when: mid-week arrivals, longer stays</span>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="request-type-option">
+                                <input type="radio" id="type-late-checkout" name="request-type" value="late_checkout" class="radio-input">
+                                <label for="type-late-checkout" class="request-type-label">
+                                    <span class="request-type-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                        </svg>
+                                    </span>
+                                    <span class="request-type-content">
+                                        <span class="request-type-title">Late checkout</span>
+                                        <span class="request-type-desc">More time on your departure day</span>
+                                        <span class="request-type-hint">Best when: flexible hotel occupancy</span>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="request-type-option">
+                                <input type="radio" id="type-breakfast" name="request-type" value="breakfast_lounge" class="radio-input">
+                                <label for="type-breakfast" class="request-type-label">
+                                    <span class="request-type-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                                            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                                            <line x1="6" y1="1" x2="6" y2="4"></line>
+                                            <line x1="10" y1="1" x2="10" y2="4"></line>
+                                            <line x1="14" y1="1" x2="14" y2="4"></line>
+                                        </svg>
+                                    </span>
+                                    <span class="request-type-content">
+                                        <span class="request-type-title">Breakfast / lounge</span>
+                                        <span class="request-type-desc">Request breakfast or lounge access</span>
+                                        <span class="request-type-hint">Best when: special occasions, loyalty members</span>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="request-type-option">
+                                <input type="radio" id="type-view" name="request-type" value="better_view" class="radio-input">
+                                <label for="type-view" class="request-type-label">
+                                    <span class="request-type-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </span>
+                                    <span class="request-type-content">
+                                        <span class="request-type-title">Better view</span>
+                                        <span class="request-type-desc">Same category, nicer view (easier approval)</span>
+                                        <span class="request-type-hint">Best when: already booked a good room</span>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="request-type-option">
+                                <input type="radio" id="type-credit" name="request-type" value="credit_spa_fb" class="radio-input">
+                                <label for="type-credit" class="request-type-label">
+                                    <span class="request-type-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                                        </svg>
+                                    </span>
+                                    <span class="request-type-content">
+                                        <span class="request-type-title">Spa / F&B credit</span>
+                                        <span class="request-type-desc">Request property credit instead of room</span>
+                                        <span class="request-type-hint">Best when: celebrating, boutique hotels</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
                 <!-- Derived fields section (shown when booking dates are available) -->
                 <div class="derived-section" id="derived-section" style="display: none;">
                     <div class="derived-header" id="derived-header">
@@ -735,6 +925,7 @@
         const checkinTime = document.getElementById('checkin-time');
         const flexibilityInputs = document.querySelectorAll('input[name="flexibility"]');
         const askPreferenceInputs = document.querySelectorAll('input[name="ask-preference"]');
+        const requestTypeInputs = document.querySelectorAll('input[name="request-type"]');
         
         // Conditional elements
         const categoryDetailField = document.getElementById('category-detail-field');
@@ -865,7 +1056,7 @@
         // Check form validity
         function checkFormValidity() {
             let hasLengthOfStay, hasArrivalDay;
-            
+
             if (fieldsAreDerived) {
                 hasLengthOfStay = lengthOfStay.value !== '';
                 hasArrivalDay = arrivalDay.value !== '';
@@ -873,14 +1064,30 @@
                 hasLengthOfStay = lengthOfStayManual.value !== '';
                 hasArrivalDay = arrivalDayManual.value !== '';
             }
-            
+
             const hasCheckinTime = checkinTime.value !== '';
             const hasFlexibility = Array.from(flexibilityInputs).some(input => input.checked);
             const hasAskPreference = Array.from(askPreferenceInputs).some(input => input.checked);
-            
-            const isValid = hasLengthOfStay && hasArrivalDay && hasCheckinTime && hasFlexibility && hasAskPreference;
+            const hasRequestType = Array.from(requestTypeInputs).some(input => input.checked);
+
+            const isValid = hasLengthOfStay && hasArrivalDay && hasCheckinTime && hasFlexibility && hasAskPreference && hasRequestType;
             submitBtn.disabled = !isValid;
         }
+
+        // Request type change handler (for analytics)
+        requestTypeInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                checkFormValidity();
+                // Track request type selection (analytics)
+                if (typeof gtag === 'function') {
+                    gtag('event', 'context_option_selected', {
+                        'event_category': 'engagement',
+                        'event_label': input.value,
+                        'request_type': input.value
+                    });
+                }
+            });
+        });
         
         // Event listeners for manual selects
         [lengthOfStayManual, arrivalDayManual, checkinTime].forEach(select => {
@@ -966,6 +1173,9 @@
             else if (flexibilityPrimary === 'timing') legacyFlexibility = 'specific';
             else if (flexibilityPrimary === 'none') legacyFlexibility = 'no';
             
+            // Get request type (default to 'upgrade' for backward compatibility)
+            const requestType = document.querySelector('input[name="request-type"]:checked')?.value || 'upgrade';
+
             // Gather form data
             const contextData = {
                 lengthOfStay: finalLengthOfStay,
@@ -976,7 +1186,8 @@
                 flexibility: legacyFlexibility, // Backward compatibility
                 flexibility_primary: flexibilityPrimary, // New field
                 flexibility_detail: flexibilityDetail, // New field
-                askPreference: document.querySelector('input[name="ask-preference"]:checked')?.value || ''
+                askPreference: document.querySelector('input[name="ask-preference"]:checked')?.value || '',
+                requestType: requestType // NEW: Request type (upgrade, late_checkout, breakfast_lounge, better_view, credit_spa_fb)
             };
             
             // Store to localStorage

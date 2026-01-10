@@ -905,15 +905,98 @@ function sanitizeInput(body) {
     };
 }
 
+// ============================================================
+// REQUEST TYPE CONFIGURATIONS
+// ============================================================
+// Each request type has specific prompt rules and templates
+// ============================================================
+
+const REQUEST_TYPE_CONFIG = {
+    upgrade: {
+        label: 'Room upgrade',
+        emailGoal: 'Request a higher room category',
+        subjectPrefix: 'Upcoming stay',
+        askDescription: 'a higher-category room or suite',
+        fallbackAsk: 'better view or quieter location',
+        whyItWorks: [
+            'Uses hotel-native language that staff recognize',
+            'Shows flexibility which makes approval easier',
+            'Acknowledges availability constraints upfront'
+        ]
+    },
+    late_checkout: {
+        label: 'Late checkout',
+        emailGoal: 'Request extended checkout time on departure day',
+        subjectPrefix: 'Late checkout inquiry',
+        askDescription: 'late checkout (around 1-2pm if possible)',
+        fallbackAsk: 'luggage storage after checkout',
+        whyItWorks: [
+            'Late checkout depends on housekeeping schedule',
+            'Asking early gives the hotel time to plan',
+            'Offering flexibility on exact time increases approval odds'
+        ]
+    },
+    breakfast_lounge: {
+        label: 'Breakfast / lounge access',
+        emailGoal: 'Request complimentary breakfast or lounge access',
+        subjectPrefix: 'Question about breakfast/lounge',
+        askDescription: 'access to the breakfast service or executive lounge during my stay',
+        fallbackAsk: 'any available dining credits or promotions',
+        whyItWorks: [
+            'Lounge access is easier to grant during low-occupancy periods',
+            'Special occasions make this request more compelling',
+            'Being flexible about timing (off-peak hours) helps'
+        ]
+    },
+    better_view: {
+        label: 'Better view',
+        emailGoal: 'Request a room with a better view or location (same category)',
+        subjectPrefix: 'Room placement preference',
+        askDescription: 'a room with a nicer view or better location (higher floor, corner room, or quieter area)',
+        fallbackAsk: 'away from elevators or in a quieter section',
+        whyItWorks: [
+            'View requests are easier to grant than category upgrades',
+            'Hotels often have flexibility in room assignment',
+            'No revenue impact makes approval more likely'
+        ]
+    },
+    credit_spa_fb: {
+        label: 'Spa / F&B credit',
+        emailGoal: 'Request property credit for spa or dining',
+        subjectPrefix: 'Inquiry about property amenities',
+        askDescription: 'any available credit toward spa services or dining at the property',
+        fallbackAsk: 'any special promotions or packages available',
+        whyItWorks: [
+            'Property credits drive on-site revenue for the hotel',
+            'Special occasions make this request more natural',
+            'Shows you value the property\'s amenities'
+        ]
+    }
+};
+
+// Get request type config with fallback to upgrade
+function getRequestTypeConfig(requestType) {
+    return REQUEST_TYPE_CONFIG[requestType] || REQUEST_TYPE_CONFIG.upgrade;
+}
+
 // Build the prompt for Gemini
 function buildPrompt(data) {
     const { booking, context } = data;
-    
+
     // Handle new flexibility fields with backward compatibility
     const flexPrimary = context.flexibility_primary || context.flexibility || 'any';
     const flexDetail = context.flexibility_detail || '';
-    
-    return `You are an expert in hotel guest relations. Generate a polite, professional, and SPECIFIC hotel upgrade request email.
+
+    // Get request type (default to 'upgrade' for backward compatibility)
+    const requestType = context.requestType || 'upgrade';
+    const rtConfig = getRequestTypeConfig(requestType);
+
+    return `You are an expert in hotel guest relations. Generate a polite, professional, and SPECIFIC hotel ${rtConfig.label.toLowerCase()} request email.
+
+REQUEST TYPE: ${requestType}
+REQUEST GOAL: ${rtConfig.emailGoal}
+PRIMARY ASK: ${rtConfig.askDescription}
+FALLBACK ASK: ${rtConfig.fallbackAsk}
 
 INPUT DATA:
 - Hotel: ${booking.hotel}
@@ -935,10 +1018,12 @@ INPUT DATA:
 - email_subject MUST be 6–12 words.
 - MUST include the stay dates in short format (e.g., "Jan 15–18").
 - MUST NOT start with "Reservation Inquiry" or sound overly formal.
-- Good examples to emulate (do not copy verbatim):
-  "Upcoming stay Jan 15–18 — flexibility if available"
-  "Arrival Jan 15–18 — request ahead of check-in"
-  "Quick note ahead of Jan 15–18 stay"
+- Subject should reflect the REQUEST TYPE:
+  - For upgrade: "Upcoming stay Jan 15–18 — flexibility if available"
+  - For late_checkout: "Late checkout inquiry for Jan 15–18 stay"
+  - For breakfast_lounge: "Question about Jan 15–18 stay amenities"
+  - For better_view: "Room preference for Jan 15–18 stay"
+  - For credit_spa_fb: "Inquiry ahead of Jan 15–18 stay"
 
 ===== EMAIL BODY RULES =====
 1. Length: email_body MUST be 160–210 words. Not shorter, not longer.
@@ -947,39 +1032,65 @@ INPUT DATA:
    "Reservation: [Confirmation Number]"
    Keep this placeholder exactly as shown.
 
-3. The Ask: CRITICAL - Adapt the request based on flexibility_priority:
-   
-   IF flexibility_priority = "any":
+3. The Ask: CRITICAL - Adapt based on REQUEST TYPE first, then flexibility_priority:
+
+   ===== REQUEST TYPE SPECIFIC RULES =====
+
+   IF REQUEST_TYPE = "upgrade":
+   - PRIMARY ASK: Request ${rtConfig.askDescription}
+   - FALLBACK: ${rtConfig.fallbackAsk}
+   - Use the phrase "forecasted to remain available" exactly ONCE
+   - Adapt based on flexibility_priority (see below)
+
+   IF REQUEST_TYPE = "late_checkout":
+   - PRIMARY ASK: Request late checkout (mention preferred time like 1pm or 2pm if possible)
+   - FALLBACK: Ask about luggage storage after checkout if late checkout isn't possible
+   - Do NOT use "forecasted to remain available" - instead use "if scheduling permits"
+   - Mention flexibility on exact checkout time
+   - Reference the checkout date from the booking
+
+   IF REQUEST_TYPE = "breakfast_lounge":
+   - PRIMARY ASK: Politely inquire about access to breakfast or executive lounge
+   - FALLBACK: Any dining credits or special offers
+   - Do NOT use "forecasted to remain available" - instead use "if any options are available"
+   - If there's an occasion, weave it in naturally
+   - Do NOT sound entitled to lounge access
+
+   IF REQUEST_TYPE = "better_view":
+   - PRIMARY ASK: Request better view/placement (higher floor, corner room, ocean/city view)
+   - FALLBACK: Quiet location, away from elevators
+   - Do NOT ask for a room category upgrade
+   - Use "if room placement flexibility exists" instead of "forecasted"
+   - Emphasize you're happy with your room category
+
+   IF REQUEST_TYPE = "credit_spa_fb":
+   - PRIMARY ASK: Inquire about any available spa or dining credits
+   - FALLBACK: Any special packages or promotions
+   - Do NOT use "forecasted to remain available"
+   - If there's an occasion, use it as context (celebrating, special trip)
+   - Ask graciously, never assume entitlement
+
+   ===== FLEXIBILITY PRIORITY MODIFICATIONS (for upgrade request type only) =====
+
+   IF flexibility_priority = "any" AND REQUEST_TYPE = "upgrade":
    - Ask for "any higher-category room" (optionally mention "including suites if appropriate")
    - State general flexibility on room type
-   - Use the phrase "forecasted to remain available" exactly ONCE in the email
-   
-   IF flexibility_priority = "category":
+
+   IF flexibility_priority = "category" AND REQUEST_TYPE = "upgrade":
    - Ask for higher-category room
    - If flexibility_detail is present, incorporate it as a preference (e.g., "particularly a junior suite")
    - Still include flexibility language (e.g., "open to similar categories if needed")
-   - Use the phrase "forecasted to remain available" exactly ONCE in the email
-   
-   IF flexibility_priority = "view":
-   - PRIMARY ask must be for "a better located room" - emphasize: higher floor, better view, quieter location, corner room, etc.
-   - If flexibility_detail is present, incorporate it (e.g., "ocean view" or "high floor")
+
+   IF flexibility_priority = "view" AND REQUEST_TYPE = "upgrade":
+   - PRIMARY ask must be for "a better located room" - emphasize: higher floor, better view, quieter location
    - Do NOT focus on category upgrade; view/location is the priority
-   - You MAY lightly mention "if a higher-category room is forecasted to remain available" but the main ask is view/location
-   - Use the phrase "forecasted to remain available" exactly ONCE in the email
-   
-   IF flexibility_priority = "timing":
-   - PRIMARY ask must be late checkout OR early check-in (default to late checkout unless detail suggests otherwise)
-   - If flexibility_detail is present, use it (e.g., "late checkout around 2pm")
-   - Do NOT push hard for category upgrade; timing enhancement is the main request
-   - Keep tone: "If timing flexibility is possible..."
-   - Use the phrase "forecasted to remain available" exactly ONCE (can apply to room inventory context)
-   
+
+   IF flexibility_priority = "timing" AND REQUEST_TYPE = "upgrade":
+   - PRIMARY ask must be late checkout OR early check-in
+   - Do NOT push hard for category upgrade
+
    IF flexibility_priority = "none":
-   - Do NOT ask for an upgrade
-   - Ask only for a small, non-disruptive preference: quiet room, away from elevator, OR a timing perk if harmless
-   - Tone: "If anything small is possible without disruption..."
-   - Keep request minimal and gracious
-   - Use the phrase "forecasted to remain available" exactly ONCE (in minimal context)
+   - Keep request minimal and gracious regardless of request type
 
 4. Specificity: Reference at least TWO of these details from input (if available):
    - Arrival day or check-in date
@@ -1095,10 +1206,11 @@ Warm regards,
 ===== OUTPUT FORMAT =====
 Respond with STRICT JSON only. No markdown, no code blocks, no commentary.
 {
-  "email_subject": "6-12 word subject including dates (e.g., Jan 15–18), not starting with Reservation Inquiry",
-  "email_body": "Full email text (140-220 words, TARGET 160-180). Must include 'Reservation: [Confirmation Number]' near top and 'forecasted to remain available' exactly once. Use [Your Name] for signature. ADAPT THE ASK based on flexibility_priority. NEVER use banned words: hack, trick, free, guarantee, owed, must, demand.",
-  "timing_guidance": ["First timing tip", "Second timing tip", "Third timing tip"],
-  "fallback_script": "One sentence for asking at the front desk in person. ALIGN WITH flexibility_priority: any/category = mention upgraded rooms, view = mention room location/view, timing = mention late checkout/early check-in, none = mention quiet room placement"
+  "email_subject": "6-12 word subject including dates (e.g., Jan 15–18), reflecting the REQUEST TYPE",
+  "email_body": "Full email text (140-220 words, TARGET 160-180). Must include 'Reservation: [Confirmation Number]' near top. Use [Your Name] for signature. ADAPT THE ASK based on REQUEST TYPE. NEVER use banned words: hack, trick, free, guarantee, owed, must, demand.",
+  "timing_guidance": ["First timing tip tailored to REQUEST TYPE", "Second timing tip", "Third timing tip"],
+  "fallback_script": "One sentence for asking at the front desk in person. ALIGN WITH REQUEST TYPE: upgrade = upgraded rooms, late_checkout = checkout time, breakfast_lounge = breakfast/lounge options, better_view = room placement, credit_spa_fb = spa/dining credits",
+  "request_type": "${requestType}"
 }
 
 Generate the JSON response:`;
@@ -1943,8 +2055,12 @@ app.post('/api/stripe/test', async (req, res) => {
             });
         }
 
-        // Extract coupon code from request body
-        const { coupon_code } = req.body || {};
+        // Extract coupon code and request type from request body
+        const { coupon_code, request_type } = req.body || {};
+
+        // Get request type config (default to 'upgrade' for backward compatibility)
+        const requestType = request_type || 'upgrade';
+        const rtConfig = getRequestTypeConfig(requestType);
 
         // Validate coupon and calculate final amount
         let finalAmountCents = BASE_PRICE_CENTS;
@@ -1960,15 +2076,15 @@ app.post('/api/stripe/test', async (req, res) => {
             }
         }
 
-        console.log(`[Stripe] Creating Checkout Session for $${(finalAmountCents / 100).toFixed(2)}`);
+        console.log(`[Stripe] Creating Checkout Session for $${(finalAmountCents / 100).toFixed(2)}, requestType=${requestType}`);
 
-        // Build product name with coupon info
-        let productName = 'StayHustler Upgrade Request';
+        // Build product name based on request type
+        let productName = `StayHustler ${rtConfig.label} Request`;
         if (appliedCoupon) {
             productName += ` (${appliedCoupon.code} applied)`;
         }
 
-        // Create Checkout Session
+        // Create Checkout Session with metadata
         const session = await stripe.checkout.sessions.create({
             mode: 'payment',
             line_items: [
@@ -1983,6 +2099,10 @@ app.post('/api/stripe/test', async (req, res) => {
                     quantity: 1,
                 },
             ],
+            metadata: {
+                request_type: requestType,
+                coupon_code: appliedCoupon?.code || null
+            },
             success_url: `${API_BASE_URL}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${BASE_URL}/payment.html`,
         });

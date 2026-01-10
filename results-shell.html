@@ -726,8 +726,8 @@
                     </svg>
                     <span id="free-request-badge-text">Free request</span>
                 </div>
-                <h1>Your insider request is ready</h1>
-                <p class="page-subheadline">Crafted using hospitality industry language that front-desk staff recognize and respond to.</p>
+                <h1 id="page-headline">Your insider request is ready</h1>
+                <p class="page-subheadline" id="page-subheadline">Crafted using hospitality industry language that front-desk staff recognize and respond to.</p>
             </header>
 
             <!-- Personalization confirmation -->
@@ -951,6 +951,80 @@ Warm regards,
             const orderRaw = localStorage.getItem('stayhustler_order');
             if (orderRaw) orderData = JSON.parse(orderRaw);
         } catch (e) {}
+
+        // Request type configuration for frontend display
+        const REQUEST_TYPE_CONFIG = {
+            upgrade: {
+                label: 'Room upgrade',
+                headline: 'Your upgrade request is ready',
+                subheadline: 'Crafted using hospitality industry language that front-desk staff recognize and respond to.',
+                whyItWorks: [
+                    'Uses phrasing hotels recognize from internal upgrade protocols',
+                    'Shows flexibility — easier to approve than rigid demands',
+                    'Timing aligned with when inventory decisions are made'
+                ]
+            },
+            late_checkout: {
+                label: 'Late checkout',
+                headline: 'Your late checkout request is ready',
+                subheadline: 'Phrased to fit housekeeping and front-desk workflows.',
+                whyItWorks: [
+                    'References housekeeping timing — shows you understand operations',
+                    'Gives hotel flexibility to offer partial extension if needed',
+                    'Polite phrasing makes approval easier for staff'
+                ]
+            },
+            breakfast_lounge: {
+                label: 'Breakfast / lounge access',
+                headline: 'Your breakfast & lounge request is ready',
+                subheadline: 'Framed as a trial or courtesy — lower friction for hotels.',
+                whyItWorks: [
+                    'Positions request as trial access, not entitlement',
+                    'Acknowledges hotel discretion — easier to approve',
+                    'References loyalty potential, appealing to hotel goals'
+                ]
+            },
+            better_view: {
+                label: 'Better room view',
+                headline: 'Your room view request is ready',
+                subheadline: 'Framed around availability, not demands.',
+                whyItWorks: [
+                    'Focuses on forecast availability, not demands',
+                    'Shows appreciation for any consideration',
+                    'Easy for front desk to fulfill if rooms are open'
+                ]
+            },
+            credit_spa_fb: {
+                label: 'Spa / F&B credit',
+                headline: 'Your spa & dining credit request is ready',
+                subheadline: 'Phrased to encourage on-property spending.',
+                whyItWorks: [
+                    'Frames credit as encouraging on-property spending',
+                    'Hotels often prefer guests use amenities over upgrades',
+                    'Shows you value their facilities, not just the room'
+                ]
+            }
+        };
+
+        // Get request type from context
+        const requestType = contextData.requestType || 'upgrade';
+        const rtConfig = REQUEST_TYPE_CONFIG[requestType] || REQUEST_TYPE_CONFIG.upgrade;
+
+        // Update page headline and subheadline based on request type
+        const pageHeadline = document.getElementById('page-headline');
+        const pageSubheadline = document.getElementById('page-subheadline');
+        if (pageHeadline && rtConfig.headline) {
+            pageHeadline.textContent = rtConfig.headline;
+        }
+        if (pageSubheadline && rtConfig.subheadline) {
+            pageSubheadline.textContent = rtConfig.subheadline;
+        }
+
+        // Update "why this works" section
+        const whyThisWorks = document.getElementById('why-this-works');
+        if (whyThisWorks && rtConfig.whyItWorks && rtConfig.whyItWorks.length > 0) {
+            whyThisWorks.innerHTML = '<strong>Why this works:</strong> ' + rtConfig.whyItWorks.join(' • ');
+        }
 
         // Show free request badge if applicable
         if (orderData && orderData.is_free_request) {

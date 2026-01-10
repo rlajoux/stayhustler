@@ -1209,12 +1209,16 @@
                 localStorage.removeItem('stayhustler_coupon');
 
                 try {
+                    // Get request type from context for metadata
+                    const contextData = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
+                    const requestType = contextData.requestType || 'upgrade';
+
                     // Request server-side access token for free coupon
                     const response = await fetch(`${API_BASE}/api/grant-free-access`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         credentials: 'include', // Important: include cookies
-                        body: JSON.stringify({ coupon_code: activeCoupon.code, email })
+                        body: JSON.stringify({ coupon_code: activeCoupon.code, email, request_type: requestType })
                     });
 
                     const data = await response.json();
@@ -1256,10 +1260,16 @@
                 payBtn.disabled = true;
 
                 try {
-                    // Include coupon code if applied
+                    // Include coupon code and request type if available
                     const requestBody = {};
                     if (activeCoupon) {
                         requestBody.coupon_code = activeCoupon.code;
+                    }
+
+                    // Get request type from context
+                    const contextData = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
+                    if (contextData.requestType) {
+                        requestBody.request_type = contextData.requestType;
                     }
 
                     const response = await fetch(`${API_BASE}/api/stripe/test`, {
