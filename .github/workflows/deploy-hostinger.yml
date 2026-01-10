@@ -42,4 +42,6 @@ jobs:
             --exclude='*.sh' \
             --exclude='flexibility-flow.txt' \
             --exclude='seo-metadata.json' \
+            --exclude='results.html' \
+            --exclude='results-shell.html' \
             ./ u837303424@145.79.4.36:/home/u837303424/domains/stayhustler.com/public_html/

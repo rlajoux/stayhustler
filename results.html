@@ -11,7 +11,7 @@
       gtag('config', 'G-H8G7MYD59K');
     </script>
     <script>
-      fetch('https://stayhustler-production.up.railway.app/api/track', {
+      fetch('https://app.stayhustler.com/api/track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ page: 'results', referrer: document.referrer })
@@ -1051,8 +1051,8 @@ Warm regards,
             window.print();
         });
 
-        // API Integration - Railway backend
-        const API_BASE = "https://stayhustler-production.up.railway.app";
+        // API Integration
+        const API_BASE = "https://app.stayhustler.com";
 
         const loadingIndicator = document.getElementById('loading-indicator');
         const fallbackNotice = document.getElementById('fallback-notice');

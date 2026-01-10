@@ -216,10 +216,10 @@ const RESULTS_COOKIE_MAX_AGE_MS = 60 * 60 * 1000; // 60 minutes
 const isProd = process.env.NODE_ENV === 'production';
 const BASE_URL = process.env.PUBLIC_BASE_URL || 'https://stayhustler.com';
 // API_BASE_URL is where the API server is hosted (for Stripe redirects)
-// In production on Railway, this should be set to the Railway URL
+// In production, this should be set to the custom domain
 const API_BASE_URL = process.env.API_BASE_URL || (process.env.RAILWAY_PUBLIC_DOMAIN
     ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
-    : 'https://stayhustler-production.up.railway.app');
+    : 'https://app.stayhustler.com');
 
 // Middleware: Verify sh_access cookie contains valid JWT
 function requireAccess(req, res, next) {
