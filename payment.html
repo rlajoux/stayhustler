@@ -1177,6 +1177,23 @@
                 // Clear the coupon from storage after use
                 localStorage.removeItem('stayhustler_coupon');
 
+                // Deliver email (same as paid flow)
+                try {
+                    const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
+                    const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
+
+                    fetch(`${API_BASE}/api/deliver-request`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, booking, context, order })
+                    }).then(response => response.json())
+                      .then(data => {
+                        if (data.ok && data.delivery_id) {
+                            localStorage.setItem('stayhustler_delivery_id', data.delivery_id);
+                        }
+                    }).catch(() => {});
+                } catch (err) {}
+
                 // Navigate to results
                 window.location.href = 'results.html';
                 return;
