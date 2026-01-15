@@ -226,6 +226,11 @@ Disallow: /
 `);
 });
 
+// Root handler for app subdomain - redirect to main site
+app.get('/', (req, res) => {
+    res.redirect(301, 'https://stayhustler.com');
+});
+
 // ============================================================
 // RESULTS ACCESS CONTROL (JWT-BASED)
 // ============================================================

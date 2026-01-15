@@ -23,6 +23,14 @@ RewriteCond %{HTTP_HOST} ^stayhustler\.com$ [NC]
 RewriteRule ^(.*)$ https://stayhustler.com/$1 [R=301,L,QSA]
 
 # -----------------------------------------------------------------------------
+# RULE 3: Redirect guide URLs without .html extension to .html version
+# Fixes 404s from external links missing the extension
+# -----------------------------------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^guides/([^/]+)$ /guides/$1.html [R=301,L]
+
+# -----------------------------------------------------------------------------
 # Notes on redirect behavior:
 #
 # http://www.stayhustler.com/path?q=1  -> https://stayhustler.com/path?q=1 (1 hop)

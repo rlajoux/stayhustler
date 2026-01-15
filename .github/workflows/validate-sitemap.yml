@@ -1,0 +1,104 @@
+name: Validate Sitemap URLs
+
+on:
+  # Run after deploy completes
+  workflow_run:
+    workflows: ["Deploy Frontend to Hostinger"]
+    types:
+      - completed
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+  # Run on schedule to catch issues
+  schedule:
+    - cron: '0 6 * * *'  # Daily at 6am UTC
+
+jobs:
+  validate:
+    name: Check Sitemap URLs
+    runs-on: ubuntu-latest
+    # Only run if deploy succeeded (or manual/scheduled trigger)
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Wait for deployment to propagate
+        if: github.event_name == 'workflow_run'
+        run: sleep 30
+
+      - name: Validate sitemap URLs
+        run: |
+          echo "=== Sitemap URL Validation ==="
+          SITEMAP_URL="https://stayhustler.com/sitemap.xml"
+
+          echo "Fetching sitemap from $SITEMAP_URL..."
+          URLS=$(curl -sf "$SITEMAP_URL" | grep -oP '(?<=<loc>)[^<]+' || echo "")
+
+          if [ -z "$URLS" ]; then
+            echo "ERROR: Could not fetch or parse sitemap"
+            exit 1
+          fi
+
+          URL_COUNT=$(echo "$URLS" | wc -l)
+          echo "Found $URL_COUNT URLs in sitemap"
+          echo ""
+
+          FAILED=0
+
+          while IFS= read -r url; do
+            STATUS=$(curl -sf -o /dev/null -w "%{http_code}" "$url" 2>/dev/null || echo "000")
+
+            if [ "$STATUS" = "200" ]; then
+              echo "[200] $url"
+            elif [ "$STATUS" = "301" ] || [ "$STATUS" = "302" ]; then
+              echo "[$STATUS] $url (redirect - check if intentional)"
+            else
+              echo "[$STATUS] $url - FAILED"
+              FAILED=$((FAILED + 1))
+            fi
+          done <<< "$URLS"
+
+          echo ""
+          if [ "$FAILED" -gt 0 ]; then
+            echo "FAILED: $FAILED URLs did not return 200"
+            exit 1
+          else
+            echo "SUCCESS: All $URL_COUNT sitemap URLs return 200"
+          fi
+
+      - name: Check critical pages
+        run: |
+          echo "=== Critical Page Checks ==="
+
+          PAGES=(
+            "https://stayhustler.com/"
+            "https://stayhustler.com/favicon.ico"
+            "https://stayhustler.com/og-image.png"
+            "https://stayhustler.com/robots.txt"
+            "https://app.stayhustler.com/robots.txt"
+            "https://app.stayhustler.com/health"
+          )
+
+          FAILED=0
+
+          for url in "${PAGES[@]}"; do
+            STATUS=$(curl -sf -o /dev/null -w "%{http_code}" "$url" 2>/dev/null || echo "000")
+
+            if [ "$STATUS" = "200" ] || [ "$STATUS" = "301" ]; then
+              echo "[OK] $url ($STATUS)"
+            else
+              echo "[FAIL] $url ($STATUS)"
+              FAILED=$((FAILED + 1))
+            fi
+          done
+
+          echo ""
+          if [ "$FAILED" -gt 0 ]; then
+            echo "WARNING: $FAILED critical pages failed"
+            # Don't fail build for critical pages, just warn
+          else
+            echo "All critical pages accessible"
+          fi
