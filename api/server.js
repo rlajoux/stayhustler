@@ -203,6 +203,30 @@ app.use(express.json());
 app.use(cookieParser());
 
 // ============================================================
+// SEO ISOLATION FOR APP SUBDOMAIN
+// ============================================================
+// All responses from app.stayhustler.com should have noindex to
+// prevent search engines from indexing API/app pages.
+// Defence in depth alongside robots.txt.
+// ============================================================
+
+app.use((req, res, next) => {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    next();
+});
+
+// robots.txt for app subdomain - block all crawling
+app.get('/robots.txt', (req, res) => {
+    res.setHeader('Content-Type', 'text/plain');
+    res.send(`# robots.txt for app.stayhustler.com
+# This subdomain hosts API endpoints only - no content to index.
+
+User-agent: *
+Disallow: /
+`);
+});
+
+// ============================================================
 // RESULTS ACCESS CONTROL (JWT-BASED)
 // ============================================================
 // Uses HttpOnly, Secure, SameSite=None cookies with JWT to verify
