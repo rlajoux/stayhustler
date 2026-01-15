@@ -390,6 +390,28 @@
                 width: 100%;
             }
         }
+
+        /* Breadcrumbs */
+        .breadcrumbs {
+            max-width: var(--max-width-article);
+            margin: var(--space-md) auto;
+            padding: 0 var(--space-md);
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+        }
+
+        .breadcrumbs a {
+            color: var(--color-text-muted);
+            text-decoration: none;
+        }
+
+        .breadcrumbs a:hover {
+            color: var(--color-accent);
+        }
+
+        .breadcrumbs span {
+            margin: 0 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -398,9 +420,18 @@
             <a href="/" class="nav-logo">StayHustler</a>
             <nav class="nav-links">
                 <a href="/" class="nav-link">Home</a>
+                <a href="/guides/" class="nav-link">Guides</a>
             </nav>
         </div>
     </header>
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span>&rsaquo;</span>
+        <a href="/guides/">Guides</a>
+        <span>&rsaquo;</span>
+        <span>Late Checkout vs Room Upgrade</span>
+    </nav>
 
     <main>
         <article>
@@ -634,8 +665,7 @@
         <div class="footer-inner">
             <nav class="footer-links">
                 <a href="/" class="footer-link">Home</a>
-                <a href="#" class="footer-link">Privacy</a>
-                <a href="#" class="footer-link">Terms</a>
+                <a href="/guides/" class="footer-link">Guides</a>
             </nav>
             <p class="footer-copyright">&copy; 2026 StayHustler</p>
         </div>
