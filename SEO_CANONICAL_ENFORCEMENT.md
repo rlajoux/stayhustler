@@ -298,10 +298,92 @@ If you see ERR_TOO_MANY_REDIRECTS:
 
 ---
 
+## Crawl Control
+
+### Non-SEO Route Inventory
+
+**Marketing Site (stayhustler.com)** - blocked in robots.txt:
+- `/booking.html` - funnel page
+- `/context.html` - funnel page
+- `/preview.html` - funnel page
+- `/payment.html` - funnel page
+- `/results.html` - funnel page
+- `/stripe-success.html` - payment callback
+- `/stripe-cancel.html` - payment callback
+- `/save.html` - internal flow
+- `/feedback.html` - internal flow
+- `/reengage.html` - internal flow
+- `/api/*` - API paths (defence in depth)
+- `/admin/*` - admin paths (defence in depth)
+- `/*test*` - test pages
+
+**App Subdomain (app.stayhustler.com)** - all routes noindex:
+- Global `X-Robots-Tag: noindex, nofollow` header on ALL responses
+- `robots.txt` returns `Disallow: /`
+- Root `/` redirects 301 to main site
+
+### robots.txt Structure
+
+**Marketing site** (`stayhustler.com/robots.txt`):
+```
+User-agent: *
+Allow: /
+Allow: /guides/
+
+# Funnel pages
+Disallow: /booking.html
+Disallow: /context.html
+... (full list in file)
+
+# API/internal paths
+Disallow: /api/
+Disallow: /admin/
+
+# URL parameters
+Disallow: /*?utm_*
+
+Sitemap: https://stayhustler.com/sitemap.xml
+```
+
+**App subdomain** (`app.stayhustler.com/robots.txt`):
+```
+User-agent: *
+Disallow: /
+```
+
+### Verification Commands
+
+```bash
+# Marketing robots.txt
+curl -I https://stayhustler.com/robots.txt
+# Expected: HTTP 200, Content-Type: text/plain
+
+curl https://stayhustler.com/robots.txt | grep -E "Disallow:|Allow:|Sitemap:"
+# Expected: See all disallow rules
+
+# App subdomain noindex
+curl -I https://app.stayhustler.com/health | grep -i x-robots-tag
+# Expected: x-robots-tag: noindex, nofollow
+
+curl -I https://app.stayhustler.com/api/health | grep -i x-robots-tag
+# Expected: x-robots-tag: noindex, nofollow
+
+# App subdomain robots.txt
+curl https://app.stayhustler.com/robots.txt
+# Expected: User-agent: * / Disallow: /
+
+# Verify no app links in sitemap
+curl -s https://stayhustler.com/sitemap.xml | grep -c "app.stayhustler"
+# Expected: 0
+```
+
+---
+
 ## Files Changed
 
 | File | Change |
 |------|--------|
-| `.htaccess` | NEW - Redirect rules for www→non-www, http→https |
-| `api/server.js` | Added global X-Robots-Tag middleware and /robots.txt endpoint |
-| `SEO_CANONICAL_ENFORCEMENT.md` | NEW - This documentation |
+| `.htaccess` | Redirect rules for www→non-www, http→https, guide extensions |
+| `api/server.js` | Global X-Robots-Tag middleware, /robots.txt endpoint, / redirect |
+| `robots.txt` | Comprehensive disallow rules for non-SEO pages |
+| `SEO_CANONICAL_ENFORCEMENT.md` | This documentation |

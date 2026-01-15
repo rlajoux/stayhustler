@@ -1,20 +1,47 @@
-# StayHustler robots.txt
-User-agent: *
-Allow: /
+# robots.txt for stayhustler.com (marketing site)
+# Last updated: 2026-01-15
 
-# Disallow non-content or private flows
+User-agent: *
+
+# Allow SEO pages
+Allow: /
+Allow: /guides/
+
+# Disallow funnel/app pages (user flows, not content)
+Disallow: /booking.html
+Disallow: /context.html
+Disallow: /preview.html
 Disallow: /payment.html
 Disallow: /results.html
-Disallow: /preview.html
+Disallow: /results-shell.html
+Disallow: /stripe-success.html
+Disallow: /stripe-cancel.html
 Disallow: /save.html
 Disallow: /feedback.html
 Disallow: /reengage.html
-Disallow: /stripe-success.html
-Disallow: /stripe-cancel.html
+
+# Disallow test and diagnostic pages
 Disallow: /diagnostic.html
 Disallow: /stripe-test.html
 Disallow: /quick-test.html
 Disallow: /test-*.html
+Disallow: /*test*
 
-# Sitemap
+# Disallow any API or internal paths (defence in depth)
+Disallow: /api/
+Disallow: /api
+Disallow: /admin/
+Disallow: /admin
+Disallow: /internal/
+Disallow: /auth/
+Disallow: /*.json$
+
+# Disallow URL parameters that don't change content
+Disallow: /*?utm_*
+Disallow: /*?gclid=*
+Disallow: /*?fbclid=*
+Disallow: /*?ref=*
+Disallow: /*?source=*
+
+# Sitemap location
 Sitemap: https://stayhustler.com/sitemap.xml
