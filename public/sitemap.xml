@@ -9,7 +9,7 @@
   <!-- Guides Hub -->
   <url>
     <loc>https://stayhustler.com/guides/</loc>
-    <lastmod>2026-01-15</lastmod>
+    <lastmod>2026-01-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -55,5 +55,17 @@
     <lastmod>2026-01-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://stayhustler.com/guides/how-hotel-inventory-systems-work.html</loc>
+    <lastmod>2026-01-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://stayhustler.com/guides/how-stayhustler-improves-your-upgrade-chances.html</loc>
+    <lastmod>2026-01-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
   </url>
 </urlset>
