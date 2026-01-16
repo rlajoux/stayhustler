@@ -11,6 +11,10 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust proxy headers (X-Forwarded-Proto, X-Forwarded-For) from Cloudflare/Railway
+// Required for correct protocol detection behind reverse proxies
+app.set('trust proxy', 1);
+
 // Initialize Stripe (will be null if STRIPE_SECRET_KEY not set)
 const stripe = process.env.STRIPE_SECRET_KEY 
     ? new Stripe(process.env.STRIPE_SECRET_KEY)
