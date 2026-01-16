@@ -1,0 +1,17 @@
+# Cloudflare Pages Redirects
+# Format: /source /destination statusCode
+# Docs: https://developers.cloudflare.com/pages/configuration/redirects/
+
+# Guide URLs without .html extension -> .html version (SEO-friendly URLs)
+/guides/how-to-ask-for-a-hotel-upgrade /guides/how-to-ask-for-a-hotel-upgrade.html 301
+/guides/best-time-to-ask-for-hotel-upgrade /guides/best-time-to-ask-for-hotel-upgrade.html 301
+/guides/hotel-upgrade-email-template /guides/hotel-upgrade-email-template.html 301
+/guides/independent-vs-chain-hotel-upgrades /guides/independent-vs-chain-hotel-upgrades.html 301
+/guides/late-checkout-vs-room-upgrade /guides/late-checkout-vs-room-upgrade.html 301
+
+# Guides index
+/guides /guides/index.html 301
+/guides/ /guides/index.html 301
+
+# Note: www -> non-www and http -> https are handled by Cloudflare automatically
+# Note: API calls go to app.stayhustler.com (separate Railway deployment)

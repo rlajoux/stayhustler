@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-H8G7MYD59K');
+    </script>
+    <script>
+      fetch('https://app.stayhustler.com/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ page: 'context', referrer: document.referrer })
+      }).catch(() => {});
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick details – StayHustler</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>">
+    <meta name="description" content="Answer a few quick questions to help us tailor your hotel upgrade request with the right timing and wording.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Quick details – StayHustler">
+    <meta property="og:description" content="Answer a few quick questions to personalize your hotel upgrade request.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stayhustler.com/context.html">
+    <meta property="og:image" content="https://stayhustler.com/og-image.png">
+    <meta property="og:site_name" content="StayHustler">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://stayhustler.com/context.html">
+    
+    <!-- Robots meta -->
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Crazy Egg -->
+    <script type="text/javascript" src="//script.crazyegg.com/pages/scripts/0131/7760.js" async="async"></script>
+
+    <style>
+        :root {
+            --color-bg: #faf9f7;
+            --color-bg-warm: #f5f3ef;
+            --color-text: #2d2a26;
+            --color-text-muted: #6b6560;
+            --color-accent: #c9a962;
+            --color-accent-hover: #b8963f;
+            --color-border: #e8e4de;
+            --color-white: #ffffff;
+            
+            --font-serif: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2.5rem;
+            --space-xl: 4rem;
+            
+            --max-width: 720px;
+            --radius: 6px;
+            --radius-lg: 10px;
+            --shadow-soft: 0 2px 16px rgba(45, 42, 38, 0.06);
+            --shadow-hover: 0 4px 24px rgba(45, 42, 38, 0.1);
+            --transition: 0.2s ease;
+        }
+        
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        
+        html {
+            height: 100%;
+        }
+        
+        body {
+            margin: 0;
+            min-height: 100%;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        h1, h2, h3 {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            line-height: 1.25;
+            margin: 0;
+        }
+        
+        p {
+            margin: 0;
+        }
+        
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        
+        /* Header */
+        .header {
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            letter-spacing: -0.01em;
+            color: var(--color-text);
+        }
+        
+        .back-link {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            transition: color var(--transition);
+        }
+        
+        .back-link:hover,
+        .back-link:focus {
+            color: var(--color-text);
+        }
+        
+        /* Main */
+        main {
+            padding: var(--space-lg) var(--space-md) var(--space-xl);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .page-header h1 {
+            font-size: clamp(1.75rem, 4vw, 2.25rem);
+            margin-bottom: var(--space-sm);
+            color: var(--color-text);
+        }
+        
+        .page-subheadline {
+            font-size: 1.05rem;
+            color: var(--color-text-muted);
+            max-width: 480px;
+            margin: 0 auto var(--space-xs);
+        }
+        
+        .time-note {
+            font-size: 0.85rem;
+            color: var(--color-accent);
+        }
+        
+        /* Form */
+        .form-card {
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .form-section {
+            padding-bottom: var(--space-md);
+            margin-bottom: var(--space-md);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .form-section:last-of-type {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        /* Form Groups */
+        .form-group {
+            margin-bottom: var(--space-md);
+        }
+        
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .form-label .required {
+            color: var(--color-accent);
+            margin-left: 2px;
+        }
+        
+        .form-helper {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-top: var(--space-xs);
+        }
+        
+        /* Select */
+        .form-select {
+            width: 100%;
+            padding: 0.875rem 2.5rem 0.875rem 1rem;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            background-color: var(--color-white);
+            color: var(--color-text);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b6560' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            transition: border-color var(--transition), box-shadow var(--transition);
+            cursor: pointer;
+        }
+        
+        .form-select:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.15);
+        }
+        
+        /* Radio Groups */
+        fieldset {
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        legend {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: var(--space-sm);
+            padding: 0;
+        }
+        
+        legend .required {
+            color: var(--color-accent);
+            margin-left: 2px;
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+        
+        .radio-option {
+            position: relative;
+        }
+        
+        .radio-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .radio-label {
+            display: flex;
+            align-items: center;
+            padding: 0.875rem 1rem;
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-size: 0.95rem;
+        }
+        
+        .radio-label::before {
+            content: '';
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--color-border);
+            border-radius: 50%;
+            margin-right: var(--space-sm);
+            transition: all var(--transition);
+            flex-shrink: 0;
+        }
+        
+        .radio-option:hover .radio-label {
+            border-color: var(--color-accent);
+        }
+        
+        .radio-input:focus-visible + .radio-label {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.15);
+        }
+        
+        .radio-input:checked + .radio-label {
+            border-color: var(--color-accent);
+            background: rgba(201, 169, 98, 0.05);
+        }
+        
+        .radio-input:checked + .radio-label::before {
+            border-color: var(--color-accent);
+            background: var(--color-accent);
+            box-shadow: inset 0 0 0 3px var(--color-white);
+        }
+
+        /* Request Type Grid */
+        .request-type-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-sm);
+        }
+
+        @media (min-width: 500px) {
+            .request-type-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .request-type-option {
+            position: relative;
+        }
+
+        .request-type-option .radio-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .request-type-label {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            background: var(--color-bg);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition);
+            height: 100%;
+        }
+
+        .request-type-label:hover {
+            border-color: var(--color-accent);
+            background: var(--color-bg-warm);
+        }
+
+        .request-type-option .radio-input:focus-visible + .request-type-label {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.15);
+        }
+
+        .request-type-option .radio-input:checked + .request-type-label {
+            border-color: var(--color-accent);
+            background: rgba(201, 169, 98, 0.08);
+            box-shadow: 0 0 0 1px var(--color-accent);
+        }
+
+        .request-type-icon {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-muted);
+            transition: color var(--transition);
+        }
+
+        .request-type-option .radio-input:checked + .request-type-label .request-type-icon {
+            color: var(--color-accent);
+        }
+
+        .request-type-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .request-type-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .request-type-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--color-text);
+        }
+
+        .request-type-desc {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            line-height: 1.4;
+        }
+
+        .request-type-hint {
+            font-size: 0.75rem;
+            color: var(--color-accent);
+            font-style: italic;
+            margin-top: 2px;
+        }
+
+        /* Conditional Fields */
+        .conditional-field {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.3s ease, opacity 0.2s ease, margin 0.3s ease;
+            margin-top: 0;
+        }
+        
+        .conditional-field.visible {
+            max-height: 150px;
+            opacity: 1;
+            margin-top: var(--space-sm);
+        }
+        
+        /* Derived Fields Section */
+        .derived-section {
+            background: var(--color-bg-warm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: var(--space-sm) var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .derived-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .derived-title {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .derived-title svg {
+            width: 16px;
+            height: 16px;
+            color: var(--color-accent);
+        }
+        
+        .derived-edit-btn {
+            font-size: 0.85rem;
+            color: var(--color-accent);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            text-decoration: underline;
+        }
+        
+        .derived-edit-btn:hover {
+            color: var(--color-accent-hover);
+        }
+        
+        .derived-values {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs) var(--space-md);
+            margin-top: var(--space-xs);
+        }
+        
+        .derived-value {
+            font-size: 0.95rem;
+            color: var(--color-text);
+        }
+        
+        .derived-value strong {
+            font-weight: 500;
+        }
+        
+        .derived-fields-editable {
+            display: none;
+            margin-top: var(--space-sm);
+            padding-top: var(--space-sm);
+            border-top: 1px solid var(--color-border);
+        }
+        
+        .derived-fields-editable.visible {
+            display: block;
+        }
+        
+        .derived-fields-editable .form-group {
+            margin-bottom: var(--space-sm);
+        }
+        
+        .derived-fields-editable .form-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .conditional-field input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            background: var(--color-white);
+            color: var(--color-text);
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+        
+        .conditional-field input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.15);
+        }
+        
+        .conditional-field input::placeholder {
+            color: var(--color-text-muted);
+        }
+        
+        .conditional-note {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.3s ease, opacity 0.2s ease, margin 0.3s ease;
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-top: 0;
+        }
+        
+        .conditional-note.visible {
+            max-height: 50px;
+            opacity: 1;
+            margin-top: var(--space-sm);
+        }
+        
+        /* CTA */
+        .cta-section {
+            margin-top: var(--space-lg);
+            text-align: center;
+        }
+        
+        .btn-primary {
+            display: inline-block;
+            width: 100%;
+            padding: 1rem 1.75rem;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--color-white);
+            background: var(--color-text);
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #1a1816;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .btn-primary:focus {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .privacy-note {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            margin-top: var(--space-sm);
+        }
+        
+        /* Desktop */
+        @media (min-width: 600px) {
+            .form-card {
+                padding: var(--space-lg);
+            }
+            
+            .btn-primary {
+                width: auto;
+                min-width: 220px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">StayHustler</a>
+            <a href="booking.html" class="back-link">Back</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <header class="page-header">
+                <h1>A few quick details</h1>
+                <p class="page-subheadline">These help us tailor hotel-native wording and the best timing to ask.</p>
+                <p class="time-note">Takes about 30 seconds.</p>
+            </header>
+
+            <form class="form-card" id="context-form">
+                <!-- Request Type Selection (NEW) -->
+                <div class="form-section">
+                    <fieldset class="form-group">
+                        <legend>What do you want to request? <span class="required">*</span></legend>
+                        <div class="request-type-grid" id="request-type-group">
+                            <div class="request-type-option">
+                                <input type="radio" id="type-upgrade" name="request-type" value="upgrade" class="radio-input" required checked>
+                                <label for="type-upgrade" class="request-type-label">
+                                    <span class="request-type-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                        </svg>
+                                    </span>
+                                    <span class="request-type-content">
+                                        <span class="request-type-title">Room upgrade</span>
+                                        <span class="request-type-desc">Ask for a better room category</span>
+                                        <span class="request-type-hint">Best when: mid-week arrivals, longer stays</span>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="request-type-option">
+                                <input type="radio" id="type-late-checkout" name="request-type" value="late_checkout" class="radio-input">
+                                <label for="type-late-checkout" class="request-type-label">
+                                    <span class="request-type-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                        </svg>
+                                    </span>
+                                    <span class="request-type-content">
+                                        <span class="request-type-title">Late checkout</span>
+                                        <span class="request-type-desc">More time on your departure day</span>
+                                        <span class="request-type-hint">Best when: flexible hotel occupancy</span>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="request-type-option">
+                                <input type="radio" id="type-breakfast" name="request-type" value="breakfast_lounge" class="radio-input">
+                                <label for="type-breakfast" class="request-type-label">
+                                    <span class="request-type-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                                            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                                            <line x1="6" y1="1" x2="6" y2="4"></line>
+                                            <line x1="10" y1="1" x2="10" y2="4"></line>
+                                            <line x1="14" y1="1" x2="14" y2="4"></line>
+                                        </svg>
+                                    </span>
+                                    <span class="request-type-content">
+                                        <span class="request-type-title">Breakfast / lounge</span>
+                                        <span class="request-type-desc">Request breakfast or lounge access</span>
+                                        <span class="request-type-hint">Best when: special occasions, loyalty members</span>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="request-type-option">
+                                <input type="radio" id="type-view" name="request-type" value="better_view" class="radio-input">
+                                <label for="type-view" class="request-type-label">
+                                    <span class="request-type-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </span>
+                                    <span class="request-type-content">
+                                        <span class="request-type-title">Better view</span>
+                                        <span class="request-type-desc">Same category, nicer view (easier approval)</span>
+                                        <span class="request-type-hint">Best when: already booked a good room</span>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="request-type-option">
+                                <input type="radio" id="type-credit" name="request-type" value="credit_spa_fb" class="radio-input">
+                                <label for="type-credit" class="request-type-label">
+                                    <span class="request-type-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                                        </svg>
+                                    </span>
+                                    <span class="request-type-content">
+                                        <span class="request-type-title">Spa / F&B credit</span>
+                                        <span class="request-type-desc">Request property credit instead of room</span>
+                                        <span class="request-type-hint">Best when: celebrating, boutique hotels</span>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="request-type-option">
+                                <input type="radio" id="type-any" name="request-type" value="any_upgrade" class="radio-input">
+                                <label for="type-any" class="request-type-label">
+                                    <span class="request-type-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                    </span>
+                                    <span class="request-type-content">
+                                        <span class="request-type-title">Any enhancement</span>
+                                        <span class="request-type-desc">I'm flexible — any improvement works</span>
+                                        <span class="request-type-hint">Best when: you want to maximize chances</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- Derived fields section (shown when booking dates are available) -->
+                <div class="derived-section" id="derived-section" style="display: none;">
+                    <div class="derived-header" id="derived-header">
+                        <span class="derived-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Derived from your booking
+                        </span>
+                        <button type="button" class="derived-edit-btn" id="derived-edit-btn">Edit</button>
+                    </div>
+                    <div class="derived-values" id="derived-values">
+                        <span class="derived-value"><strong>Stay:</strong> <span id="derived-length-display">—</span></span>
+                        <span class="derived-value"><strong>Arrival:</strong> <span id="derived-arrival-display">—</span></span>
+                    </div>
+                    <div class="derived-fields-editable" id="derived-fields-editable">
+                        <div class="form-group">
+                            <label for="length-of-stay" class="form-label">Length of stay</label>
+                            <select id="length-of-stay" class="form-select">
+                                <option value="">Select</option>
+                                <option value="1">1 night</option>
+                                <option value="2">2 nights</option>
+                                <option value="3-4">3–4 nights</option>
+                                <option value="5+">5+ nights</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="arrival-day" class="form-label">Arrival day</label>
+                            <select id="arrival-day" class="form-select">
+                                <option value="">Select</option>
+                                <option value="monday">Monday</option>
+                                <option value="tuesday">Tuesday</option>
+                                <option value="wednesday">Wednesday</option>
+                                <option value="thursday">Thursday</option>
+                                <option value="friday">Friday</option>
+                                <option value="saturday">Saturday</option>
+                                <option value="sunday">Sunday</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manual fields section (shown when booking dates are NOT available) -->
+                <div class="form-section" id="manual-fields-section">
+                    <div class="form-group" id="length-of-stay-group">
+                        <label for="length-of-stay-manual" class="form-label">Length of stay <span class="required">*</span></label>
+                        <select id="length-of-stay-manual" class="form-select" required>
+                            <option value="">Select</option>
+                            <option value="1">1 night</option>
+                            <option value="2">2 nights</option>
+                            <option value="3-4">3–4 nights</option>
+                            <option value="5+">5+ nights</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="arrival-day-group">
+                        <label for="arrival-day-manual" class="form-label">Arrival day <span class="required">*</span></label>
+                        <select id="arrival-day-manual" class="form-select" required>
+                            <option value="">Select</option>
+                            <option value="monday">Monday</option>
+                            <option value="tuesday">Tuesday</option>
+                            <option value="wednesday">Wednesday</option>
+                            <option value="thursday">Thursday</option>
+                            <option value="friday">Friday</option>
+                            <option value="saturday">Saturday</option>
+                            <option value="sunday">Sunday</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="checkin-time" class="form-label">Check-in time preference <span class="required">*</span></label>
+                        <select id="checkin-time" class="form-select" required>
+                            <option value="">Select</option>
+                            <option value="morning">Morning (before 12pm)</option>
+                            <option value="afternoon">Afternoon (12–4pm)</option>
+                            <option value="evening">Evening (after 4pm)</option>
+                        </select>
+                        <p class="form-helper">Timing affects upgrade availability.</p>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="loyalty-status" class="form-label">Loyalty status</label>
+                        <select id="loyalty-status" class="form-select">
+                            <option value="">Select (optional)</option>
+                            <option value="none">None</option>
+                            <option value="member">Member (no tier)</option>
+                            <option value="silver">Silver / mid-tier</option>
+                            <option value="gold">Gold / top-tier</option>
+                        </select>
+                        <p class="form-helper">If you're unsure, choose 'Member' or 'None'.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="occasion" class="form-label">Occasion</label>
+                        <select id="occasion" class="form-select">
+                            <option value="">Select (optional)</option>
+                            <option value="none">None</option>
+                            <option value="birthday">Birthday</option>
+                            <option value="anniversary">Anniversary</option>
+                            <option value="honeymoon">Honeymoon</option>
+                            <option value="first-visit">First visit</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <fieldset class="form-group">
+                        <legend>How do you prefer to ask? <span class="required">*</span></legend>
+                        <div class="radio-group" id="ask-preference-group">
+                            <div class="radio-option">
+                                <input type="radio" id="ask-email" name="ask-preference" value="email" class="radio-input" required>
+                                <label for="ask-email" class="radio-label">Email before arrival</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="ask-inperson" name="ask-preference" value="inperson" class="radio-input">
+                                <label for="ask-inperson" class="radio-label">In person at check-in</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="ask-both" name="ask-preference" value="both" class="radio-input">
+                                <label for="ask-both" class="radio-label">Both (recommended)</label>
+                            </div>
+                        </div>
+                        <p class="conditional-note" id="email-note">We'll generate an email you can copy and send.</p>
+                    </fieldset>
+                </div>
+
+                <div class="cta-section">
+                    <button type="submit" class="btn-primary" id="submit-btn" disabled>See my chances</button>
+                    <p class="privacy-note">Stored locally in your browser for this flow. No hotel is contacted.</p>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <div aria-live="polite" id="aria-live" style="position: absolute; left: -9999px;"></div>
+
+    <script>
+        const form = document.getElementById('context-form');
+        const submitBtn = document.getElementById('submit-btn');
+        
+        // Derived section elements
+        const derivedSection = document.getElementById('derived-section');
+        const derivedEditBtn = document.getElementById('derived-edit-btn');
+        const derivedFieldsEditable = document.getElementById('derived-fields-editable');
+        const derivedLengthDisplay = document.getElementById('derived-length-display');
+        const derivedArrivalDisplay = document.getElementById('derived-arrival-display');
+        
+        // Manual fields section
+        const manualFieldsSection = document.getElementById('manual-fields-section');
+        const lengthOfStayGroup = document.getElementById('length-of-stay-group');
+        const arrivalDayGroup = document.getElementById('arrival-day-group');
+        
+        // Select elements (derived)
+        const lengthOfStay = document.getElementById('length-of-stay');
+        const arrivalDay = document.getElementById('arrival-day');
+        
+        // Select elements (manual fallback)
+        const lengthOfStayManual = document.getElementById('length-of-stay-manual');
+        const arrivalDayManual = document.getElementById('arrival-day-manual');
+        
+        const checkinTime = document.getElementById('checkin-time');
+        const askPreferenceInputs = document.querySelectorAll('input[name="ask-preference"]');
+        const requestTypeInputs = document.querySelectorAll('input[name="request-type"]');
+
+        // Conditional elements
+        const emailNote = document.getElementById('email-note');
+        
+        // Track if fields were derived
+        let fieldsAreDerived = false;
+        let derivedLengthValue = '';
+        let derivedArrivalValue = '';
+        
+        // Day names for display
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const dayValues = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        
+        // Length display mapping
+        const lengthDisplayMap = {
+            '1': '1 night',
+            '2': '2 nights',
+            '3-4': '3–4 nights',
+            '5+': '5+ nights'
+        };
+        
+        // Compute nights from dates
+        function computeNights(checkinStr, checkoutStr) {
+            const checkin = new Date(checkinStr);
+            const checkout = new Date(checkoutStr);
+            if (isNaN(checkin) || isNaN(checkout)) return null;
+            const diffTime = checkout - checkin;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays > 0 ? diffDays : null;
+        }
+        
+        // Map nights to lengthOfStay value
+        function nightsToLengthValue(nights) {
+            if (nights === 1) return '1';
+            if (nights === 2) return '2';
+            if (nights >= 3 && nights <= 4) return '3-4';
+            if (nights >= 5) return '5+';
+            return '';
+        }
+        
+        // Get arrival day from date
+        function getArrivalDay(checkinStr) {
+            const checkin = new Date(checkinStr);
+            if (isNaN(checkin)) return null;
+            const dayIndex = checkin.getDay();
+            return {
+                value: dayValues[dayIndex],
+                display: dayNames[dayIndex]
+            };
+        }
+        
+        // Initialize derived fields from booking data
+        function initDerivedFields() {
+            try {
+                const bookingRaw = localStorage.getItem('stayhustler_booking');
+                if (!bookingRaw) return false;
+                
+                const booking = JSON.parse(bookingRaw);
+                if (!booking.checkin || !booking.checkout) return false;
+                
+                const nights = computeNights(booking.checkin, booking.checkout);
+                const arrival = getArrivalDay(booking.checkin);
+                
+                if (!nights || !arrival) return false;
+                
+                // Compute derived values
+                derivedLengthValue = nightsToLengthValue(nights);
+                derivedArrivalValue = arrival.value;
+                
+                if (!derivedLengthValue || !derivedArrivalValue) return false;
+                
+                // Set derived select values
+                lengthOfStay.value = derivedLengthValue;
+                arrivalDay.value = derivedArrivalValue;
+                
+                // Update display
+                derivedLengthDisplay.textContent = lengthDisplayMap[derivedLengthValue] || derivedLengthValue;
+                derivedArrivalDisplay.textContent = arrival.display;
+                
+                // Show derived section, hide manual length/arrival fields
+                derivedSection.style.display = 'block';
+                lengthOfStayGroup.style.display = 'none';
+                arrivalDayGroup.style.display = 'none';
+                
+                // Remove required from manual fields since derived are auto-filled
+                lengthOfStayManual.removeAttribute('required');
+                arrivalDayManual.removeAttribute('required');
+                
+                fieldsAreDerived = true;
+                return true;
+                
+            } catch (e) {
+                console.error('Error deriving fields:', e);
+                return false;
+            }
+        }
+        
+        // Toggle edit mode for derived fields
+        derivedEditBtn.addEventListener('click', () => {
+            const isVisible = derivedFieldsEditable.classList.contains('visible');
+            if (isVisible) {
+                derivedFieldsEditable.classList.remove('visible');
+                derivedEditBtn.textContent = 'Edit';
+            } else {
+                derivedFieldsEditable.classList.add('visible');
+                derivedEditBtn.textContent = 'Done';
+            }
+        });
+        
+        // Update display when derived fields are edited
+        lengthOfStay.addEventListener('change', () => {
+            derivedLengthDisplay.textContent = lengthDisplayMap[lengthOfStay.value] || lengthOfStay.value;
+            checkFormValidity();
+        });
+        
+        arrivalDay.addEventListener('change', () => {
+            const idx = dayValues.indexOf(arrivalDay.value);
+            derivedArrivalDisplay.textContent = idx >= 0 ? dayNames[idx] : arrivalDay.value;
+            checkFormValidity();
+        });
+        
+        // Check form validity
+        function checkFormValidity() {
+            let hasLengthOfStay, hasArrivalDay;
+
+            if (fieldsAreDerived) {
+                hasLengthOfStay = lengthOfStay.value !== '';
+                hasArrivalDay = arrivalDay.value !== '';
+            } else {
+                hasLengthOfStay = lengthOfStayManual.value !== '';
+                hasArrivalDay = arrivalDayManual.value !== '';
+            }
+
+            const hasCheckinTime = checkinTime.value !== '';
+            const hasAskPreference = Array.from(askPreferenceInputs).some(input => input.checked);
+            const hasRequestType = Array.from(requestTypeInputs).some(input => input.checked);
+
+            const isValid = hasLengthOfStay && hasArrivalDay && hasCheckinTime && hasAskPreference && hasRequestType;
+            submitBtn.disabled = !isValid;
+        }
+
+        // Request type change handler (for analytics)
+        requestTypeInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                checkFormValidity();
+                // Track request type selection (analytics)
+                if (typeof gtag === 'function') {
+                    gtag('event', 'context_option_selected', {
+                        'event_category': 'engagement',
+                        'event_label': input.value,
+                        'request_type': input.value
+                    });
+                }
+            });
+        });
+        
+        // Event listeners for manual selects
+        [lengthOfStayManual, arrivalDayManual, checkinTime].forEach(select => {
+            select.addEventListener('change', checkFormValidity);
+        });
+
+        // Ask preference radio handling
+        askPreferenceInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                checkFormValidity();
+                
+                if ((input.value === 'email' || input.value === 'both') && input.checked) {
+                    emailNote.classList.add('visible');
+                } else if (input.checked) {
+                    emailNote.classList.remove('visible');
+                }
+            });
+        });
+        
+        // Form submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            if (submitBtn.disabled) return;
+            
+            // Get length and arrival values from appropriate source
+            let finalLengthOfStay, finalArrivalDay;
+            if (fieldsAreDerived) {
+                finalLengthOfStay = lengthOfStay.value;
+                finalArrivalDay = arrivalDay.value;
+            } else {
+                finalLengthOfStay = lengthOfStayManual.value;
+                finalArrivalDay = arrivalDayManual.value;
+            }
+            
+            // Get request type (default to 'upgrade' for backward compatibility)
+            const requestType = document.querySelector('input[name="request-type"]:checked')?.value || 'upgrade';
+
+            // Derive flexibility from request type for backward compatibility
+            let legacyFlexibility = 'any';
+            if (requestType === 'better_view') legacyFlexibility = 'view';
+            else if (requestType === 'late_checkout') legacyFlexibility = 'timing';
+            else if (requestType === 'any_upgrade') legacyFlexibility = 'any';
+
+            // Gather form data
+            const contextData = {
+                lengthOfStay: finalLengthOfStay,
+                arrivalDay: finalArrivalDay,
+                checkinTime: checkinTime.value,
+                loyaltyStatus: document.getElementById('loyalty-status').value,
+                occasion: document.getElementById('occasion').value,
+                flexibility: legacyFlexibility, // Backward compatibility
+                askPreference: document.querySelector('input[name="ask-preference"]:checked')?.value || '',
+                requestType: requestType // Request type (upgrade, late_checkout, breakfast_lounge, better_view, credit_spa_fb, any_upgrade)
+            };
+            
+            // Store to localStorage
+            localStorage.setItem('stayhustler_context', JSON.stringify(contextData));
+            
+            // Navigate to preview
+            window.location.href = 'preview.html';
+        });
+        
+        // Initialize immediately (script is at bottom of body, DOM is ready)
+        (function init() {
+            const derived = initDerivedFields();
+            checkFormValidity();
+        })();
+    </script>
+</body>
+</html>

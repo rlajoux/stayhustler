@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-H8G7MYD59K');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Upgrade Guides - StayHustler</title>
+    <meta name="description" content="Expert guides on getting hotel upgrades, from timing your request to crafting the perfect email. Learn the tactics that actually work.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Hotel Upgrade Guides - StayHustler">
+    <meta property="og:description" content="Expert guides on getting hotel upgrades, from timing your request to crafting the perfect email.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stayhustler.com/guides/">
+    <meta property="og:site_name" content="StayHustler">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://stayhustler.com/guides/">
+    <link rel="icon" href="/favicon.ico">
+
+    <style>
+        :root {
+            --color-bg: #faf9f7;
+            --color-bg-warm: #f5f3ef;
+            --color-text: #2d2a26;
+            --color-text-muted: #6b6560;
+            --color-accent: #c9a962;
+            --color-accent-hover: #b8963f;
+            --color-border: #e8e4de;
+            --color-white: #ffffff;
+
+            --font-serif: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2.5rem;
+            --space-xl: 4rem;
+            --space-2xl: 6rem;
+
+            --max-width: 1140px;
+            --radius: 6px;
+            --shadow-soft: 0 2px 16px rgba(45, 42, 38, 0.06);
+            --shadow-hover: 0 4px 24px rgba(45, 42, 38, 0.1);
+            --transition: 0.2s ease;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            line-height: 1.3;
+            margin: 0;
+        }
+
+        p {
+            margin: 0 0 var(--space-md);
+        }
+
+        a {
+            color: var(--color-accent);
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+
+        a:hover {
+            color: var(--color-accent-hover);
+        }
+
+        /* Navigation */
+        .nav {
+            background: var(--color-white);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--space-sm) 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            color: var(--color-text);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--space-md);
+        }
+
+        .nav-link {
+            color: var(--color-text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--color-accent);
+        }
+
+        /* Breadcrumbs */
+        .breadcrumbs {
+            max-width: var(--max-width);
+            margin: var(--space-md) auto;
+            padding: 0 var(--space-md);
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+        }
+
+        .breadcrumbs a {
+            color: var(--color-text-muted);
+        }
+
+        .breadcrumbs a:hover {
+            color: var(--color-accent);
+        }
+
+        .breadcrumbs span {
+            margin: 0 0.5rem;
+        }
+
+        /* Hero */
+        .hero {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: var(--space-xl) var(--space-md);
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: var(--space-md);
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--color-text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Guide Sections */
+        .guides-section {
+            max-width: var(--max-width);
+            margin: 0 auto var(--space-2xl);
+            padding: 0 var(--space-md);
+        }
+
+        .section-header {
+            margin-bottom: var(--space-lg);
+        }
+
+        .section-header h2 {
+            font-size: 1.75rem;
+            margin-bottom: var(--space-xs);
+        }
+
+        .section-header p {
+            color: var(--color-text-muted);
+            margin: 0;
+        }
+
+        /* Guide Cards */
+        .guides-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .guide-card {
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: var(--space-lg);
+            text-decoration: none;
+            color: inherit;
+            transition: box-shadow var(--transition), border-color var(--transition);
+        }
+
+        .guide-card:hover {
+            box-shadow: var(--shadow-hover);
+            border-color: var(--color-accent);
+        }
+
+        .guide-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: var(--space-sm);
+            color: var(--color-text);
+        }
+
+        .guide-card p {
+            color: var(--color-text-muted);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .guide-card .read-more {
+            display: inline-block;
+            margin-top: var(--space-sm);
+            color: var(--color-accent);
+            font-size: 0.9rem;
+        }
+
+        /* Tips Section */
+        .tips-section {
+            background: var(--color-bg-warm);
+            padding: var(--space-xl) 0;
+            margin-bottom: var(--space-2xl);
+        }
+
+        .tips-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+
+        .tip-item h4 {
+            font-size: 1.1rem;
+            margin-bottom: var(--space-xs);
+            color: var(--color-text);
+        }
+
+        .tip-item p {
+            color: var(--color-text-muted);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        /* CTA */
+        .cta-section {
+            max-width: 700px;
+            margin: 0 auto var(--space-2xl);
+            padding: var(--space-xl) var(--space-md);
+            text-align: center;
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+        }
+
+        .cta-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .cta-section p {
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-md);
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background: var(--color-accent);
+            color: var(--color-white);
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius);
+            font-weight: 500;
+            text-decoration: none;
+            transition: background var(--transition);
+        }
+
+        .cta-btn:hover {
+            background: var(--color-accent-hover);
+            color: var(--color-white);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--color-text);
+            color: var(--color-bg);
+            padding: var(--space-lg) 0;
+        }
+
+        .footer-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--space-md);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: var(--space-md);
+        }
+
+        .footer-link {
+            color: var(--color-bg);
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .footer-link:hover {
+            opacity: 1;
+            color: var(--color-accent);
+        }
+
+        .footer-copyright {
+            font-size: 0.85rem;
+            opacity: 0.6;
+            margin: 0;
+        }
+
+        @media (max-width: 640px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .guides-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="nav">
+        <div class="nav-inner">
+            <a href="/" class="nav-logo">StayHustler</a>
+            <nav class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/guides/" class="nav-link active">Guides</a>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span>&rsaquo;</span>
+        <span>Guides</span>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h1>Hotel Upgrade Guides</h1>
+            <p class="hero-subtitle">Everything you need to know about asking for upgrades, from timing your request to choosing the right words. Based on how hotels actually operate.</p>
+        </section>
+
+        <!-- Getting Started Section -->
+        <section class="guides-section">
+            <div class="section-header">
+                <h2>Getting Started</h2>
+                <p>The fundamentals of asking for hotel upgrades effectively.</p>
+            </div>
+            <div class="guides-grid">
+                <a href="/guides/how-to-ask-for-a-hotel-upgrade.html" class="guide-card">
+                    <h3>How to Ask for a Hotel Upgrade (The Right Way)</h3>
+                    <p>Understand how hotels decide who gets upgraded, the role of loyalty programs, and the tone that actually works.</p>
+                    <span class="read-more">Read guide &rarr;</span>
+                </a>
+                <a href="/guides/best-time-to-ask-for-hotel-upgrade.html" class="guide-card">
+                    <h3>Best Time to Ask for a Hotel Upgrade</h3>
+                    <p>The 24-36 hour window explained. Learn when hotels have the most flexibility and why timing matters.</p>
+                    <span class="read-more">Read guide &rarr;</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Templates & Scripts Section -->
+        <section class="guides-section">
+            <div class="section-header">
+                <h2>Templates & Scripts</h2>
+                <p>Ready-to-use frameworks for your upgrade requests.</p>
+            </div>
+            <div class="guides-grid">
+                <a href="/guides/hotel-upgrade-email-template.html" class="guide-card">
+                    <h3>Hotel Upgrade Email Template (That Hotels Actually Respond To)</h3>
+                    <p>The 4-part email structure hotels respond to. Includes examples for different scenarios and what language to avoid.</p>
+                    <span class="read-more">Read guide &rarr;</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Strategic Decisions Section -->
+        <section class="guides-section">
+            <div class="section-header">
+                <h2>Strategic Decisions</h2>
+                <p>Navigate the nuances of different hotel types and request types.</p>
+            </div>
+            <div class="guides-grid">
+                <a href="/guides/independent-vs-chain-hotel-upgrades.html" class="guide-card">
+                    <h3>Independent vs Chain Hotel Upgrades</h3>
+                    <p>Upgrade dynamics differ dramatically between property types. Learn which approach works for boutique hotels vs major chains.</p>
+                    <span class="read-more">Read guide &rarr;</span>
+                </a>
+                <a href="/guides/late-checkout-vs-room-upgrade.html" class="guide-card">
+                    <h3>Late Checkout vs Room Upgrade: Which Is Easier to Get?</h3>
+                    <p>Compare the odds and operational constraints. Sometimes asking for the right thing matters more than how you ask.</p>
+                    <span class="read-more">Read guide &rarr;</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Tips Section -->
+        <section class="tips-section">
+            <div class="tips-inner">
+                <h2>Most Effective Tactics</h2>
+                <div class="tips-grid">
+                    <div class="tip-item">
+                        <h4>Time Your Request</h4>
+                        <p>Send your request 24-36 hours before arrival, when hotels have the clearest picture of availability.</p>
+                    </div>
+                    <div class="tip-item">
+                        <h4>Book Direct</h4>
+                        <p>Direct bookings signal higher value to the hotel and often receive more flexibility than OTA bookings.</p>
+                    </div>
+                    <div class="tip-item">
+                        <h4>Be Flexible</h4>
+                        <p>Phrase requests as polite inquiries, not demands. Make it easy for the hotel to say yes.</p>
+                    </div>
+                    <div class="tip-item">
+                        <h4>Know Your Market</h4>
+                        <p>Resort destinations on weekdays and business hotels on weekends often have more upgrade flexibility.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Common Mistakes Section -->
+        <section class="guides-section">
+            <div class="section-header">
+                <h2>Common Mistakes to Avoid</h2>
+            </div>
+            <div class="tips-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-md);">
+                <div class="tip-item" style="background: var(--color-white); padding: var(--space-md); border-radius: var(--radius); border: 1px solid var(--color-border);">
+                    <h4>Demanding upgrades based on status</h4>
+                    <p>Loyalty status creates priority, not guarantees. Mentioning it briefly is fine; demanding is not.</p>
+                </div>
+                <div class="tip-item" style="background: var(--color-white); padding: var(--space-md); border-radius: var(--radius); border: 1px solid var(--color-border);">
+                    <h4>Asking at check-in without prior contact</h4>
+                    <p>By check-in, rooms are often already assigned. Email requests 24-36 hours before are more effective.</p>
+                </div>
+                <div class="tip-item" style="background: var(--color-white); padding: var(--space-md); border-radius: var(--radius); border: 1px solid var(--color-border);">
+                    <h4>Using generic template language</h4>
+                    <p>Hotels see the same templates repeatedly. Adapt your request to your specific booking context.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <h2>Ready to Ask for an Upgrade?</h2>
+            <p>StayHustler generates a personalized request based on your specific booking details, timing, and hotel type.</p>
+            <a href="/booking.html" class="cta-btn">Generate My Request</a>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <nav class="footer-links">
+                <a href="/" class="footer-link">Home</a>
+                <a href="/guides/" class="footer-link">Guides</a>
+            </nav>
+            <p class="footer-copyright">&copy; 2026 StayHustler</p>
+        </div>
+    </footer>
+</body>
+</html>

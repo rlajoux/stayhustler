@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-H8G7MYD59K');
+    </script>
+    <script>
+      fetch('https://app.stayhustler.com/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ page: 'payment', referrer: document.referrer })
+      }).catch(() => {});
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout – StayHustler</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>">
+    <meta name="description" content="Complete your purchase to unlock your personalized hotel upgrade request and timing guidance.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Checkout – StayHustler">
+    <meta property="og:description" content="Unlock your personalized hotel upgrade request.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stayhustler.com/payment.html">
+    <meta property="og:image" content="https://stayhustler.com/og-image.png">
+    <meta property="og:site_name" content="StayHustler">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://stayhustler.com/payment.html">
+    
+    <!-- Robots meta -->
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Crazy Egg -->
+    <script type="text/javascript" src="//script.crazyegg.com/pages/scripts/0131/7760.js" async="async"></script>
+
+    <style>
+        :root {
+            --color-bg: #faf9f7;
+            --color-bg-warm: #f5f3ef;
+            --color-text: #2d2a26;
+            --color-text-muted: #6b6560;
+            --color-accent: #c9a962;
+            --color-accent-hover: #b8963f;
+            --color-border: #e8e4de;
+            --color-white: #ffffff;
+            --color-error: #c45c5c;
+            
+            --font-serif: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2.5rem;
+            --space-xl: 4rem;
+            
+            --max-width: 720px;
+            --radius: 6px;
+            --radius-lg: 10px;
+            --shadow-soft: 0 2px 16px rgba(45, 42, 38, 0.06);
+            --shadow-hover: 0 4px 24px rgba(45, 42, 38, 0.1);
+            --transition: 0.2s ease;
+        }
+        
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        
+        html {
+            height: 100%;
+        }
+        
+        body {
+            margin: 0;
+            min-height: 100%;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        h1, h2, h3 {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            line-height: 1.25;
+            margin: 0;
+        }
+        
+        p {
+            margin: 0;
+        }
+        
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        
+        /* Header */
+        .header {
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            letter-spacing: -0.01em;
+            color: var(--color-text);
+        }
+        
+        .back-link {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            transition: color var(--transition);
+        }
+        
+        .back-link:hover,
+        .back-link:focus {
+            color: var(--color-text);
+        }
+        
+        /* Main */
+        main {
+            padding: var(--space-lg) var(--space-md) var(--space-xl);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        
+        /* Page Header */
+        .page-header {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .page-header h1 {
+            font-size: clamp(1.75rem, 4vw, 2.25rem);
+            color: var(--color-text);
+        }
+        
+        /* Layout */
+        .checkout-layout {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+        
+        /* Order Summary Card */
+        .order-summary {
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            box-shadow: var(--shadow-soft);
+            order: -1;
+        }
+        
+        .order-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .order-price {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            color: var(--color-text);
+            margin-bottom: var(--space-md);
+        }
+        
+        .order-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            border-top: 1px solid var(--color-border);
+            padding-top: var(--space-md);
+        }
+        
+        .order-list li {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) 0;
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+        }
+        
+        .order-list li svg {
+            width: 16px;
+            height: 16px;
+            color: var(--color-accent);
+            flex-shrink: 0;
+        }
+
+        /* Price Display */
+        .price-breakdown {
+            margin-bottom: var(--space-md);
+        }
+
+        .price-original {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            color: var(--color-text-muted);
+            text-decoration: line-through;
+            margin-bottom: 0.25rem;
+        }
+
+        .price-original.hidden {
+            display: none;
+        }
+
+        .price-discount {
+            font-size: 0.9rem;
+            color: #2a7d4f;
+            margin-bottom: 0.25rem;
+        }
+
+        .price-discount.hidden {
+            display: none;
+        }
+
+        .price-final {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            color: var(--color-text);
+        }
+
+        /* Coupon Section */
+        .coupon-section {
+            border-top: 1px solid var(--color-border);
+            padding-top: var(--space-md);
+            margin-top: var(--space-sm);
+            overflow: hidden;
+        }
+
+        .coupon-toggle {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            transition: color var(--transition);
+        }
+
+        .coupon-toggle:hover {
+            color: var(--color-text);
+        }
+
+        .coupon-form {
+            display: none;
+            margin-top: var(--space-sm);
+        }
+
+        .coupon-form.visible {
+            display: block;
+        }
+
+        .coupon-input-row {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .coupon-input {
+            flex: 1 1 0;
+            min-width: 0;
+            padding: 0.5rem 0.75rem;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: var(--color-text);
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            transition: border-color var(--transition);
+        }
+
+        .coupon-input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+
+        .coupon-input::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        .coupon-btn {
+            flex-shrink: 0;
+            padding: 0.5rem 1rem;
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--color-text);
+            background: var(--color-bg-warm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+            white-space: nowrap;
+        }
+
+        .coupon-btn:hover:not(:disabled) {
+            background: var(--color-border);
+        }
+
+        .coupon-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .coupon-feedback {
+            font-size: 0.8rem;
+            margin-top: var(--space-xs);
+            min-height: 1.2em;
+        }
+
+        .coupon-feedback.error {
+            color: var(--color-error);
+        }
+
+        .coupon-feedback.success {
+            color: #2a7d4f;
+        }
+
+        .coupon-applied {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-xs) var(--space-sm);
+            background: rgba(42, 125, 79, 0.08);
+            border-radius: var(--radius);
+            margin-top: var(--space-sm);
+        }
+
+        .coupon-applied.visible {
+            display: flex;
+        }
+
+        .coupon-applied-text {
+            font-size: 0.85rem;
+            color: #2a7d4f;
+        }
+
+        .coupon-remove {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .coupon-remove:hover {
+            color: var(--color-error);
+        }
+
+        @media (max-width: 400px) {
+            .coupon-input-row {
+                flex-direction: column;
+            }
+
+            .coupon-btn {
+                width: 100%;
+            }
+        }
+
+        /* Payment Section */
+        .payment-section {
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            margin-bottom: var(--space-md);
+            color: var(--color-text);
+        }
+        
+        /* Payment Methods */
+        fieldset {
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        legend {
+            font-size: 1.1rem;
+            font-family: var(--font-serif);
+            font-weight: 400;
+            color: var(--color-text);
+            margin-bottom: var(--space-md);
+            padding: 0;
+        }
+        
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+            margin-bottom: var(--space-md);
+        }
+        
+        .payment-option {
+            position: relative;
+        }
+        
+        .payment-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .payment-label {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: 1rem;
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .payment-label::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--color-border);
+            border-radius: 50%;
+            flex-shrink: 0;
+            transition: all var(--transition);
+        }
+        
+        .payment-option:hover .payment-label {
+            border-color: var(--color-accent);
+        }
+        
+        .payment-input:focus-visible + .payment-label {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.2);
+        }
+        
+        .payment-input:checked + .payment-label {
+            border-color: var(--color-accent);
+            background: rgba(201, 169, 98, 0.05);
+        }
+        
+        .payment-input:checked + .payment-label::before {
+            border-color: var(--color-accent);
+            background: var(--color-accent);
+            box-shadow: inset 0 0 0 4px var(--color-white);
+        }
+        
+        .payment-icon {
+            width: 32px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-muted);
+        }
+        
+        .payment-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .payment-name {
+            font-size: 0.95rem;
+            color: var(--color-text);
+        }
+        
+        /* Trust Note */
+        .trust-note {
+            font-size: 0.8rem;
+            line-height: 1.45;
+            color: var(--color-text-muted);
+            text-align: center;
+            margin: var(--space-sm) 0;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Conversion Hints */
+        .conversion-hint {
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: var(--color-text-muted);
+            text-align: center;
+            margin: 0;
+        }
+
+        .cta-hint {
+            margin-top: var(--space-sm);
+        }
+
+        .order-hints {
+            border-top: 1px solid var(--color-border);
+            padding-top: var(--space-sm);
+            margin-top: var(--space-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        /* Validation */
+        /* Email Field */
+        .email-field {
+            margin-bottom: var(--space-md);
+        }
+
+        .email-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: var(--space-xs);
+        }
+
+        .email-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            color: var(--color-text);
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+
+        .email-input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.15);
+        }
+
+        .email-helper {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            margin-top: var(--space-xs);
+        }
+
+        .validation-message {
+            display: none;
+            font-size: 0.85rem;
+            color: var(--color-error);
+            margin-bottom: var(--space-sm);
+            padding: var(--space-xs) var(--space-sm);
+            background: rgba(196, 92, 92, 0.08);
+            border-radius: var(--radius);
+        }
+        
+        .validation-message.visible {
+            display: block;
+        }
+        
+        /* Reassurance Block */
+        .reassurance-block {
+            background: var(--color-bg-warm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .reassurance-title {
+            font-family: var(--font-serif);
+            font-size: 0.95rem;
+            color: var(--color-text);
+            margin-bottom: var(--space-sm);
+        }
+
+        .reassurance-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 var(--space-sm) 0;
+        }
+
+        .reassurance-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-xs);
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            padding: 0.25rem 0;
+        }
+
+        .reassurance-list li::before {
+            content: '•';
+            color: var(--color-accent);
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .reassurance-footer {
+            font-size: 0.85rem;
+            color: var(--color-text);
+            font-style: italic;
+            padding-top: var(--space-xs);
+            border-top: 1px solid var(--color-border);
+        }
+
+        /* CTA */
+        .cta-section {
+            margin-top: var(--space-md);
+        }
+        
+        .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 1rem 1.75rem;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--color-white);
+            background: var(--color-text);
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #1a1816;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .btn-primary:focus {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Why We Charge */
+        .why-link {
+            display: inline-block;
+            margin-top: var(--space-sm);
+            padding: 0;
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            line-height: 1.3;
+            color: var(--color-text-muted);
+            background: none;
+            border: none;
+            border-bottom: 1px solid var(--color-text-muted);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .why-link:hover {
+            color: var(--color-text);
+            border-bottom-color: var(--color-text);
+        }
+
+        .why-link:focus {
+            outline: none;
+        }
+
+        .why-link:focus-visible {
+            outline: none;
+            color: var(--color-text);
+            border-bottom-color: var(--color-text);
+            box-shadow: 0 2px 0 0 var(--color-text);
+        }
+        
+        .why-panel {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.3s ease, opacity 0.2s ease, margin 0.3s ease;
+        }
+        
+        .why-panel.visible {
+            max-height: 150px;
+            opacity: 1;
+            margin-top: var(--space-sm);
+        }
+        
+        .why-panel-inner {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            background: var(--color-bg-warm);
+            padding: var(--space-sm);
+            border-radius: var(--radius);
+            line-height: 1.6;
+        }
+        
+        /* Fine Print */
+        .fine-print {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            margin-top: var(--space-lg);
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--color-border);
+        }
+        
+        /* Desktop Layout */
+        @media (min-width: 640px) {
+            .checkout-layout {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+            
+            .payment-section {
+                flex: 1;
+                order: 0;
+            }
+            
+            .order-summary {
+                width: 280px;
+                flex-shrink: 0;
+                order: 0;
+                position: sticky;
+                top: var(--space-md);
+            }
+            
+            .payment-section {
+                padding: var(--space-lg);
+            }
+            
+            .order-summary {
+                padding: var(--space-lg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">StayHustler</a>
+            <a href="preview.html" class="back-link">Back</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <header class="page-header">
+                <h1>Checkout</h1>
+            </header>
+
+            <div class="checkout-layout">
+                <section class="payment-section">
+                    <form id="payment-form">
+                        <fieldset>
+                            <legend>Payment method</legend>
+                            
+                            <div class="payment-methods" role="radiogroup">
+                                <div class="payment-option">
+                                    <input type="radio" id="method-stripe" name="payment-method" value="stripe" class="payment-input" checked>
+                                    <label for="method-stripe" class="payment-label">
+                                        <span class="payment-icon">
+                                            <svg viewBox="0 0 32 20" fill="currentColor">
+                                                <path d="M16 2c-2.4 0-4.3.6-5.8 1.6-.9.6-1.5 1.3-1.9 2.1-.4.8-.6 1.6-.6 2.5 0 1.2.4 2.3 1.1 3.2.7.9 1.8 1.6 3.1 2.1l1.6.5c.9.3 1.5.6 1.9 1 .4.4.6.9.6 1.5 0 .7-.3 1.3-.8 1.7-.5.4-1.2.6-2.1.6-1.3 0-2.5-.4-3.6-1.3l-1.5 2c1.4 1.1 3.1 1.7 5.1 1.7 2.5 0 4.4-.6 5.9-1.7 1.4-1.1 2.1-2.6 2.1-4.4 0-1.2-.4-2.2-1.1-3.1-.7-.9-1.8-1.6-3.2-2.1l-1.6-.5c-.8-.3-1.4-.6-1.8-.9-.4-.3-.6-.8-.6-1.3 0-.6.2-1.1.7-1.5.5-.4 1.1-.6 1.9-.6 1.1 0 2.2.3 3.2 1l1.4-2c-1.3-.9-2.8-1.3-4.6-1.3z"/>
+                                            </svg>
+                                        </span>
+                                        <span class="payment-name">Stripe Checkout</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </fieldset>
+                        
+                        <div class="email-field">
+                            <label for="email-input" class="email-label">Email address</label>
+                            <input type="email" id="email-input" class="email-input" placeholder="you@example.com" required>
+                            <p class="email-helper">We'll send your upgrade request here.</p>
+                        </div>
+
+                        <div class="validation-message" id="validation-message" role="alert" aria-live="polite">
+                            Please enter your email to continue.
+                        </div>
+
+                        <section class="reassurance-block" aria-labelledby="reassurance-heading">
+                            <h3 class="reassurance-title" id="reassurance-heading">What this does — and doesn't do</h3>
+                            <ul class="reassurance-list">
+                                <li>This creates a hotel-ready request, tailored to your booking.</li>
+                                <li>It does not guarantee upgrades.</li>
+                                <li>Hotels decide based on availability, timing, and flexibility.</li>
+                            </ul>
+                            <p class="reassurance-footer">You're paying for execution quality — the part most people get wrong.</p>
+                        </section>
+
+                        <div class="cta-section">
+                            <button type="submit" class="btn-primary" id="pay-btn" disabled>Pay & unlock</button>
+
+                            <p class="conversion-hint cta-hint">After payment, you'll get your ready-to-send request instantly.</p>
+
+                            <p class="trust-note">We can't access or change your reservation.<br>We don't contact hotels or booking systems.<br>Your details are used only to generate your request.</p>
+
+                            <button type="button" class="why-link" id="why-toggle" aria-expanded="false">Why we charge</button>
+                            
+                            <div class="why-panel" id="why-panel">
+                                <div class="why-panel-inner">
+                                    We keep this independent and ad-free. The fee supports high-quality guidance and continuous improvement.
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                <aside class="order-summary">
+                    <p class="order-title">Per stay</p>
+                    <div class="price-breakdown">
+                        <p class="price-original hidden" id="price-original">$7</p>
+                        <p class="price-discount hidden" id="price-discount"></p>
+                        <p class="price-final" id="price-final">$7</p>
+                    </div>
+                    <ul class="order-list">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Instant delivery
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            No subscription
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Includes: request + timing + fallback script
+                        </li>
+                    </ul>
+
+                    <div class="order-hints">
+                        <p class="conversion-hint">Best used 24–72 hours before check-in</p>
+                        <p class="conversion-hint">One request per stay · No subscription</p>
+                    </div>
+
+                    <div class="coupon-section">
+                        <button type="button" class="coupon-toggle" id="coupon-toggle">Have a promo code?</button>
+                        <div class="coupon-form" id="coupon-form">
+                            <div class="coupon-input-row">
+                                <input type="text" class="coupon-input" id="coupon-input" placeholder="Enter code" autocomplete="off">
+                                <button type="button" class="coupon-btn" id="coupon-apply-btn">Apply</button>
+                            </div>
+                            <p class="coupon-feedback" id="coupon-feedback"></p>
+                        </div>
+                        <div class="coupon-applied" id="coupon-applied">
+                            <span class="coupon-applied-text" id="coupon-applied-text"></span>
+                            <button type="button" class="coupon-remove" id="coupon-remove">Remove</button>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <p class="fine-print">Upgrades depend on availability; this improves odds, not guarantees.</p>
+        </div>
+    </main>
+
+    <div aria-live="polite" id="aria-live" style="position: absolute; left: -9999px;"></div>
+
+    <script>
+        const form = document.getElementById('payment-form');
+        const payBtn = document.getElementById('pay-btn');
+        const validationMessage = document.getElementById('validation-message');
+        const whyToggle = document.getElementById('why-toggle');
+        const whyPanel = document.getElementById('why-panel');
+        const paymentInputs = document.querySelectorAll('input[name="payment-method"]');
+        const emailInput = document.getElementById('email-input');
+
+        // Coupon elements
+        const couponToggle = document.getElementById('coupon-toggle');
+        const couponForm = document.getElementById('coupon-form');
+        const couponInput = document.getElementById('coupon-input');
+        const couponApplyBtn = document.getElementById('coupon-apply-btn');
+        const couponFeedback = document.getElementById('coupon-feedback');
+        const couponApplied = document.getElementById('coupon-applied');
+        const couponAppliedText = document.getElementById('coupon-applied-text');
+        const couponRemove = document.getElementById('coupon-remove');
+        const priceOriginal = document.getElementById('price-original');
+        const priceDiscount = document.getElementById('price-discount');
+        const priceFinal = document.getElementById('price-final');
+
+        // Price constants
+        const BASE_PRICE_CENTS = 700;
+        const API_BASE = 'https://app.stayhustler.com';
+
+        // Stripe is pre-selected, so set it as default
+        let selectedMethod = 'stripe';
+        let activeCoupon = null;
+
+        // Format cents to USD string
+        function formatPrice(cents) {
+            return '$' + (cents / 100).toFixed(cents % 100 === 0 ? 0 : 2);
+        }
+
+        // Update price display based on active coupon
+        function updatePriceDisplay() {
+            if (activeCoupon) {
+                priceOriginal.textContent = formatPrice(BASE_PRICE_CENTS);
+                priceOriginal.classList.remove('hidden');
+
+                const discountText = activeCoupon.type === 'percent'
+                    ? `Promo (${activeCoupon.code}): −${activeCoupon.value}%`
+                    : `Promo (${activeCoupon.code}): −${formatPrice(activeCoupon.discount_cents)}`;
+                priceDiscount.textContent = discountText;
+                priceDiscount.classList.remove('hidden');
+
+                priceFinal.textContent = formatPrice(activeCoupon.final_cents);
+
+                // Show applied state, hide form
+                couponAppliedText.textContent = `${activeCoupon.code} applied`;
+                couponApplied.classList.add('visible');
+                couponForm.classList.remove('visible');
+                couponToggle.style.display = 'none';
+            } else {
+                priceOriginal.classList.add('hidden');
+                priceDiscount.classList.add('hidden');
+                priceFinal.textContent = formatPrice(BASE_PRICE_CENTS);
+
+                // Show toggle, hide applied state
+                couponApplied.classList.remove('visible');
+                couponToggle.style.display = '';
+            }
+        }
+
+        // Save coupon to localStorage
+        function saveCoupon() {
+            if (activeCoupon) {
+                localStorage.setItem('stayhustler_coupon', JSON.stringify(activeCoupon));
+            } else {
+                localStorage.removeItem('stayhustler_coupon');
+            }
+        }
+
+        // Load coupon from localStorage
+        function loadCoupon() {
+            try {
+                const saved = localStorage.getItem('stayhustler_coupon');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    // Don't restore TRYITFREE if it's already been used
+                    if (parsed.code === 'TRYITFREE' && isTryItFreeUsed()) {
+                        localStorage.removeItem('stayhustler_coupon');
+                        return;
+                    }
+                    activeCoupon = parsed;
+                    updatePriceDisplay();
+                    updatePayButton();
+                    // Note: checkFormValidity will be called after this in the init flow
+                }
+            } catch (e) {
+                localStorage.removeItem('stayhustler_coupon');
+            }
+        }
+
+        // Check if TRYITFREE has been used
+        function isTryItFreeUsed() {
+            return localStorage.getItem('stayhustler_tryitfree_used') === 'true';
+        }
+
+        // Mark TRYITFREE as used
+        function markTryItFreeUsed() {
+            localStorage.setItem('stayhustler_tryitfree_used', 'true');
+        }
+
+        // Apply coupon via API
+        async function applyCoupon(code) {
+            const trimmed = code.trim();
+            if (!trimmed) {
+                showCouponFeedback('Enter a code', 'error');
+                return;
+            }
+
+            // Check if TRYITFREE has already been used
+            const normalizedCode = trimmed.toUpperCase();
+            if (normalizedCode === 'TRYITFREE' && isTryItFreeUsed()) {
+                showCouponFeedback('This code has already been used', 'error');
+                return;
+            }
+
+            couponApplyBtn.disabled = true;
+            couponApplyBtn.textContent = '...';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/validate-coupon`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: trimmed })
+                });
+
+                const data = await response.json();
+
+                if (data.valid) {
+                    activeCoupon = {
+                        code: data.code,
+                        type: data.type,
+                        value: data.value,
+                        discount_cents: data.discount_cents,
+                        final_cents: data.final_cents
+                    };
+                    saveCoupon();
+                    updatePriceDisplay();
+                    updatePayButton();
+                    checkFormValidity(); // Re-check form validity after coupon applied
+                    showCouponFeedback('', '');
+                    couponInput.value = '';
+
+                    // Track analytics
+                    trackCouponApplied();
+                } else {
+                    showCouponFeedback('Invalid code', 'error');
+                }
+            } catch (error) {
+                showCouponFeedback('Could not verify code', 'error');
+            } finally {
+                couponApplyBtn.disabled = false;
+                couponApplyBtn.textContent = 'Apply';
+            }
+        }
+
+        // Update pay button based on price
+        function updatePayButton() {
+            if (activeCoupon && activeCoupon.final_cents === 0) {
+                payBtn.textContent = 'Get my request';
+            } else {
+                payBtn.textContent = 'Pay & unlock';
+            }
+        }
+
+        // Remove coupon
+        function removeCoupon() {
+            activeCoupon = null;
+            saveCoupon();
+            updatePriceDisplay();
+            updatePayButton();
+            couponForm.classList.remove('visible');
+        }
+
+        // Show feedback message
+        function showCouponFeedback(message, type) {
+            couponFeedback.textContent = message;
+            couponFeedback.className = 'coupon-feedback';
+            if (type) {
+                couponFeedback.classList.add(type);
+            }
+        }
+
+        // Track coupon applied event
+        function trackCouponApplied() {
+            const eventData = {
+                code: activeCoupon.code,
+                discount_type: activeCoupon.type,
+                discount_value: activeCoupon.value,
+                final_price: activeCoupon.final_cents / 100
+            };
+
+            // GA4 event
+            if (typeof gtag === 'function') {
+                gtag('event', 'coupon_applied', eventData);
+            } else {
+                console.log('[Analytics] coupon_applied', eventData);
+            }
+        }
+
+        // Track free request used event
+        function trackFreeRequestUsed(couponCode) {
+            const eventData = {
+                code: couponCode || 'UNKNOWN'
+            };
+
+            // GA4 event
+            if (typeof gtag === 'function') {
+                gtag('event', 'free_request_used', eventData);
+            } else {
+                console.log('[Analytics] free_request_used', eventData);
+            }
+        }
+
+        // Coupon toggle
+        couponToggle.addEventListener('click', () => {
+            couponForm.classList.toggle('visible');
+            if (couponForm.classList.contains('visible')) {
+                couponInput.focus();
+            }
+        });
+
+        // Apply button
+        couponApplyBtn.addEventListener('click', () => {
+            applyCoupon(couponInput.value);
+        });
+
+        // Enter key in input
+        couponInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                applyCoupon(couponInput.value);
+            }
+        });
+
+        // Remove coupon
+        couponRemove.addEventListener('click', removeCoupon);
+
+        // Load saved coupon on page load
+        loadCoupon();
+
+        // Pre-fill email if already saved
+        const savedEmail = localStorage.getItem('stayhustler_email');
+        if (savedEmail) {
+            emailInput.value = savedEmail;
+        }
+
+        // Check form validity
+        function checkFormValidity() {
+            const emailValid = emailInput.value.trim() && emailInput.checkValidity();
+            payBtn.disabled = !emailValid;
+            if (emailValid) {
+                validationMessage.classList.remove('visible');
+            }
+        }
+
+        // Listen for email input
+        emailInput.addEventListener('input', checkFormValidity);
+        checkFormValidity(); // Initial check
+
+        // Enable/disable button based on selection (kept for potential future payment methods)
+        paymentInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                if (input.checked) {
+                    selectedMethod = input.value;
+                    checkFormValidity();
+                }
+            });
+        });
+
+        // Form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = emailInput.value.trim();
+            if (!email || !emailInput.checkValidity()) {
+                validationMessage.classList.add('visible');
+                emailInput.focus();
+                return;
+            }
+
+            // Save email to localStorage
+            localStorage.setItem('stayhustler_email', email);
+
+            // Check if this is a free request (100% discount)
+            const isFreeRequest = activeCoupon && activeCoupon.final_cents === 0;
+
+            if (isFreeRequest) {
+                // Free request flow - get server-side access token
+                payBtn.textContent = 'Processing...';
+                payBtn.disabled = true;
+
+                // Handle one-time vs unlimited free coupons
+                if (activeCoupon.code === 'TRYITFREE') {
+                    // TRYITFREE is one-time use - mark as used
+                    markTryItFreeUsed();
+                    trackFreeRequestUsed('TRYITFREE');
+                } else if (activeCoupon.code === 'ADMINFREE100') {
+                    // ADMINFREE100 is unlimited - just track analytics
+                    trackFreeRequestUsed('ADMINFREE100');
+                }
+
+                // Save order as free request (for localStorage-based content)
+                const order = {
+                    price: 0,
+                    currency: 'USD',
+                    ts: Date.now(),
+                    method: 'free',
+                    coupon: activeCoupon.code,
+                    is_free_request: true
+                };
+                localStorage.setItem('stayhustler_order', JSON.stringify(order));
+
+                // Clear the coupon from storage after use
+                localStorage.removeItem('stayhustler_coupon');
+
+                // Get booking and context data
+                const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
+                const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
+
+                // Trigger email delivery (fire and forget)
+                fetch(`${API_BASE}/api/deliver-request`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, booking, context, order })
+                }).then(response => response.json())
+                  .then(data => {
+                    if (data.ok && data.delivery_id) {
+                        localStorage.setItem('stayhustler_delivery_id', data.delivery_id);
+                    }
+                }).catch(() => {});
+
+                // Encode booking and context data for cross-domain transfer
+                const dataPayload = btoa(JSON.stringify({ booking, context, order }));
+
+                // Redirect to API server to set cookie (avoids third-party cookie issues)
+                // The server will validate the coupon, set the cookie, and redirect to /results
+                const redirectUrl = `${API_BASE}/free-access?code=${encodeURIComponent(activeCoupon.code)}&email=${encodeURIComponent(email)}&data=${encodeURIComponent(dataPayload)}`;
+                window.location.href = redirectUrl;
+                return;
+            }
+
+            // Handle Stripe Checkout for paid requests
+            if (selectedMethod === 'stripe') {
+                payBtn.textContent = 'Redirecting to Stripe...';
+                payBtn.disabled = true;
+
+                try {
+                    // Include coupon code and request type if available
+                    const requestBody = {};
+                    if (activeCoupon) {
+                        requestBody.coupon_code = activeCoupon.code;
+                    }
+
+                    // Get request type from context
+                    const contextData = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
+                    if (contextData.requestType) {
+                        requestBody.request_type = contextData.requestType;
+                    }
+
+                    const response = await fetch(`${API_BASE}/api/stripe/test`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    const data = await response.json();
+
+                    if (data.ok && data.checkout_url) {
+                        // Save that we initiated Stripe payment
+                        localStorage.setItem('stayhustler_stripe_initiated', 'true');
+                        localStorage.setItem('stayhustler_payment_method', 'stripe');
+
+                        // Redirect to Stripe Checkout
+                        window.location.href = data.checkout_url;
+                        return; // Don't continue to results page
+                    } else {
+                        alert('Failed to create Stripe checkout session. Please try another payment method.');
+                        payBtn.textContent = 'Pay & unlock';
+                        payBtn.disabled = false;
+                        return;
+                    }
+                } catch (error) {
+                    alert('Failed to connect to payment processor. Please try again.');
+                    payBtn.textContent = 'Pay & unlock';
+                    payBtn.disabled = false;
+                    return;
+                }
+            }
+
+            // Calculate final price for non-Stripe methods
+            const finalPriceCents = activeCoupon ? activeCoupon.final_cents : BASE_PRICE_CENTS;
+
+            // Simulate successful payment (for non-Stripe methods)
+            localStorage.setItem('stayhustler_paid', 'true');
+            const order = {
+                price: finalPriceCents / 100,
+                currency: 'USD',
+                ts: Date.now(),
+                method: selectedMethod,
+                coupon: activeCoupon ? activeCoupon.code : null
+            };
+            localStorage.setItem('stayhustler_order', JSON.stringify(order));
+
+            // Try to deliver via email (non-blocking)
+            if (email) {
+                try {
+                    const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
+                    const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
+
+                    // POST to delivery endpoint (don't block navigation on failure)
+                    fetch(`${API_BASE}/api/deliver-request`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, booking, context, order })
+                    }).then(response => response.json())
+                      .then(data => {
+                        if (data.ok && data.delivery_id) {
+                            localStorage.setItem('stayhustler_delivery_id', data.delivery_id);
+                        }
+                    }).catch(() => {});
+                } catch (err) {
+                    // Silent fail - will show on results page
+                }
+            }
+
+            // Navigate to results immediately (don't wait for email)
+            window.location.href = 'results.html';
+        });
+
+        // Why we charge toggle
+        whyToggle.addEventListener('click', () => {
+            const isExpanded = whyPanel.classList.contains('visible');
+            whyPanel.classList.toggle('visible');
+            whyToggle.setAttribute('aria-expanded', !isExpanded);
+        });
+    </script>
+</body>
+</html>
