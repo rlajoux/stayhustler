@@ -3217,7 +3217,7 @@ app.post('/api/track', async (req, res) => {
     }
 });
 
-// Hourly funnel report (called by cron)
+// Daily funnel report (called by cron)
 app.get('/api/cron/hourly-report', async (req, res) => {
     try {
         const cronSecret = req.query.secret || req.headers['x-cron-secret'];
@@ -3236,7 +3236,7 @@ app.get('/api/cron/hourly-report', async (req, res) => {
         const result = await pool.query(`
             SELECT page, COUNT(*) as count
             FROM page_views
-            WHERE created_at > NOW() - INTERVAL '1 hour'
+            WHERE created_at > NOW() - INTERVAL '24 hours'
             GROUP BY page
             ORDER BY
                 CASE page
@@ -3279,10 +3279,10 @@ app.get('/api/cron/hourly-report', async (req, res) => {
         }
 
         const now = new Date();
-        const emailText = `StayHustler Hourly Funnel Report
+        const emailText = `StayHustler Daily Funnel Report
 ${now.toISOString()}
 
-FUNNEL OVERVIEW (Last Hour)
+FUNNEL OVERVIEW (Last 24 Hours)
 ═══════════════════════════════════════
 
 Homepage visits:     ${funnel.index}
@@ -3311,17 +3311,17 @@ StayHustler Analytics
         const msg = {
             to: 'rlajoux@gmail.com',
             from: process.env.SENDGRID_FROM_EMAIL,
-            subject: `StayHustler Hourly: ${funnel.index} visits, ${funnel.results} conversions`,
+            subject: `StayHustler Daily: ${funnel.index} visits, ${funnel.results} conversions`,
             text: emailText
         };
 
         await sgMail.send(msg);
-        console.log('[Cron] Hourly report sent');
+        console.log('[Cron] Daily report sent');
 
         res.json({ ok: true, funnel, dropoffs });
 
     } catch (err) {
-        console.error('[Cron] Hourly report error:', err.message);
+        console.error('[Cron] Daily report error:', err.message);
         res.status(500).json({ error: err.message });
     }
 });
@@ -3340,19 +3340,19 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://0.0.0.0:${PORT}`);
     console.log(`API endpoint: http://0.0.0.0:${PORT}/api/generate-request`);
 
-    // Automatic hourly funnel report
+    // Automatic daily funnel report
     if (process.env.SENDGRID_API_KEY && process.env.SENDGRID_FROM_EMAIL && pool) {
-        console.log('[Cron] Hourly funnel report scheduler started');
+        console.log('[Cron] Daily funnel report scheduler started');
 
-        // Run every hour
+        // Run every 24 hours
         setInterval(async () => {
             try {
-                console.log('[Cron] Running hourly funnel report...');
+                console.log('[Cron] Running daily funnel report...');
 
                 const result = await pool.query(`
                     SELECT page, COUNT(*) as count
                     FROM page_views
-                    WHERE created_at > NOW() - INTERVAL '1 hour'
+                    WHERE created_at > NOW() - INTERVAL '24 hours'
                     GROUP BY page
                 `);
 
@@ -3386,10 +3386,10 @@ app.listen(PORT, '0.0.0.0', () => {
                 }
 
                 const now = new Date();
-                const emailText = `StayHustler Hourly Funnel Report
+                const emailText = `StayHustler Daily Funnel Report
 ${now.toISOString()}
 
-FUNNEL OVERVIEW (Last Hour)
+FUNNEL OVERVIEW (Last 24 Hours)
 ═══════════════════════════════════════
 
 Homepage visits:     ${funnel.index}
@@ -3418,14 +3418,14 @@ StayHustler Analytics
                 await sgMail.send({
                     to: 'rlajoux@gmail.com',
                     from: process.env.SENDGRID_FROM_EMAIL,
-                    subject: `StayHustler Hourly: ${funnel.index} visits, ${funnel.results} conversions`,
+                    subject: `StayHustler Daily: ${funnel.index} visits, ${funnel.results} conversions`,
                     text: emailText
                 });
 
-                console.log('[Cron] Hourly report sent successfully');
+                console.log('[Cron] Daily report sent successfully');
             } catch (err) {
-                console.error('[Cron] Hourly report error:', err.message);
+                console.error('[Cron] Daily report error:', err.message);
             }
-        }, 60 * 60 * 1000); // Every hour (60 min * 60 sec * 1000 ms)
+        }, 24 * 60 * 60 * 1000); // Every 24 hours
     }
 });
