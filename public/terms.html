@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service — StayHustler</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>">
+    <meta name="description" content="StayHustler terms of service. Service description, payment terms, refund policy, and limitations.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://stayhustler.com/terms.html">
+
+    <style>
+        :root {
+            --color-bg: #faf9f7;
+            --color-bg-warm: #f5f3ef;
+            --color-text: #2d2a26;
+            --color-text-muted: #6b6560;
+            --color-accent: #c9a962;
+            --color-accent-hover: #b8963f;
+            --color-border: #e8e4de;
+            --color-white: #ffffff;
+
+            --font-serif: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2.5rem;
+            --space-xl: 4rem;
+            --space-2xl: 6rem;
+
+            --max-width: 1140px;
+            --radius: 6px;
+            --shadow-soft: 0 2px 16px rgba(45, 42, 38, 0.06);
+            --transition: 0.2s ease;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            line-height: 1.25;
+            margin: 0;
+        }
+
+        p { margin: 0; }
+        a { color: inherit; text-decoration: none; }
+
+        .container {
+            width: min(1120px, calc(100% - 64px));
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @media (max-width: 640px) {
+            .container { width: calc(100% - 40px); }
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            background: rgba(250, 249, 247, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .nav-logo {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            letter-spacing: -0.01em;
+            color: var(--color-text);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--space-lg);
+        }
+
+        .nav-link {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            transition: color var(--transition);
+        }
+
+        .nav-link:hover,
+        .nav-link:focus { color: var(--color-text); }
+
+        /* Article layout */
+        .article {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: calc(64px + var(--space-xl)) 0 var(--space-2xl);
+        }
+
+        .article h1 {
+            font-size: clamp(1.75rem, 3vw, 2.25rem);
+            margin-bottom: var(--space-xs);
+        }
+
+        .article-meta {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-xl);
+        }
+
+        .article h2 {
+            font-size: 1.25rem;
+            margin-top: var(--space-lg);
+            margin-bottom: var(--space-sm);
+        }
+
+        .article p {
+            color: var(--color-text-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: var(--space-sm);
+        }
+
+        .article ul {
+            margin: 0 0 var(--space-sm);
+            padding-left: 1.25rem;
+        }
+
+        .article li {
+            color: var(--color-text-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: var(--space-xs);
+        }
+
+        .article a {
+            color: var(--color-accent);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .article a:hover { color: var(--color-accent-hover); }
+
+        /* Footer */
+        .footer {
+            padding: var(--space-xl) 0;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .footer-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-md);
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: var(--space-lg);
+        }
+
+        .footer-link {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            transition: color var(--transition);
+        }
+
+        .footer-link:hover { color: var(--color-text); }
+
+        .footer-disclaimer {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .footer-copyright {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { gap: var(--space-md); }
+            .nav-link { font-size: 0.85rem; }
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: var(--space-md);
+            }
+        }
+
+        @media (max-width: 480px) {
+            :root {
+                --space-md: 1.25rem;
+                --space-lg: 2rem;
+                --space-xl: 3rem;
+                --space-2xl: 4rem;
+            }
+            .nav-links { gap: var(--space-sm); }
+        }
+    </style>
+</head>
+<body>
+    <header class="nav">
+        <div class="container">
+            <nav class="nav-inner">
+                <a href="/" class="nav-logo">StayHustler</a>
+                <div class="nav-links">
+                    <a href="/#how-it-works" class="nav-link">How it works</a>
+                    <a href="/#pricing" class="nav-link">Pricing</a>
+                    <a href="/guides/" class="nav-link">Guides</a>
+                    <a href="/#faq" class="nav-link">FAQ</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <article class="article">
+                <h1>Terms of Service</h1>
+                <p class="article-meta">Last updated: February 2026</p>
+
+                <p>By using StayHustler, you agree to these terms. If you do not agree, please do not use the service.</p>
+
+                <h2>Service description</h2>
+                <p>StayHustler generates a personalized hotel upgrade request based on the booking details you provide. The service costs $7 per stay and includes an AI-generated upgrade request email, timing guidance, and a check-in script tailored to your situation.</p>
+
+                <h2>No guarantee of upgrade</h2>
+                <p>StayHustler does not guarantee that you will receive a hotel upgrade, room change, late checkout, or any other enhancement. All upgrade decisions are made entirely at the hotel's discretion and depend on availability, occupancy, and property policy. What we provide is a well-crafted request designed to improve your chances — not a guaranteed outcome.</p>
+
+                <h2>Payment terms</h2>
+                <p>Payment is processed securely through Stripe. The $7 fee is a one-time charge per stay. There are no subscriptions, recurring fees, or hidden costs. You will not be charged again unless you choose to use the service for a different stay.</p>
+
+                <h2>Refund policy</h2>
+                <p>Because the content generated is personalized to your specific booking and delivered immediately, refunds are not available once your results have been generated. If you experience a technical issue that prevents delivery, contact us and we will resolve it or issue a refund.</p>
+
+                <h2>Intellectual property</h2>
+                <p>The upgrade request, timing guidance, and scripts generated for you are for your personal use only. You may use the content to contact hotels about your own stays. You may not resell, redistribute, or republish the generated content.</p>
+                <p>The StayHustler name, design, and site content are owned by StayHustler and may not be copied or used without permission.</p>
+
+                <h2>Limitation of liability</h2>
+                <p>StayHustler provides guidance based on common hotel industry practices. We are not responsible for any hotel's decision regarding your request. We do not contact hotels on your behalf, access your reservation, or make any changes to your booking.</p>
+                <p>To the fullest extent permitted by law, StayHustler's total liability for any claim arising from your use of the service is limited to the amount you paid ($7). We are not liable for indirect, incidental, or consequential damages.</p>
+
+                <h2>Changes to these terms</h2>
+                <p>We may update these terms from time to time. Material changes will be reflected in the "Last updated" date at the top of this page. Continued use of the service after changes constitutes acceptance of the updated terms.</p>
+
+                <h2>Contact</h2>
+                <p>Questions about these terms? Email <a href="mailto:support@stayhustler.com">support@stayhustler.com</a>.</p>
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <nav class="footer-links">
+                    <a href="/guides/" class="footer-link">Guides</a>
+                    <a href="/privacy.html" class="footer-link">Privacy</a>
+                    <a href="/terms.html" class="footer-link">Terms</a>
+                </nav>
+                <p class="footer-disclaimer">StayHustler provides guidance based on common hotel practices; outcomes vary by property and availability.</p>
+                <p class="footer-copyright">&copy; 2026 stayhustler.com</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
