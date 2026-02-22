@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-H8G7MYD59K');
-    </script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotel Upgrade Guides - StayHustler</title>
@@ -21,10 +12,35 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://stayhustler.com/guides/">
     <meta property="og:site_name" content="StayHustler">
+    <meta property="og:image" content="https://stayhustler.com/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://stayhustler.com/og-image.png">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://stayhustler.com/guides/">
     <link rel="icon" href="/favicon.ico">
+
+    <!-- Schema Markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://stayhustler.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Guides",
+          "item": "https://stayhustler.com/guides/"
+        }
+      ]
+    }
+    </script>
 
     <style>
         :root {
@@ -370,6 +386,7 @@
             <nav class="nav-links">
                 <a href="/" class="nav-link">Home</a>
                 <a href="/guides/" class="nav-link active">Guides</a>
+                <a href="/tools/" class="nav-link">Tools</a>
             </nav>
         </div>
     </header>
@@ -393,6 +410,11 @@
                 <p>The fundamentals of asking for hotel upgrades effectively.</p>
             </div>
             <div class="guides-grid">
+                <a href="/guides/upgrade-myths-that-dont-work-anymore.html" class="guide-card">
+                    <h3>Hotel Upgrade Myths That Don't Work Anymore</h3>
+                    <p>The upgrade advice you keep hearing is mostly outdated. Here's what no longer works, why it fails, and what to do instead.</p>
+                    <span class="read-more">Read guide &rarr;</span>
+                </a>
                 <a href="/guides/how-to-ask-for-a-hotel-upgrade.html" class="guide-card">
                     <h3>How to Ask for a Hotel Upgrade (The Right Way)</h3>
                     <p>Understand how hotels decide who gets upgraded, the role of loyalty programs, and the tone that actually works.</p>
@@ -401,6 +423,26 @@
                 <a href="/guides/best-time-to-ask-for-hotel-upgrade.html" class="guide-card">
                     <h3>Best Time to Ask for a Hotel Upgrade</h3>
                     <p>The 24-36 hour window explained. Learn when hotels have the most flexibility and why timing matters.</p>
+                    <span class="read-more">Read guide &rarr;</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Understanding Hotel Operations Section -->
+        <section class="guides-section">
+            <div class="section-header">
+                <h2>Understanding Hotel Operations</h2>
+                <p>How hotels actually make upgrade decisions - and why most advice ignores this.</p>
+            </div>
+            <div class="guides-grid">
+                <a href="/guides/how-hotel-inventory-systems-work.html" class="guide-card">
+                    <h3>How Hotel Inventory Systems Work</h3>
+                    <p>A practical explanation of revenue management, inventory allocation, and why upgrades are decided before you arrive.</p>
+                    <span class="read-more">Read guide &rarr;</span>
+                </a>
+                <a href="/guides/how-stayhustler-improves-your-upgrade-chances.html" class="guide-card">
+                    <h3>How StayHustler Improves Your Upgrade Chances</h3>
+                    <p>Why timing beats politeness, where the real decision window lives, and how StayHustler aligns with hotel operations.</p>
                     <span class="read-more">Read guide &rarr;</span>
                 </a>
             </div>
@@ -437,6 +479,31 @@
                     <h3>Late Checkout vs Room Upgrade: Which Is Easier to Get?</h3>
                     <p>Compare the odds and operational constraints. Sometimes asking for the right thing matters more than how you ask.</p>
                     <span class="read-more">Read guide &rarr;</span>
+                </a>
+                <a href="/guides/does-loyalty-status-get-upgrades.html" class="guide-card">
+                    <h3>Does Loyalty Status Get You Upgraded?</h3>
+                    <p>Elite status creates priority, not guarantees. Learn how loyalty programmes actually influence upgrade decisions.</p>
+                    <span class="read-more">Read guide &rarr;</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Free Tools Section -->
+        <section class="guides-section">
+            <div class="section-header">
+                <h2>Free Tools</h2>
+                <p>Interactive calculators to help you plan your upgrade request.</p>
+            </div>
+            <div class="guides-grid">
+                <a href="/tools/upgrade-checker.html" class="guide-card">
+                    <h3>Upgrade Probability Checker</h3>
+                    <p>Enter your booking details and get a free assessment of your upgrade chances, plus tips to improve your odds.</p>
+                    <span class="read-more">Use tool &rarr;</span>
+                </a>
+                <a href="/tools/send-timing.html" class="guide-card">
+                    <h3>Best Time to Send Calculator</h3>
+                    <p>Enter your check-in date and get the exact window to send your upgrade request for maximum impact.</p>
+                    <span class="read-more">Use tool &rarr;</span>
                 </a>
             </div>
         </section>
@@ -500,9 +567,22 @@
             <nav class="footer-links">
                 <a href="/" class="footer-link">Home</a>
                 <a href="/guides/" class="footer-link">Guides</a>
+                <a href="/tools/" class="footer-link">Tools</a>
+                <a href="/about.html" class="footer-link">About</a>
+                <a href="/privacy.html" class="footer-link">Privacy</a>
+                <a href="/terms.html" class="footer-link">Terms</a>
             </nav>
             <p class="footer-copyright">&copy; 2026 StayHustler</p>
         </div>
     </footer>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-H8G7MYD59K');
+    </script>
 </body>
 </html>

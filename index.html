@@ -1,44 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-H8G7MYD59K');
-    </script>
-    <script>
-      // Funnel tracking
-      fetch('https://app.stayhustler.com/api/track', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ page: 'index', referrer: document.referrer })
-      }).catch(() => {});
-    </script>
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StayHustler – Insider access to better hotel stays</title>
+    <title>How to Get a Hotel Room Upgrade — Free Upgrade Request Tool</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>">
-    <meta name="description" content="We help travelers ask for upgrades and perks the way hotels actually expect. No integrations, no booking changes. Takes under 2 minutes.">
-    
+    <meta name="description" content="Generate a personalized hotel upgrade request email in under 2 minutes. Tailored to your booking, timed for when hotels have the most flexibility. $7 per stay.">
+
     <!-- Open Graph -->
-    <meta property="og:title" content="StayHustler – Insider access to better hotel stays">
-    <meta property="og:description" content="We help travelers ask for upgrades and perks the way hotels actually expect.">
+    <meta property="og:title" content="How to Get a Hotel Room Upgrade — Free Upgrade Request Tool">
+    <meta property="og:description" content="Generate a personalized hotel upgrade request email in under 2 minutes. Tailored to your booking, timed for when hotels have the most flexibility.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://stayhustler.com">
+    <meta property="og:url" content="https://stayhustler.com/">
     <meta property="og:image" content="https://stayhustler.com/og-image.png">
     <meta property="og:site_name" content="StayHustler">
     <meta name="twitter:card" content="summary_large_image">
-    
+    <meta name="twitter:title" content="How to Get a Hotel Room Upgrade — Free Upgrade Request Tool">
+    <meta name="twitter:description" content="Generate a personalized hotel upgrade request email in under 2 minutes.">
+    <meta name="twitter:image" content="https://stayhustler.com/og-image.png">
+
     <!-- Canonical URL -->
     <link rel="canonical" href="https://stayhustler.com/">
 
-    <!-- Crazy Egg -->
-    <script type="text/javascript" src="//script.crazyegg.com/pages/scripts/0131/7760.js" async="async"></script>
+    <!-- Schema: Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "StayHustler",
+      "url": "https://stayhustler.com",
+      "description": "Hotel upgrade request generator that helps travelers ask for upgrades the way hotels expect."
+    }
+    </script>
+
+    <!-- Schema: FAQPage -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does this guarantee a hotel upgrade?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Upgrades are always at the hotel's discretion and depend on availability. What we provide is a well-crafted, appropriately timed request that improves your chances by speaking the hotel's language."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will you contact the hotel for me?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. We prepare the request; you send it. This keeps you in control and ensures the communication comes directly from the guest — which hotels prefer."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does this work for any hotel?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Our guidance applies to most hotels, from boutique properties to large chains. The approach is based on common hospitality practices, though results vary by property and situation."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is my booking information safe?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. We use your booking details only to personalize your request. We do not store payment information, contact hotels on your behalf, or share your data with third parties."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Schema: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://stayhustler.com/"
+        }
+      ]
+    }
+    </script>
 
     <style>
         :root {
@@ -905,6 +956,7 @@
                     <a href="#how-it-works" class="nav-link">How it works</a>
                     <a href="#pricing" class="nav-link">Pricing</a>
                     <a href="/guides/" class="nav-link">Guides</a>
+                    <a href="/tools/" class="nav-link">Tools</a>
                     <a href="#faq" class="nav-link">FAQ</a>
                 </div>
             </nav>
@@ -967,19 +1019,6 @@
                 </div>
             </div>
             <div class="hero-decoration" aria-hidden="true"></div>
-        </section>
-
-        <section class="trusted">
-            <div class="container">
-                <div class="trusted-inner">
-                    <span class="trusted-label">Trusted by</span>
-                    <div class="trusted-logos">
-                        <span class="trusted-logo">Boutique Hotels</span>
-                        <span class="trusted-logo">Frequent Travelers</span>
-                        <span class="trusted-logo">Hospitality Pros</span>
-                    </div>
-                </div>
-            </div>
         </section>
 
         <section class="newsletter">
@@ -1120,8 +1159,10 @@
             <div class="footer-inner">
                 <nav class="footer-links">
                     <a href="/guides/" class="footer-link">Guides</a>
-                    <a href="#" class="footer-link">Privacy</a>
-                    <a href="#" class="footer-link">Terms</a>
+                    <a href="/tools/" class="footer-link">Tools</a>
+                    <a href="/about.html" class="footer-link">About</a>
+                    <a href="/privacy.html" class="footer-link">Privacy</a>
+                    <a href="/terms.html" class="footer-link">Terms</a>
                 </nav>
                 <p class="footer-disclaimer">StayHustler provides guidance based on common hotel practices; outcomes vary by property and availability.</p>
                 <p class="footer-copyright">&copy; 2026 stayhustler.com</p>
@@ -1203,6 +1244,35 @@
             }
         });
     </script>
+
+    <!-- Analytics (deferred to avoid blocking render) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-H8G7MYD59K');
+    </script>
+    <script>
+      // Funnel tracking (non-blocking)
+      if (typeof requestIdleCallback === 'function') {
+        requestIdleCallback(() => {
+          fetch('https://app.stayhustler.com/api/track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ page: 'index', referrer: document.referrer })
+          }).catch(() => {});
+        });
+      } else {
+        setTimeout(() => {
+          fetch('https://app.stayhustler.com/api/track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ page: 'index', referrer: document.referrer })
+          }).catch(() => {});
+        }, 0);
+      }
+    </script>
+    <script type="text/javascript" src="//script.crazyegg.com/pages/scripts/0131/7760.js" async="async"></script>
 </body>
 </html>
-<!-- deploy 1767923552 -->

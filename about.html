@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About StayHustler — Raphael L. | 20 Years in Travel Tech</title>
+    <meta name="description" content="StayHustler is built by Raphael L., a travel technology veteran with 20 years of experience running product at multiple OTAs.">
+    <link rel="icon" href="/favicon.ico">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="About StayHustler — Raphael L.">
+    <meta property="og:description" content="Built by a travel tech veteran with 20 years running product at multiple OTAs.">
+    <meta property="og:type" content="profile">
+    <meta property="og:url" content="https://stayhustler.com/about.html">
+    <meta property="og:site_name" content="StayHustler">
+    <meta property="og:image" content="https://stayhustler.com/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://stayhustler.com/og-image.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://stayhustler.com/about.html">
+
+    <!-- Schema: Person (E-E-A-T) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Raphael L.",
+      "url": "https://stayhustler.com/about.html",
+      "jobTitle": "Founder",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "StayHustler",
+        "url": "https://stayhustler.com"
+      },
+      "knowsAbout": ["hotel operations", "revenue management", "online travel agencies", "travel technology", "hotel upgrade strategies"],
+      "description": "Travel technology professional with 20 years of experience. Ran the product department at several major OTAs."
+    }
+    </script>
+
+    <!-- Schema: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://stayhustler.com/" },
+        { "@type": "ListItem", "position": 2, "name": "About", "item": "https://stayhustler.com/about.html" }
+      ]
+    }
+    </script>
+
+    <style>
+        :root {
+            --color-bg: #faf9f7;
+            --color-bg-warm: #f5f3ef;
+            --color-text: #2d2a26;
+            --color-text-muted: #6b6560;
+            --color-accent: #c9a962;
+            --color-accent-hover: #b8963f;
+            --color-border: #e8e4de;
+            --color-white: #ffffff;
+            --font-serif: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2.5rem;
+            --space-xl: 4rem;
+            --max-width: 1140px;
+            --max-width-article: 720px;
+            --radius: 6px;
+            --transition: 0.2s ease;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0; font-family: var(--font-sans); font-size: 1rem;
+            line-height: 1.7; color: var(--color-text); background-color: var(--color-bg);
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3 { font-family: var(--font-serif); font-weight: 400; line-height: 1.3; margin: 0; }
+        p { margin: 0 0 var(--space-md); }
+        a { color: var(--color-accent); text-decoration: none; }
+        a:hover { color: var(--color-accent-hover); }
+        ul { margin: 0 0 var(--space-md); padding-left: var(--space-lg); }
+        li { margin-bottom: var(--space-xs); }
+
+        .nav {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--color-white);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--space-sm) 0;
+        }
+        .nav-inner {
+            display: flex; align-items: center; justify-content: space-between;
+            max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);
+        }
+        .nav-logo { font-family: var(--font-serif); font-size: 1.25rem; color: var(--color-text); text-decoration: none; }
+        .nav-links { display: flex; gap: var(--space-md); }
+        .nav-link { font-size: 0.9rem; color: var(--color-text-muted); text-decoration: none; }
+        .nav-link:hover, .nav-link.active { color: var(--color-accent); }
+
+        .breadcrumbs {
+            max-width: var(--max-width-article); margin: var(--space-md) auto; padding: 0 var(--space-md);
+            font-size: 0.85rem; color: var(--color-text-muted);
+        }
+        .breadcrumbs a { color: var(--color-text-muted); }
+        .breadcrumbs a:hover { color: var(--color-accent); }
+        .breadcrumbs span { margin: 0 0.5rem; }
+
+        .about-container {
+            max-width: var(--max-width-article);
+            margin: 0 auto;
+            padding: var(--space-lg) var(--space-md) var(--space-xl);
+        }
+        .about-container h1 {
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            letter-spacing: -0.02em; margin-bottom: var(--space-lg);
+        }
+        .about-container h2 {
+            font-size: 1.5rem; margin: var(--space-xl) 0 var(--space-md);
+        }
+        .about-container p { font-size: 1.05rem; line-height: 1.8; }
+
+        .author-card {
+            display: flex; gap: var(--space-lg); align-items: flex-start;
+            padding: var(--space-lg);
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            margin-bottom: var(--space-xl);
+        }
+        .author-photo {
+            flex-shrink: 0; width: 120px; height: 120px;
+            background: var(--color-bg-warm);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; color: var(--color-text-muted); text-align: center;
+            padding: var(--space-sm);
+        }
+        .author-info h2 { font-size: 1.35rem; margin: 0 0 var(--space-xs); }
+        .author-role {
+            font-size: 0.9rem; color: var(--color-accent); margin-bottom: var(--space-sm);
+        }
+        .author-info p { font-size: 0.95rem; margin: 0; }
+
+        @media (max-width: 600px) {
+            .author-card { flex-direction: column; align-items: center; text-align: center; }
+        }
+
+        .credentials {
+            padding: var(--space-lg);
+            background: var(--color-bg-warm);
+            border-radius: var(--radius);
+            margin-bottom: var(--space-xl);
+        }
+        .credentials h3 {
+            font-family: var(--font-serif); font-weight: 400;
+            font-size: 1.15rem; margin-bottom: var(--space-sm);
+        }
+        .credentials ul { margin-bottom: 0; }
+        .credentials li { font-size: 0.95rem; }
+
+        .guides-list { margin-top: var(--space-lg); }
+        .guides-list h2 { font-size: 1.35rem; margin-bottom: var(--space-md); }
+        .guide-link {
+            display: block; padding: var(--space-sm) 0;
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-text); font-size: 0.95rem;
+        }
+        .guide-link:hover { color: var(--color-accent); }
+        .guide-link:last-child { border-bottom: none; }
+
+        .footer {
+            background: var(--color-text); color: var(--color-bg);
+            padding: var(--space-lg) 0; margin-top: var(--space-xl);
+        }
+        .footer-inner {
+            max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md);
+        }
+        .footer-links { display: flex; gap: var(--space-md); }
+        .footer-link { color: var(--color-bg); opacity: 0.8; font-size: 0.9rem; }
+        .footer-link:hover { opacity: 1; color: var(--color-accent); }
+        .footer-copyright { font-size: 0.85rem; opacity: 0.6; margin: 0; }
+    </style>
+</head>
+<body>
+    <header class="nav">
+        <div class="nav-inner">
+            <a href="/" class="nav-logo">StayHustler</a>
+            <nav class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/guides/" class="nav-link">Guides</a>
+                <a href="/tools/" class="nav-link">Tools</a>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span>&rsaquo;</span>
+        <span>About</span>
+    </nav>
+
+    <main class="about-container">
+        <h1>About StayHustler</h1>
+
+        <div class="author-card">
+            <div class="author-photo">
+                <!-- Replace with <img src="/author-photo.jpg" alt="Raphael L." width="120" height="120"> -->
+                Photo coming soon
+            </div>
+            <div class="author-info">
+                <h2>Raphael L.</h2>
+                <p class="author-role">Founder &amp; Creator</p>
+                <p>Travel technology professional with 20 years of experience. Former head of product at multiple online travel agencies. Built StayHustler to share what the industry knows about hotel operations with the people who actually stay at hotels.</p>
+            </div>
+        </div>
+
+        <h2>Why I Built This</h2>
+
+        <p>After two decades in travel technology, I noticed a disconnect. The advice travellers find online about hotel upgrades is mostly surface-level: be nice, dress well, ask at check-in. None of it reflects how hotels actually make upgrade decisions.</p>
+
+        <p>Having worked inside the systems that power hotel distribution, I know that upgrades are controlled outcomes driven by revenue management, inventory forecasting, and operational constraints. The decision happens 24-72 hours before arrival, not at the front desk.</p>
+
+        <p>StayHustler bridges that gap. It takes the operational knowledge that hotel professionals have and translates it into practical guidance for guests. The result is upgrade requests that speak the hotel's language rather than working against it.</p>
+
+        <div class="credentials">
+            <h3>Background</h3>
+            <ul>
+                <li>20 years in travel technology and online distribution</li>
+                <li>Ran product departments at several major OTAs</li>
+                <li>Deep familiarity with hotel revenue management systems and inventory allocation</li>
+                <li>Experience with hotel property management systems, channel managers, and booking engines</li>
+            </ul>
+        </div>
+
+        <h2>What StayHustler Does</h2>
+
+        <p>StayHustler generates personalised hotel upgrade requests based on your specific booking. It considers your hotel type, booking channel, timing, and circumstances to craft a message that aligns with how hotels actually operate.</p>
+
+        <p>The approach is grounded in revenue management principles: timing requests to the decision window, using operational language, signalling flexibility, and making it easy for hotels to say yes.</p>
+
+        <p>The guides and free tools on this site share the same underlying knowledge. Everything is based on how hotels work, not on wishful thinking.</p>
+
+        <section class="guides-list">
+            <h2>Guides by Raphael L.</h2>
+            <a href="/guides/how-to-ask-for-a-hotel-upgrade.html" class="guide-link">How to Ask for a Hotel Room Upgrade</a>
+            <a href="/guides/best-time-to-ask-for-hotel-upgrade.html" class="guide-link">Best Time to Email a Hotel for a Room Upgrade</a>
+            <a href="/guides/hotel-upgrade-email-template.html" class="guide-link">Hotel Upgrade Email Template</a>
+            <a href="/guides/upgrade-myths-that-dont-work-anymore.html" class="guide-link">Hotel Upgrade Myths That Don't Work Anymore</a>
+            <a href="/guides/how-hotel-inventory-systems-work.html" class="guide-link">How Hotel Inventory Systems Work</a>
+            <a href="/guides/independent-vs-chain-hotel-upgrades.html" class="guide-link">Independent vs Chain Hotel Upgrades</a>
+            <a href="/guides/late-checkout-vs-room-upgrade.html" class="guide-link">Late Checkout vs Room Upgrade</a>
+            <a href="/guides/does-loyalty-status-get-upgrades.html" class="guide-link">Does Loyalty Status Get You Upgrades?</a>
+            <a href="/guides/how-stayhustler-improves-your-upgrade-chances.html" class="guide-link">How StayHustler Improves Your Upgrade Chances</a>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <nav class="footer-links">
+                <a href="/" class="footer-link">Home</a>
+                <a href="/guides/" class="footer-link">Guides</a>
+                <a href="/tools/" class="footer-link">Tools</a>
+                <a href="/about.html" class="footer-link">About</a>
+                <a href="/privacy.html" class="footer-link">Privacy</a>
+                <a href="/terms.html" class="footer-link">Terms</a>
+            </nav>
+            <p class="footer-copyright">&copy; 2026 StayHustler</p>
+        </div>
+    </footer>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-H8G7MYD59K');
+    </script>
+</body>
+</html>

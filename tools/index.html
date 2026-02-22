@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Hotel Upgrade Tools — StayHustler</title>
+    <meta name="description" content="Free tools to help you get hotel upgrades. Check your upgrade probability and calculate the best time to send your request.">
+    <link rel="icon" href="/favicon.ico">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Free Hotel Upgrade Tools — StayHustler">
+    <meta property="og:description" content="Free tools to help you get hotel upgrades. Check your upgrade probability and calculate the best time to send your request.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stayhustler.com/tools/">
+    <meta property="og:site_name" content="StayHustler">
+    <meta property="og:image" content="https://stayhustler.com/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://stayhustler.com/og-image.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://stayhustler.com/tools/">
+
+    <!-- Schema: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://stayhustler.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://stayhustler.com/tools/" }
+      ]
+    }
+    </script>
+
+    <!-- Schema: CollectionPage -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "Free Hotel Upgrade Tools",
+      "description": "Free tools to help you get hotel upgrades.",
+      "url": "https://stayhustler.com/tools/",
+      "hasPart": [
+        {
+          "@type": "WebApplication",
+          "name": "Hotel Upgrade Probability Checker",
+          "url": "https://stayhustler.com/tools/upgrade-checker.html"
+        },
+        {
+          "@type": "WebApplication",
+          "name": "Hotel Upgrade Request Timing Calculator",
+          "url": "https://stayhustler.com/tools/send-timing.html"
+        }
+      ]
+    }
+    </script>
+
+    <style>
+        :root {
+            --color-bg: #faf9f7;
+            --color-bg-warm: #f5f3ef;
+            --color-text: #2d2a26;
+            --color-text-muted: #6b6560;
+            --color-accent: #c9a962;
+            --color-accent-hover: #b8963f;
+            --color-border: #e8e4de;
+            --color-white: #ffffff;
+            --font-serif: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2.5rem;
+            --space-xl: 4rem;
+            --max-width: 1140px;
+            --radius: 6px;
+            --transition: 0.2s ease;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0; font-family: var(--font-sans); font-size: 1rem;
+            line-height: 1.7; color: var(--color-text); background-color: var(--color-bg);
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3 { font-family: var(--font-serif); font-weight: 400; line-height: 1.3; margin: 0; }
+        p { margin: 0 0 var(--space-md); }
+        a { color: var(--color-accent); text-decoration: none; }
+        a:hover { color: var(--color-accent-hover); }
+
+        .nav {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--color-white);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--space-sm) 0;
+        }
+        .nav-inner {
+            display: flex; align-items: center; justify-content: space-between;
+            max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);
+        }
+        .nav-logo { font-family: var(--font-serif); font-size: 1.25rem; color: var(--color-text); text-decoration: none; }
+        .nav-links { display: flex; gap: var(--space-md); }
+        .nav-link { font-size: 0.9rem; color: var(--color-text-muted); text-decoration: none; }
+        .nav-link:hover, .nav-link.active { color: var(--color-accent); }
+
+        .breadcrumbs {
+            max-width: var(--max-width); margin: var(--space-md) auto; padding: 0 var(--space-md);
+            font-size: 0.85rem; color: var(--color-text-muted);
+        }
+        .breadcrumbs a { color: var(--color-text-muted); }
+        .breadcrumbs a:hover { color: var(--color-accent); }
+        .breadcrumbs span { margin: 0 0.5rem; }
+
+        .hero {
+            max-width: var(--max-width); margin: 0 auto;
+            padding: var(--space-xl) var(--space-md); text-align: center;
+        }
+        .hero h1 { font-size: 2.5rem; margin-bottom: var(--space-md); }
+        .hero-subtitle {
+            font-size: 1.15rem; color: var(--color-text-muted);
+            max-width: 600px; margin: 0 auto;
+        }
+
+        .tools-grid {
+            max-width: var(--max-width); margin: 0 auto var(--space-xl);
+            padding: 0 var(--space-md);
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: var(--space-md);
+        }
+        .tool-card {
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: var(--space-lg);
+            text-decoration: none; color: inherit;
+            transition: box-shadow var(--transition), border-color var(--transition);
+        }
+        .tool-card:hover {
+            box-shadow: 0 4px 24px rgba(45,42,38,0.1);
+            border-color: var(--color-accent);
+        }
+        .tool-badge {
+            display: inline-block; font-size: 0.75rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.05em;
+            padding: 0.25rem 0.5rem; border-radius: 3px;
+            background: var(--color-bg-warm); color: var(--color-accent);
+            margin-bottom: var(--space-sm);
+        }
+        .tool-card h2 {
+            font-size: 1.4rem; margin-bottom: var(--space-sm); color: var(--color-text);
+        }
+        .tool-card p {
+            color: var(--color-text-muted); margin: 0 0 var(--space-sm); font-size: 0.95rem;
+        }
+        .tool-card .use-tool {
+            display: inline-block; color: var(--color-accent); font-size: 0.9rem; font-weight: 500;
+        }
+
+        .guides-note {
+            max-width: 700px; margin: 0 auto var(--space-xl);
+            padding: var(--space-lg) var(--space-md); text-align: center;
+        }
+        .guides-note p { color: var(--color-text-muted); font-size: 0.95rem; }
+
+        .footer {
+            background: var(--color-text); color: var(--color-bg);
+            padding: var(--space-lg) 0; margin-top: var(--space-xl);
+        }
+        .footer-inner {
+            max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md);
+        }
+        .footer-links { display: flex; gap: var(--space-md); }
+        .footer-link { color: var(--color-bg); opacity: 0.8; font-size: 0.9rem; }
+        .footer-link:hover { opacity: 1; color: var(--color-accent); }
+        .footer-copyright { font-size: 0.85rem; opacity: 0.6; margin: 0; }
+
+        @media (max-width: 640px) {
+            .hero h1 { font-size: 2rem; }
+            .tools-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="nav">
+        <div class="nav-inner">
+            <a href="/" class="nav-logo">StayHustler</a>
+            <nav class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/guides/" class="nav-link">Guides</a>
+                <a href="/tools/" class="nav-link active">Tools</a>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span>&rsaquo;</span>
+        <span>Tools</span>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h1>Free Hotel Upgrade Tools</h1>
+            <p class="hero-subtitle">Two free tools to help you time and assess your hotel upgrade request. No sign-up required.</p>
+        </section>
+
+        <section class="tools-grid">
+            <a href="/tools/upgrade-checker.html" class="tool-card">
+                <span class="tool-badge">Free</span>
+                <h2>Upgrade Probability Checker</h2>
+                <p>Enter your hotel type, booking channel, loyalty status, and travel dates. Get a personalised assessment of your upgrade chances plus tips to improve your odds.</p>
+                <span class="use-tool">Use this tool &rarr;</span>
+            </a>
+            <a href="/tools/send-timing.html" class="tool-card">
+                <span class="tool-badge">Free</span>
+                <h2>Best Time to Send Calculator</h2>
+                <p>Enter your check-in date and get the exact window to send your upgrade request. Based on how hotel revenue management actually works.</p>
+                <span class="use-tool">Use this tool &rarr;</span>
+            </a>
+        </section>
+
+        <section class="guides-note">
+            <p>These tools complement our <a href="/guides/">upgrade guides</a>. For the full strategy behind effective upgrade requests, start with <a href="/guides/how-to-ask-for-a-hotel-upgrade.html">how to ask for a hotel upgrade</a>.</p>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <nav class="footer-links">
+                <a href="/" class="footer-link">Home</a>
+                <a href="/guides/" class="footer-link">Guides</a>
+                <a href="/tools/" class="footer-link">Tools</a>
+                <a href="/about.html" class="footer-link">About</a>
+                <a href="/privacy.html" class="footer-link">Privacy</a>
+                <a href="/terms.html" class="footer-link">Terms</a>
+            </nav>
+            <p class="footer-copyright">&copy; 2026 StayHustler</p>
+        </div>
+    </footer>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-H8G7MYD59K');
+    </script>
+</body>
+</html>

@@ -23,7 +23,13 @@ RewriteCond %{HTTP_HOST} ^stayhustler\.com$ [NC]
 RewriteRule ^(.*)$ https://stayhustler.com/$1 [R=301,L,QSA]
 
 # -----------------------------------------------------------------------------
-# RULE 3: Redirect guide URLs without .html extension to .html version
+# RULE 3: Redirect /index.html to / (canonical homepage URL)
+# Prevents duplicate content: stayhustler.com/index.html -> stayhustler.com/
+# -----------------------------------------------------------------------------
+RewriteRule ^index\.html$ / [R=301,L]
+
+# -----------------------------------------------------------------------------
+# RULE 4: Redirect guide URLs without .html extension to .html version
 # Fixes 404s from external links missing the extension
 # -----------------------------------------------------------------------------
 RewriteCond %{REQUEST_FILENAME} !-f
