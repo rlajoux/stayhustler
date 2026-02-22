@@ -2,68 +2,68 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://stayhustler.com/</loc>
-    <lastmod>2026-01-10</lastmod>
+    <lastmod>2026-02-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <!-- Guides Hub -->
   <url>
     <loc>https://stayhustler.com/guides/</loc>
-    <lastmod>2026-01-16</lastmod>
+    <lastmod>2026-02-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
-  <!-- Guide Articles -->
+  <!-- Guide Articles (clean URLs — Cloudflare pretty URLs strip .html) -->
   <url>
-    <loc>https://stayhustler.com/guides/upgrade-myths-that-dont-work-anymore.html</loc>
+    <loc>https://stayhustler.com/guides/upgrade-myths-that-dont-work-anymore</loc>
     <lastmod>2026-01-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://stayhustler.com/guides/how-to-ask-for-a-hotel-upgrade.html</loc>
-    <lastmod>2026-01-10</lastmod>
+    <loc>https://stayhustler.com/guides/how-to-ask-for-a-hotel-upgrade</loc>
+    <lastmod>2026-02-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://stayhustler.com/guides/best-time-to-ask-for-hotel-upgrade.html</loc>
-    <lastmod>2026-01-10</lastmod>
+    <loc>https://stayhustler.com/guides/best-time-to-ask-for-hotel-upgrade</loc>
+    <lastmod>2026-02-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://stayhustler.com/guides/hotel-upgrade-email-template.html</loc>
-    <lastmod>2026-01-10</lastmod>
+    <loc>https://stayhustler.com/guides/hotel-upgrade-email-template</loc>
+    <lastmod>2026-02-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://stayhustler.com/guides/independent-vs-chain-hotel-upgrades.html</loc>
-    <lastmod>2026-01-10</lastmod>
+    <loc>https://stayhustler.com/guides/independent-vs-chain-hotel-upgrades</loc>
+    <lastmod>2026-02-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://stayhustler.com/guides/late-checkout-vs-room-upgrade.html</loc>
-    <lastmod>2026-01-10</lastmod>
+    <loc>https://stayhustler.com/guides/late-checkout-vs-room-upgrade</loc>
+    <lastmod>2026-02-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://stayhustler.com/guides/does-loyalty-status-get-upgrades.html</loc>
-    <lastmod>2026-01-16</lastmod>
+    <loc>https://stayhustler.com/guides/does-loyalty-status-get-upgrades</loc>
+    <lastmod>2026-02-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://stayhustler.com/guides/how-hotel-inventory-systems-work.html</loc>
+    <loc>https://stayhustler.com/guides/how-hotel-inventory-systems-work</loc>
     <lastmod>2026-01-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://stayhustler.com/guides/how-stayhustler-improves-your-upgrade-chances.html</loc>
+    <loc>https://stayhustler.com/guides/how-stayhustler-improves-your-upgrade-chances</loc>
     <lastmod>2026-01-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
@@ -76,20 +76,20 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://stayhustler.com/tools/upgrade-checker.html</loc>
+    <loc>https://stayhustler.com/tools/upgrade-checker</loc>
     <lastmod>2026-02-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://stayhustler.com/tools/send-timing.html</loc>
+    <loc>https://stayhustler.com/tools/send-timing</loc>
     <lastmod>2026-02-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <!-- About -->
   <url>
-    <loc>https://stayhustler.com/about.html</loc>
+    <loc>https://stayhustler.com/about</loc>
     <lastmod>2026-02-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

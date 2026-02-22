@@ -28,12 +28,12 @@
     <meta property="og:title" content="Your insider request – StayHustler">
     <meta property="og:description" content="Your personalized hotel upgrade request is ready.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://stayhustler.com/results.html">
+    <meta property="og:url" content="https://stayhustler.com/results">
     <meta property="og:image" content="https://stayhustler.com/og-image.png">
     <meta property="og:site_name" content="StayHustler">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://stayhustler.com/results.html">
+    <link rel="canonical" href="https://stayhustler.com/results">
     
     <!-- Robots meta -->
     <meta name="robots" content="noindex, nofollow">
@@ -704,8 +704,8 @@
 <body>
     <header class="header">
         <div class="header-inner">
-            <a href="index.html" class="logo">StayHustler</a>
-            <a href="index.html" class="start-over-link">Start over</a>
+            <a href="/" class="logo">StayHustler</a>
+            <a href="/" class="start-over-link">Start over</a>
         </div>
     </header>
 
@@ -864,9 +864,9 @@ Warm regards,
                 <h3 class="learn-more-title">Want to understand this better?</h3>
                 <p class="learn-more-subtitle">These guides explain how hotels evaluate upgrade requests and timing.</p>
                 <ul class="learn-more-links">
-                    <li><a href="/guides/how-to-ask-for-a-hotel-upgrade.html">How to ask for a hotel upgrade the right way</a></li>
-                    <li><a href="/guides/best-time-to-ask-for-hotel-upgrade.html">Best time to ask for a hotel upgrade</a></li>
-                    <li><a href="/guides/late-checkout-vs-room-upgrade.html">Late checkout vs room upgrade: which is easier?</a></li>
+                    <li><a href="/guides/how-to-ask-for-a-hotel-upgrade">How to ask for a hotel upgrade the right way</a></li>
+                    <li><a href="/guides/best-time-to-ask-for-hotel-upgrade">Best time to ask for a hotel upgrade</a></li>
+                    <li><a href="/guides/late-checkout-vs-room-upgrade">Late checkout vs room upgrade: which is easier?</a></li>
                 </ul>
             </section>
 
@@ -908,7 +908,7 @@ Warm regards,
                     <p class="secondary-cta-title">Save this for my trip</p>
                     <p class="secondary-cta-helper">Print or save as PDF for offline access.</p>
                 </button>
-                <a href="index.html" class="secondary-cta">
+                <a href="/" class="secondary-cta">
                     <p class="secondary-cta-title">Get insider access next time</p>
                     <p class="secondary-cta-helper">Multi-stay options coming soon.</p>
                 </a>
@@ -1269,7 +1269,7 @@ Warm regards,
             fallbackNotice.style.display = 'block';
             fallbackNotice.innerHTML = `
                 Missing trip details: ${missingFields.join(', ')}. 
-                <a href="booking.html" style="color: var(--color-accent); text-decoration: underline;">Please go back and complete the booking step.</a>
+                <a href="booking" style="color: var(--color-accent); text-decoration: underline;">Please go back and complete the booking step.</a>
             `;
             // Still show default template so page isn't empty
             emailTextarea.value = defaultContent.email_body;

@@ -49,12 +49,10 @@ jobs:
           FAILED=0
 
           while IFS= read -r url; do
-            STATUS=$(curl -sf -o /dev/null -w "%{http_code}" "$url" 2>/dev/null || echo "000")
+            STATUS=$(curl -sLf -o /dev/null -w "%{http_code}" "$url" 2>/dev/null || echo "000")
 
             if [ "$STATUS" = "200" ]; then
               echo "[200] $url"
-            elif [ "$STATUS" = "301" ] || [ "$STATUS" = "302" ]; then
-              echo "[$STATUS] $url (redirect - check if intentional)"
             else
               echo "[$STATUS] $url - FAILED"
               FAILED=$((FAILED + 1))
