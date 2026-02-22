@@ -6,6 +6,8 @@ User-agent: *
 # Allow SEO pages
 Allow: /
 Allow: /guides/
+Allow: /tools/
+Allow: /about.html
 
 # Disallow funnel/app pages (user flows, not content)
 Disallow: /booking.html

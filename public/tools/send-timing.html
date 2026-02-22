@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>When to Email a Hotel for an Upgrade — Free Timing Calculator | StayHustler</title>
+    <meta name="description" content="Enter your check-in date and get the exact window to send your hotel upgrade request. Free tool based on how revenue management actually works.">
+    <link rel="icon" href="/favicon.ico">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="When to Email a Hotel for an Upgrade — Free Timing Calculator">
+    <meta property="og:description" content="Enter your check-in date and get the exact window to send your hotel upgrade request.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stayhustler.com/tools/send-timing.html">
+    <meta property="og:site_name" content="StayHustler">
+    <meta property="og:image" content="https://stayhustler.com/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://stayhustler.com/og-image.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://stayhustler.com/tools/send-timing.html">
+
+    <!-- Schema: WebApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Hotel Upgrade Request Timing Calculator",
+      "description": "Free tool that calculates the best time to send your hotel upgrade email based on your check-in date.",
+      "url": "https://stayhustler.com/tools/send-timing.html",
+      "applicationCategory": "TravelApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Raphael L.",
+        "url": "https://stayhustler.com/about.html"
+      }
+    }
+    </script>
+
+    <!-- Schema: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://stayhustler.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://stayhustler.com/tools/" },
+        { "@type": "ListItem", "position": 3, "name": "Send Timing Calculator", "item": "https://stayhustler.com/tools/send-timing.html" }
+      ]
+    }
+    </script>
+
+    <style>
+        :root {
+            --color-bg: #faf9f7;
+            --color-bg-warm: #f5f3ef;
+            --color-text: #2d2a26;
+            --color-text-muted: #6b6560;
+            --color-accent: #c9a962;
+            --color-accent-hover: #b8963f;
+            --color-border: #e8e4de;
+            --color-white: #ffffff;
+            --color-green: #4a9e6d;
+            --color-green-bg: #f0f7f3;
+            --color-yellow-bg: #fdf8ee;
+            --color-red-bg: #fdf0f0;
+            --font-serif: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2.5rem;
+            --space-xl: 4rem;
+            --max-width: 1140px;
+            --max-width-tool: 680px;
+            --radius: 6px;
+            --transition: 0.2s ease;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0; font-family: var(--font-sans); font-size: 1rem;
+            line-height: 1.7; color: var(--color-text); background-color: var(--color-bg);
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3 { font-family: var(--font-serif); font-weight: 400; line-height: 1.3; margin: 0; }
+        p { margin: 0 0 var(--space-md); }
+        a { color: var(--color-accent); text-decoration: none; }
+        a:hover { color: var(--color-accent-hover); }
+
+        .nav {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--color-white);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--space-sm) 0;
+        }
+        .nav-inner {
+            display: flex; align-items: center; justify-content: space-between;
+            max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);
+        }
+        .nav-logo { font-family: var(--font-serif); font-size: 1.25rem; color: var(--color-text); text-decoration: none; }
+        .nav-links { display: flex; gap: var(--space-md); }
+        .nav-link { font-size: 0.9rem; color: var(--color-text-muted); text-decoration: none; }
+        .nav-link:hover, .nav-link.active { color: var(--color-accent); }
+
+        .breadcrumbs {
+            max-width: var(--max-width-tool); margin: var(--space-md) auto; padding: 0 var(--space-md);
+            font-size: 0.85rem; color: var(--color-text-muted);
+        }
+        .breadcrumbs a { color: var(--color-text-muted); }
+        .breadcrumbs a:hover { color: var(--color-accent); }
+        .breadcrumbs span { margin: 0 0.5rem; }
+
+        .tool-container {
+            max-width: var(--max-width-tool);
+            margin: 0 auto;
+            padding: var(--space-lg) var(--space-md) var(--space-xl);
+        }
+        .tool-container h1 {
+            font-size: clamp(1.75rem, 4vw, 2.25rem);
+            letter-spacing: -0.02em; margin-bottom: var(--space-sm);
+        }
+        .tool-intro {
+            font-size: 1.05rem; color: var(--color-text-muted);
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-group { margin-bottom: var(--space-md); }
+        .form-group label {
+            display: block; font-weight: 500; font-size: 0.9rem;
+            margin-bottom: var(--space-xs);
+        }
+        .form-group select, .form-group input {
+            width: 100%; padding: 0.75rem; font-size: 1rem;
+            border: 1px solid var(--color-border); border-radius: var(--radius);
+            background: var(--color-white); color: var(--color-text);
+            font-family: var(--font-sans);
+        }
+        .form-group select:focus, .form-group input:focus {
+            outline: none; border-color: var(--color-accent);
+        }
+        .form-hint { font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.25rem; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
+        @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+
+        .calc-btn {
+            display: block; width: 100%;
+            padding: 0.875rem; font-size: 1rem; font-weight: 500;
+            color: var(--color-white); background: var(--color-text);
+            border: none; border-radius: var(--radius); cursor: pointer;
+            transition: background var(--transition); margin-top: var(--space-md);
+        }
+        .calc-btn:hover { background: #1a1816; }
+
+        /* Results */
+        .result-panel {
+            display: none; margin-top: var(--space-lg);
+            padding: var(--space-lg); background: var(--color-white);
+            border: 1px solid var(--color-border); border-radius: var(--radius);
+        }
+        .result-panel.visible { display: block; }
+
+        .timing-result {
+            text-align: center; margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid var(--color-border);
+        }
+        .timing-label {
+            font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: var(--space-xs);
+        }
+        .timing-date {
+            font-family: var(--font-serif); font-size: 2rem; line-height: 1.2;
+            color: var(--color-green); margin-bottom: var(--space-xs);
+        }
+        .timing-window {
+            font-size: 1.1rem; color: var(--color-text);
+        }
+        .timing-countdown {
+            font-size: 0.9rem; color: var(--color-text-muted); margin-top: var(--space-xs);
+        }
+
+        .timeline {
+            margin-bottom: var(--space-lg);
+        }
+        .timeline h3 {
+            font-family: var(--font-serif); font-weight: 400;
+            font-size: 1.1rem; margin-bottom: var(--space-sm);
+        }
+        .timeline-item {
+            display: flex; gap: var(--space-sm); padding: var(--space-sm);
+            border-radius: var(--radius); margin-bottom: var(--space-xs);
+        }
+        .timeline-item.optimal { background: var(--color-green-bg); }
+        .timeline-item.ok { background: var(--color-yellow-bg); }
+        .timeline-item.poor { background: var(--color-red-bg); }
+        .timeline-marker {
+            flex-shrink: 0; width: 24px; text-align: center; font-size: 1.1rem;
+        }
+        .timeline-content { font-size: 0.9rem; }
+        .timeline-content strong { display: block; font-size: 0.85rem; }
+
+        .explanation {
+            font-size: 0.95rem; line-height: 1.8;
+            margin-bottom: var(--space-lg);
+        }
+
+        .result-cta {
+            text-align: center; padding-top: var(--space-md);
+            border-top: 1px solid var(--color-border);
+        }
+        .result-cta p {
+            font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: var(--space-sm);
+        }
+        .result-cta-btn {
+            display: inline-block; padding: 0.875rem 1.75rem;
+            font-size: 1rem; font-weight: 500;
+            color: var(--color-white); background: var(--color-text);
+            border-radius: var(--radius); transition: background var(--transition);
+        }
+        .result-cta-btn:hover { background: #1a1816; color: var(--color-white); }
+
+        .methodology {
+            margin-top: var(--space-xl); padding-top: var(--space-lg);
+            border-top: 1px solid var(--color-border);
+        }
+        .methodology h2 { font-size: 1.35rem; margin-bottom: var(--space-md); }
+        .methodology p { font-size: 0.95rem; line-height: 1.8; }
+
+        .related-links { margin-top: var(--space-lg); }
+        .related-links h3 { font-size: 1.1rem; margin-bottom: var(--space-sm); }
+        .related-links ul { padding-left: var(--space-md); margin: 0; }
+        .related-links li { margin-bottom: var(--space-xs); font-size: 0.9rem; }
+
+        .footer {
+            background: var(--color-text); color: var(--color-bg);
+            padding: var(--space-lg) 0; margin-top: var(--space-xl);
+        }
+        .footer-inner {
+            max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md);
+        }
+        .footer-links { display: flex; gap: var(--space-md); }
+        .footer-link { color: var(--color-bg); opacity: 0.8; font-size: 0.9rem; }
+        .footer-link:hover { opacity: 1; color: var(--color-accent); }
+        .footer-copyright { font-size: 0.85rem; opacity: 0.6; margin: 0; }
+    </style>
+</head>
+<body>
+    <header class="nav">
+        <div class="nav-inner">
+            <a href="/" class="nav-logo">StayHustler</a>
+            <nav class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/guides/" class="nav-link">Guides</a>
+                <a href="/tools/" class="nav-link active">Tools</a>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span>&rsaquo;</span>
+        <a href="/tools/">Tools</a>
+        <span>&rsaquo;</span>
+        <span>Send Timing Calculator</span>
+    </nav>
+
+    <main class="tool-container">
+        <h1>When Should You Email a Hotel for an Upgrade?</h1>
+        <p class="tool-intro">Enter your check-in date and we'll calculate the exact window to send your upgrade request for maximum impact.</p>
+
+        <form id="timing-form">
+            <div class="form-group">
+                <label for="checkin-date">Check-in date</label>
+                <input type="date" id="checkin-date" required>
+                <p class="form-hint">The date you arrive at the hotel.</p>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="hotel-type">Hotel type</label>
+                    <select id="hotel-type" required>
+                        <option value="">Select...</option>
+                        <option value="chain">Major chain</option>
+                        <option value="independent">Independent / boutique</option>
+                        <option value="resort">Resort</option>
+                        <option value="luxury">Luxury / five-star</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="booking-channel">Booking channel</label>
+                    <select id="booking-channel" required>
+                        <option value="">Select...</option>
+                        <option value="direct">Direct booking</option>
+                        <option value="loyalty">Loyalty programme</option>
+                        <option value="ota">OTA (Booking.com, etc.)</option>
+                        <option value="package">Package / tour</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="calc-btn">Calculate best send time</button>
+        </form>
+
+        <div class="result-panel" id="result-panel">
+            <div class="timing-result">
+                <p class="timing-label">Send your upgrade request on</p>
+                <p class="timing-date" id="send-date"></p>
+                <p class="timing-window" id="send-window"></p>
+                <p class="timing-countdown" id="send-countdown"></p>
+            </div>
+
+            <div class="timeline">
+                <h3>Your upgrade timeline</h3>
+                <div id="timeline-items"></div>
+            </div>
+
+            <div class="explanation" id="explanation"></div>
+
+            <div class="result-cta">
+                <p>Know when to send. Now get the right words.</p>
+                <a href="/booking.html" class="result-cta-btn">Generate my upgrade request</a>
+            </div>
+        </div>
+
+        <section class="methodology">
+            <h2>Why the 24-36 Hour Window?</h2>
+            <p>Hotels finalise group room blocks 48-72 hours before arrival. Individual cancellations peak in the 24-48 hour range. This creates a brief window where revenue managers can see what will actually remain unsold.</p>
+            <p>Sending your request in this window means the hotel has real data to work with. Earlier requests are speculative; later ones miss the flexibility window.</p>
+            <p>For the full explanation, read our guide on the <a href="/guides/best-time-to-ask-for-hotel-upgrade.html">best time to ask for a hotel upgrade</a>.</p>
+        </section>
+
+        <section class="related-links">
+            <h3>Related Guides</h3>
+            <ul>
+                <li><a href="/guides/hotel-upgrade-email-template.html">Hotel Upgrade Email Template</a></li>
+                <li><a href="/guides/how-to-ask-for-a-hotel-upgrade.html">How to Ask for a Hotel Room Upgrade</a></li>
+                <li><a href="/guides/how-hotel-inventory-systems-work.html">How Hotel Inventory Systems Work</a></li>
+                <li><a href="/tools/upgrade-checker.html">Upgrade Probability Checker</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <nav class="footer-links">
+                <a href="/" class="footer-link">Home</a>
+                <a href="/guides/" class="footer-link">Guides</a>
+                <a href="/tools/" class="footer-link">Tools</a>
+                <a href="/about.html" class="footer-link">About</a>
+                <a href="/privacy.html" class="footer-link">Privacy</a>
+                <a href="/terms.html" class="footer-link">Terms</a>
+            </nav>
+            <p class="footer-copyright">&copy; 2026 StayHustler</p>
+        </div>
+    </footer>
+
+    <script>
+    (function() {
+        // Set min date to today
+        var today = new Date();
+        var dateInput = document.getElementById('checkin-date');
+        dateInput.min = today.toISOString().split('T')[0];
+
+        var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+        function formatDate(d) {
+            return days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate();
+        }
+
+        function addDays(d, n) {
+            var result = new Date(d);
+            result.setDate(result.getDate() + n);
+            return result;
+        }
+
+        function daysBetween(a, b) {
+            var msPerDay = 86400000;
+            return Math.round((b - a) / msPerDay);
+        }
+
+        var form = document.getElementById('timing-form');
+        var panel = document.getElementById('result-panel');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            var checkinStr = dateInput.value;
+            var hotelType = document.getElementById('hotel-type').value;
+            var channel = document.getElementById('booking-channel').value;
+
+            // Parse the date (handle timezone by parsing components)
+            var parts = checkinStr.split('-');
+            var checkin = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+
+            // Calculate send window
+            // Optimal: 24-36 hours before 3PM check-in
+            // For chains: slightly earlier (36h) because automated systems run earlier
+            // For independents: 24-30h is fine, closer to the decision maker
+            var sendDateEarly, sendDateOptimal, sendDateLate;
+
+            if (hotelType === 'chain') {
+                sendDateOptimal = addDays(checkin, -2); // 2 days before
+                sendDateEarly = addDays(checkin, -3);
+                sendDateLate = addDays(checkin, -1);
+            } else if (hotelType === 'luxury') {
+                sendDateOptimal = addDays(checkin, -2);
+                sendDateEarly = addDays(checkin, -3);
+                sendDateLate = addDays(checkin, -1);
+            } else {
+                sendDateOptimal = addDays(checkin, -1); // Day before
+                sendDateEarly = addDays(checkin, -2);
+                sendDateLate = checkin; // Morning of
+            }
+
+            // Time of day recommendation
+            var timeWindow;
+            if (hotelType === 'chain' || hotelType === 'luxury') {
+                timeWindow = 'between 8 AM and 11 AM (hotel local time)';
+            } else {
+                timeWindow = 'between 9 AM and 12 PM (hotel local time)';
+            }
+
+            // Countdown
+            var now = new Date();
+            now.setHours(0,0,0,0);
+            var daysUntilSend = daysBetween(now, sendDateOptimal);
+            var countdown;
+            if (daysUntilSend < 0) {
+                countdown = 'This date has already passed.';
+            } else if (daysUntilSend === 0) {
+                countdown = 'That\'s today! Send your request this morning.';
+            } else if (daysUntilSend === 1) {
+                countdown = 'That\'s tomorrow.';
+            } else {
+                countdown = 'That\'s in ' + daysUntilSend + ' days.';
+            }
+
+            // Render main result
+            document.getElementById('send-date').textContent = formatDate(sendDateOptimal);
+            document.getElementById('send-window').textContent = timeWindow;
+            document.getElementById('send-countdown').textContent = countdown;
+
+            // Build timeline
+            var timelineEl = document.getElementById('timeline-items');
+            var items = [];
+
+            items.push({
+                cls: 'poor',
+                marker: '\u2715',
+                label: formatDate(addDays(checkin, -7)) + ' or earlier',
+                text: 'Too early. The hotel can\'t evaluate your request yet \u2014 demand forecasts aren\'t reliable this far out.'
+            });
+            items.push({
+                cls: 'ok',
+                marker: '\u25CB',
+                label: formatDate(sendDateEarly),
+                text: 'Acceptable but early. Group blocks may not have released yet. Your request might sit unactioned.'
+            });
+            items.push({
+                cls: 'optimal',
+                marker: '\u2713',
+                label: formatDate(sendDateOptimal),
+                text: 'Optimal window. Group blocks released, cancellations processed, and the hotel has real inventory data.'
+            });
+
+            if (hotelType === 'independent' || hotelType === 'resort') {
+                items.push({
+                    cls: 'ok',
+                    marker: '\u25CB',
+                    label: formatDate(checkin) + ' (morning)',
+                    text: 'Last chance. Some independents still have flexibility on the morning of arrival.'
+                });
+            } else {
+                items.push({
+                    cls: 'poor',
+                    marker: '\u2715',
+                    label: formatDate(checkin) + ' (at check-in)',
+                    text: 'Too late for chains. Automated upgrade queues have already processed. Room assignments are locked.'
+                });
+            }
+
+            timelineEl.innerHTML = '';
+            items.forEach(function(item) {
+                var div = document.createElement('div');
+                div.className = 'timeline-item ' + item.cls;
+                div.innerHTML = '<div class="timeline-marker">' + item.marker + '</div>' +
+                    '<div class="timeline-content"><strong>' + item.label + '</strong> ' + item.text + '</div>';
+                timelineEl.appendChild(div);
+            });
+
+            // Explanation based on channel
+            var explanationEl = document.getElementById('explanation');
+            var explText = '';
+
+            if (channel === 'direct') {
+                explText = '<p><strong>Direct booking advantage:</strong> You have a direct relationship with the hotel. Send your email to the reservations or front office team. Include your confirmation number and keep the tone polite and flexible.</p>';
+            } else if (channel === 'loyalty') {
+                explText = '<p><strong>Loyalty booking note:</strong> Your loyalty programme may automatically process upgrade queues 48-72 hours before arrival. If you haven\'t been upgraded by ' + formatDate(sendDateOptimal) + ', a brief email mentioning your status and flexibility can supplement the automated process.</p>';
+            } else if (channel === 'ota') {
+                explText = '<p><strong>OTA booking note:</strong> The hotel may not have your direct contact details. Find the hotel\'s reservations email on their website and reach out directly. Include your OTA confirmation number and be clear that you understand it\'s a request, not a guarantee.</p>';
+            } else {
+                explText = '<p><strong>Package booking note:</strong> Package bookings have the least flexibility. Contact the hotel directly (not your tour operator) and be especially polite and low-pressure in your request.</p>';
+            }
+
+            explanationEl.innerHTML = explText;
+
+            panel.classList.add('visible');
+            panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    })();
+    </script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-H8G7MYD59K');
+    </script>
+</body>
+</html>
