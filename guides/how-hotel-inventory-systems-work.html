@@ -78,230 +78,46 @@
     }
     </script>
 
-    <style>
-        :root {
-            --color-bg: #faf9f7;
-            --color-bg-warm: #f5f3ef;
-            --color-text: #2d2a26;
-            --color-text-muted: #6b6560;
-            --color-accent: #c9a962;
-            --color-accent-hover: #b8963f;
-            --color-border: #e8e4de;
-            --color-white: #ffffff;
-            --font-serif: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
-            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-            --space-xs: 0.5rem;
-            --space-sm: 1rem;
-            --space-md: 1.5rem;
-            --space-lg: 2.5rem;
-            --space-xl: 4rem;
-            --space-2xl: 6rem;
-            --max-width: 1140px;
-            --max-width-article: 720px;
-            --radius: 6px;
-            --shadow-soft: 0 2px 16px rgba(45, 42, 38, 0.06);
-            --transition: 0.2s ease;
-        }
-        *, *::before, *::after { box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body {
-            margin: 0;
-            font-family: var(--font-sans);
-            font-size: 1rem;
-            line-height: 1.7;
-            color: var(--color-text);
-            background-color: var(--color-bg);
-            -webkit-font-smoothing: antialiased;
-        }
-        h1, h2, h3, h4 {
-            font-family: var(--font-serif);
-            font-weight: 400;
-            line-height: 1.3;
-            margin: 0;
-        }
-        .byline {
-            font-size: 0.85rem;
-            color: var(--color-text-muted);
-            margin-top: var(--space-xs);
-            margin-bottom: var(--space-lg);
-        }
-        p { margin: 0 0 var(--space-md); }
-        a { color: var(--color-accent); text-decoration: none; transition: color var(--transition); }
-        a:hover { color: var(--color-accent-hover); }
-        ul, ol { margin: 0 0 var(--space-md); padding-left: var(--space-lg); }
-        li { margin-bottom: var(--space-xs); line-height: 1.8; }
-        .nav {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 100;
-            background: rgba(250, 249, 247, 0.92);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--color-border);
-        }
-        .nav-inner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 64px;
-            max-width: var(--max-width);
-            margin: 0 auto;
-            padding: 0 var(--space-md);
-        }
-        .nav-logo { font-family: var(--font-serif); font-size: 1.25rem; letter-spacing: -0.01em; color: var(--color-text); }
-        .nav-links { display: flex; gap: var(--space-lg); }
-        .nav-link { font-size: 0.9rem; color: var(--color-text-muted); transition: color var(--transition); }
-        .nav-link:hover { color: var(--color-text); }
-        article {
-            max-width: var(--max-width-article);
-            margin: 0 auto;
-            padding: calc(64px + var(--space-xl)) var(--space-md) var(--space-xl);
-        }
-        article h1 {
-            font-size: clamp(2rem, 4vw, 2.75rem);
-            letter-spacing: -0.02em;
-            margin-bottom: var(--space-lg);
-            color: var(--color-text);
-        }
-        article h2 {
-            font-size: 1.75rem;
-            margin: var(--space-xl) 0 var(--space-md);
-            color: var(--color-text);
-        }
-        article h3 {
-            font-size: 1.35rem;
-            margin: var(--space-lg) 0 var(--space-md);
-            color: var(--color-text);
-        }
-        article p { font-size: 1.05rem; line-height: 1.8; color: var(--color-text); }
-        .learn-box {
-            background: var(--color-bg-warm);
-            border-left: 3px solid var(--color-accent);
-            padding: var(--space-md);
-            margin: var(--space-lg) 0;
-            border-radius: var(--radius);
-        }
-        .learn-box h4 { margin: 0 0 var(--space-sm); font-size: 1rem; color: var(--color-text); }
-        .learn-box ul { margin: 0; padding-left: var(--space-md); }
-        .learn-box li { font-size: 0.95rem; margin-bottom: var(--space-xs); }
-        .constraints-box {
-            background: var(--color-white);
-            border: 1px solid var(--color-border);
-            padding: var(--space-lg);
-            margin: var(--space-xl) 0;
-            border-radius: var(--radius);
-        }
-        .constraints-box h3 { margin: 0 0 var(--space-md); font-size: 1.25rem; }
-        .constraints-box ul { margin: 0; padding-left: var(--space-md); }
-        .constraints-box li { font-size: 0.95rem; margin-bottom: var(--space-sm); padding-left: var(--space-xs); }
-        .related-guides {
-            margin-top: var(--space-2xl);
-            padding-top: var(--space-xl);
-            border-top: 1px solid var(--color-border);
-        }
-        .related-guides h2 { font-size: 1.5rem; margin-bottom: var(--space-lg); }
-        .related-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--space-md);
-        }
-        .related-card {
-            padding: var(--space-md);
-            background: var(--color-white);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius);
-            transition: box-shadow var(--transition), transform var(--transition);
-        }
-        .related-card:hover { box-shadow: var(--shadow-soft); transform: translateY(-2px); }
-        .related-card h3 { font-size: 1.1rem; margin: 0 0 var(--space-xs); color: var(--color-text); }
-        .related-card p { font-size: 0.9rem; color: var(--color-text-muted); margin: 0; line-height: 1.6; }
-        .footer {
-            padding: var(--space-xl) 0;
-            border-top: 1px solid var(--color-border);
-            margin-top: var(--space-2xl);
-        }
-        .footer-inner {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: var(--space-md);
-            text-align: center;
-            max-width: var(--max-width);
-            margin: 0 auto;
-            padding: 0 var(--space-md);
-        }
-        .footer-links { display: flex; gap: var(--space-lg); }
-        .footer-link { font-size: 0.9rem; color: var(--color-text-muted); transition: color var(--transition); }
-        .footer-link:hover { color: var(--color-text); }
-        .footer-copyright { font-size: 0.8rem; color: var(--color-text-muted); }
-        .guide-cta {
-            margin: var(--space-xl) 0;
-            padding: var(--space-lg);
-            background: var(--color-white);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius);
-            text-align: center;
-        }
-        .guide-cta-headline { font-family: var(--font-serif); font-size: 1.35rem; font-weight: 400; color: var(--color-text); margin: 0 0 var(--space-xs); }
-        .guide-cta-body { font-size: 0.95rem; color: var(--color-text-muted); margin: 0 0 var(--space-md); line-height: 1.6; }
-        .guide-cta-steps { text-align: left; max-width: 400px; margin: 0 auto var(--space-md); padding-left: var(--space-md); }
-        .guide-cta-steps li { font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: var(--space-xs); }
-        .guide-cta-btn {
-            display: inline-block;
-            padding: 0.875rem 1.75rem;
-            font-family: var(--font-sans);
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--color-white);
-            background: var(--color-text);
-            border: none;
-            border-radius: var(--radius);
-            cursor: pointer;
-            text-decoration: none;
-            transition: background var(--transition), transform var(--transition);
-        }
-        .guide-cta-btn:hover { background: #1a1816; transform: translateY(-1px); color: var(--color-white); }
-        .guide-cta-secondary { display: block; margin-top: var(--space-sm); font-size: 0.85rem; color: var(--color-text-muted); }
-        .guide-cta-trust { margin-top: var(--space-md); font-size: 0.8rem; color: var(--color-text-muted); font-style: italic; }
-        .breadcrumbs {
-            max-width: var(--max-width-article);
-            margin: var(--space-md) auto;
-            padding: 0 var(--space-md);
-            font-size: 0.85rem;
-            color: var(--color-text-muted);
-        }
-        .breadcrumbs a { color: var(--color-text-muted); text-decoration: none; }
-        .breadcrumbs a:hover { color: var(--color-accent); }
-        .breadcrumbs span { margin: 0 0.5rem; }
-        @media (max-width: 768px) {
-            article { padding-left: var(--space-sm); padding-right: var(--space-sm); }
-            article h1 { font-size: 2rem; }
-            article h2 { font-size: 1.5rem; }
-            article h3 { font-size: 1.2rem; }
-            .related-grid { grid-template-columns: 1fr; }
-            .footer-links { flex-wrap: wrap; justify-content: center; gap: var(--space-sm); }
-        }
-        @media (max-width: 480px) {
-            article h1 { font-size: 1.75rem; }
-            article h2 { font-size: 1.35rem; }
-            article p { font-size: 1rem; }
-            .nav-inner { padding: 0 var(--space-sm); }
-            .guide-cta { padding: var(--space-md); }
-            .guide-cta-btn { display: block; width: 100%; }
-        }
-    </style>
+
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/assets/site.css">
 </head>
-<body>
-    <header class="nav">
-        <div class="nav-inner">
-            <a href="/" class="nav-logo">StayHustler</a>
-            <nav class="nav-links">
-                <a href="/" class="nav-link">Home</a>
-                <a href="/guides/" class="nav-link">Guides</a>
-                <a href="/tools/" class="nav-link">Tools</a>
-            </nav>
-        </div>
-    </header>
+<body class="editorial-page">
+    <a href="#main-content" class="skip-link">Skip to content</a>
+<header class="site-header">
+<div class="site-nav">
+<a class="brand" href="/">
+<span class="brand-mark">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<path d="M5 21V3h14v18M3 21h18M9 7h1m4 0h1M9 11h1m4 0h1m-5 10v-5h4v5"/>
+</svg>
+</span>StayHustler</a>
+<nav class="desktop-nav" aria-label="Main navigation">
+<a href="/">Hotel requests</a>
+<a href="/guides/" aria-current="page">Travel guides</a>
+<a href="/tools/">Free tools</a>
+</nav>
+<div class="nav-actions">
+<span class="nav-currency">Prices in USD</span>
+<a href="mailto:support@stayhustler.com">Help</a>
+<a class="outline-btn" href="/booking">Create a request</a>
+</div>
+<details class="mobile-nav">
+<summary aria-label="Open navigation">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<path d="M4 6h16M4 12h16M4 18h16"/>
+</svg>
+</summary>
+<nav aria-label="Mobile navigation">
+<a href="/">Hotel requests</a>
+<a href="/guides/" aria-current="page">Travel guides</a>
+<a href="/tools/">Free tools</a>
+<a href="/about">About us</a>
+<a href="mailto:support@stayhustler.com">Get help</a>
+</nav>
+</details>
+</div>
+</header>
 
     <nav class="breadcrumbs" aria-label="Breadcrumb">
         <a href="/">Home</a>
@@ -311,10 +127,11 @@
         <span>How Hotel Inventory Systems Work</span>
     </nav>
 
-    <main>
+    <main id="main-content">
         <article>
             <h1>How Hotel Inventory Systems Work</h1>
-            <p class="byline">By <a href="/about">Raphael L.</a></p>
+            <p class="byline">By <a href="/about">Raphael L.</a>
+</p>
 
             <p>Most travellers imagine hotel room allocation as fluid and human-driven. A front desk agent looks at availability, makes a judgement call, and assigns a room.</p>
 
@@ -348,9 +165,12 @@
             <p>Hotel inventory systems are not built to please individual guests. They are built to optimise three things:</p>
 
             <ul>
-                <li><strong>Revenue per available room (RevPAR)</strong> - the primary metric</li>
-                <li><strong>Occupancy certainty</strong> - predictable fill rates reduce risk</li>
-                <li><strong>Operational predictability</strong> - housekeeping, staffing, maintenance</li>
+                <li>
+<strong>Revenue per available room (RevPAR)</strong> - the primary metric</li>
+                <li>
+<strong>Occupancy certainty</strong> - predictable fill rates reduce risk</li>
+                <li>
+<strong>Operational predictability</strong> - housekeeping, staffing, maintenance</li>
             </ul>
 
             <p>Everything else is secondary. Upgrades are not a benefit in isolation. They are a tool used when they serve one of those objectives.</p>
@@ -422,12 +242,18 @@
             <div class="constraints-box">
                 <h3>Key Constraints Hotels Cannot Ignore</h3>
                 <ul>
-                    <li><strong>Revenue protection:</strong> Premium inventory won't be given away if it might sell</li>
-                    <li><strong>Loyalty obligations:</strong> Elite members are processed first through automated queues (see <a href="/guides/does-loyalty-status-get-upgrades">does loyalty status get upgrades?</a>)</li>
-                    <li><strong>Rate fences:</strong> Some booking rates are contractually excluded from upgrades</li>
-                    <li><strong>Housekeeping schedules:</strong> Late changes disrupt cleaning rotations (this is why <a href="/guides/late-checkout-vs-room-upgrade">late checkout</a> involves different constraints than upgrades)</li>
-                    <li><strong>Overbooking buffers:</strong> Rooms may be held as fallback inventory</li>
-                    <li><strong>Arrival timing:</strong> Late arrivals reduce flexibility, not increase it</li>
+                    <li>
+<strong>Revenue protection:</strong> Premium inventory won't be given away if it might sell</li>
+                    <li>
+<strong>Loyalty obligations:</strong> Elite members are processed first through automated queues (see <a href="/guides/does-loyalty-status-get-upgrades">does loyalty status get upgrades?</a>)</li>
+                    <li>
+<strong>Rate fences:</strong> Some booking rates are contractually excluded from upgrades</li>
+                    <li>
+<strong>Housekeeping schedules:</strong> Late changes disrupt cleaning rotations (this is why <a href="/guides/late-checkout-vs-room-upgrade">late checkout</a> involves different constraints than upgrades)</li>
+                    <li>
+<strong>Overbooking buffers:</strong> Rooms may be held as fallback inventory</li>
+                    <li>
+<strong>Arrival timing:</strong> Late arrivals reduce flexibility, not increase it</li>
                 </ul>
             </div>
 
@@ -522,20 +348,43 @@
             </section>
         </article>
     </main>
+<footer class="site-footer">
+<div class="wrap">
+<div class="footer-top">
+<div>
+<a class="brand" href="/">
+<span class="brand-mark">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<path d="M5 21V3h14v18M3 21h18M9 7h1m4 0h1M9 11h1m4 0h1m-5 10v-5h4v5"/>
+</svg>
+</span>StayHustler</a>
+<p>A little preparation for a better hotel stay.<br>Your request. Your conversation.</p>
+</div>
+<div class="footer-menu">
+<div>
+<strong>Plan your request</strong>
+<a href="/booking">Create a request</a>
+<a href="/guides/">Travel guides</a>
+<a href="/tools/">Free tools</a>
+</div>
+<div>
+<strong>StayHustler</strong>
+<a href="/about">About us</a>
+<a href="mailto:support@stayhustler.com">Contact &amp; support</a>
+<a href="/#faq">Common questions</a>
+</div>
+</div>
+</div>
+<div class="footer-bottom">
+<span>© 2026 StayHustler · Hotel benefits are subject to availability and hotel policy.</span>
+<span>
+<a href="/privacy">Privacy</a> &nbsp; · &nbsp; <a href="/terms">Terms</a> &nbsp; · &nbsp; <a href="/assets/photos/CREDITS.txt">Photography</a>
+</span>
+</div>
+</div>
+</footer>
 
-    <footer class="footer">
-        <div class="footer-inner">
-            <nav class="footer-links">
-                <a href="/" class="footer-link">Home</a>
-                <a href="/guides/" class="footer-link">Guides</a>
-                <a href="/tools/" class="footer-link">Tools</a>
-                <a href="/about" class="footer-link">About</a>
-                <a href="/privacy" class="footer-link">Privacy</a>
-                <a href="/terms" class="footer-link">Terms</a>
-            </nav>
-            <p class="footer-copyright">&copy; 2026 StayHustler</p>
-        </div>
-    </footer>
+
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>

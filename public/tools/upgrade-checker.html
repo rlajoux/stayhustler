@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotel Upgrade Probability Checker — Free Tool | StayHustler</title>
     <meta name="description" content="Check your hotel upgrade chances for free. Enter your booking details and get a personalised assessment with tips to improve your odds.">
-    <link rel="icon" href="/favicon.ico">
+
 
     <!-- Open Graph -->
     <meta property="og:title" content="Hotel Upgrade Probability Checker — Free Tool">
@@ -56,222 +56,46 @@
     }
     </script>
 
-    <style>
-        :root {
-            --color-bg: #faf9f7;
-            --color-bg-warm: #f5f3ef;
-            --color-text: #2d2a26;
-            --color-text-muted: #6b6560;
-            --color-accent: #c9a962;
-            --color-accent-hover: #b8963f;
-            --color-border: #e8e4de;
-            --color-white: #ffffff;
-            --color-green: #4a9e6d;
-            --color-yellow: #c9a962;
-            --color-orange: #d4874d;
-            --color-red: #b85c5c;
-            --font-serif: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
-            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-            --space-xs: 0.5rem;
-            --space-sm: 1rem;
-            --space-md: 1.5rem;
-            --space-lg: 2.5rem;
-            --space-xl: 4rem;
-            --max-width: 1140px;
-            --max-width-tool: 680px;
-            --radius: 6px;
-            --transition: 0.2s ease;
-        }
-        *, *::before, *::after { box-sizing: border-box; }
-        body {
-            margin: 0;
-            font-family: var(--font-sans);
-            font-size: 1rem;
-            line-height: 1.7;
-            color: var(--color-text);
-            background-color: var(--color-bg);
-            -webkit-font-smoothing: antialiased;
-        }
-        h1, h2, h3 {
-            font-family: var(--font-serif);
-            font-weight: 400;
-            line-height: 1.3;
-            margin: 0;
-        }
-        p { margin: 0 0 var(--space-md); }
-        a { color: var(--color-accent); text-decoration: none; }
-        a:hover { color: var(--color-accent-hover); }
 
-        .nav {
-            position: sticky; top: 0; z-index: 100;
-            background: var(--color-white);
-            border-bottom: 1px solid var(--color-border);
-            padding: var(--space-sm) 0;
-        }
-        .nav-inner {
-            display: flex; align-items: center; justify-content: space-between;
-            max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);
-        }
-        .nav-logo { font-family: var(--font-serif); font-size: 1.25rem; color: var(--color-text); text-decoration: none; }
-        .nav-links { display: flex; gap: var(--space-md); }
-        .nav-link { font-size: 0.9rem; color: var(--color-text-muted); text-decoration: none; }
-        .nav-link:hover, .nav-link.active { color: var(--color-accent); }
-
-        .breadcrumbs {
-            max-width: var(--max-width-tool); margin: var(--space-md) auto; padding: 0 var(--space-md);
-            font-size: 0.85rem; color: var(--color-text-muted);
-        }
-        .breadcrumbs a { color: var(--color-text-muted); }
-        .breadcrumbs a:hover { color: var(--color-accent); }
-        .breadcrumbs span { margin: 0 0.5rem; }
-
-        .tool-container {
-            max-width: var(--max-width-tool);
-            margin: 0 auto;
-            padding: var(--space-lg) var(--space-md) var(--space-xl);
-        }
-        .tool-container h1 {
-            font-size: clamp(1.75rem, 4vw, 2.25rem);
-            letter-spacing: -0.02em;
-            margin-bottom: var(--space-sm);
-        }
-        .tool-intro {
-            font-size: 1.05rem; color: var(--color-text-muted);
-            margin-bottom: var(--space-lg);
-        }
-
-        .form-group { margin-bottom: var(--space-md); }
-        .form-group label {
-            display: block; font-weight: 500; font-size: 0.9rem;
-            margin-bottom: var(--space-xs);
-        }
-        .form-group select, .form-group input {
-            width: 100%; padding: 0.75rem; font-size: 1rem;
-            border: 1px solid var(--color-border); border-radius: var(--radius);
-            background: var(--color-white); color: var(--color-text);
-            font-family: var(--font-sans);
-        }
-        .form-group select:focus, .form-group input:focus {
-            outline: none; border-color: var(--color-accent);
-        }
-        .form-hint {
-            font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.25rem;
-        }
-        .form-row {
-            display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);
-        }
-        @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
-
-        .check-btn {
-            display: block; width: 100%;
-            padding: 0.875rem; font-size: 1rem; font-weight: 500;
-            color: var(--color-white); background: var(--color-text);
-            border: none; border-radius: var(--radius); cursor: pointer;
-            transition: background var(--transition);
-            margin-top: var(--space-md);
-        }
-        .check-btn:hover { background: #1a1816; }
-
-        /* Results */
-        .result-panel {
-            display: none;
-            margin-top: var(--space-lg);
-            padding: var(--space-lg);
-            background: var(--color-white);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius);
-        }
-        .result-panel.visible { display: block; }
-
-        .score-display {
-            text-align: center; margin-bottom: var(--space-lg);
-        }
-        .score-label {
-            font-family: var(--font-serif); font-size: 1rem;
-            color: var(--color-text-muted); margin-bottom: var(--space-xs);
-        }
-        .score-value {
-            font-family: var(--font-serif); font-size: 2.5rem;
-            font-weight: 400; line-height: 1.2;
-        }
-        .score-bar {
-            width: 100%; height: 8px; background: var(--color-border);
-            border-radius: 4px; margin-top: var(--space-sm); overflow: hidden;
-        }
-        .score-bar-fill {
-            height: 100%; border-radius: 4px;
-            transition: width 0.6s ease, background 0.6s ease;
-        }
-        .score-subtitle {
-            font-size: 0.9rem; color: var(--color-text-muted); margin-top: var(--space-xs);
-        }
-
-        .tips-list {
-            list-style: none; padding: 0; margin: 0 0 var(--space-lg);
-        }
-        .tips-list li {
-            padding: var(--space-sm) 0;
-            border-bottom: 1px solid var(--color-border);
-            font-size: 0.95rem;
-        }
-        .tips-list li:last-child { border-bottom: none; }
-        .tip-icon { margin-right: 0.5rem; }
-
-        .result-cta {
-            text-align: center; padding-top: var(--space-md);
-            border-top: 1px solid var(--color-border);
-        }
-        .result-cta p {
-            font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: var(--space-sm);
-        }
-        .result-cta-btn {
-            display: inline-block; padding: 0.875rem 1.75rem;
-            font-size: 1rem; font-weight: 500;
-            color: var(--color-white); background: var(--color-text);
-            border-radius: var(--radius); transition: background var(--transition);
-        }
-        .result-cta-btn:hover { background: #1a1816; color: var(--color-white); }
-
-        .methodology {
-            margin-top: var(--space-xl);
-            padding-top: var(--space-lg);
-            border-top: 1px solid var(--color-border);
-        }
-        .methodology h2 { font-size: 1.35rem; margin-bottom: var(--space-md); }
-        .methodology p { font-size: 0.95rem; line-height: 1.8; }
-
-        .related-links {
-            margin-top: var(--space-lg);
-        }
-        .related-links h3 { font-size: 1.1rem; margin-bottom: var(--space-sm); }
-        .related-links ul { padding-left: var(--space-md); margin: 0; }
-        .related-links li { margin-bottom: var(--space-xs); font-size: 0.9rem; }
-
-        .footer {
-            background: var(--color-text); color: var(--color-bg);
-            padding: var(--space-lg) 0; margin-top: var(--space-xl);
-        }
-        .footer-inner {
-            max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md);
-        }
-        .footer-links { display: flex; gap: var(--space-md); }
-        .footer-link { color: var(--color-bg); opacity: 0.8; font-size: 0.9rem; }
-        .footer-link:hover { opacity: 1; color: var(--color-accent); }
-        .footer-copyright { font-size: 0.85rem; opacity: 0.6; margin: 0; }
-    </style>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/assets/site.css">
 </head>
-<body>
-    <header class="nav">
-        <div class="nav-inner">
-            <a href="/" class="nav-logo">StayHustler</a>
-            <nav class="nav-links">
-                <a href="/" class="nav-link">Home</a>
-                <a href="/guides/" class="nav-link">Guides</a>
-                <a href="/tools/" class="nav-link active">Tools</a>
-            </nav>
-        </div>
-    </header>
+<body class="tool-page">
+    <a href="#main-content" class="skip-link">Skip to content</a>
+<header class="site-header">
+<div class="site-nav">
+<a class="brand" href="/">
+<span class="brand-mark">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<path d="M5 21V3h14v18M3 21h18M9 7h1m4 0h1M9 11h1m4 0h1m-5 10v-5h4v5"/>
+</svg>
+</span>StayHustler</a>
+<nav class="desktop-nav" aria-label="Main navigation">
+<a href="/">Hotel requests</a>
+<a href="/guides/">Travel guides</a>
+<a href="/tools/" aria-current="page">Free tools</a>
+</nav>
+<div class="nav-actions">
+<span class="nav-currency">Prices in USD</span>
+<a href="mailto:support@stayhustler.com">Help</a>
+<a class="outline-btn" href="/booking">Create a request</a>
+</div>
+<details class="mobile-nav">
+<summary aria-label="Open navigation">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<path d="M4 6h16M4 12h16M4 18h16"/>
+</svg>
+</summary>
+<nav aria-label="Mobile navigation">
+<a href="/">Hotel requests</a>
+<a href="/guides/">Travel guides</a>
+<a href="/tools/" aria-current="page">Free tools</a>
+<a href="/about">About us</a>
+<a href="mailto:support@stayhustler.com">Get help</a>
+</nav>
+</details>
+</div>
+</header>
 
     <nav class="breadcrumbs" aria-label="Breadcrumb">
         <a href="/">Home</a>
@@ -281,7 +105,7 @@
         <span>Upgrade Probability Checker</span>
     </nav>
 
-    <main class="tool-container">
+    <main id="main-content" class="tool-container">
         <h1>Hotel Upgrade Probability Checker</h1>
         <p class="tool-intro">Enter your booking details to get a free assessment of your upgrade chances, plus personalised tips to improve your odds.</p>
 
@@ -384,13 +208,16 @@
                 <p class="score-label">Your upgrade probability</p>
                 <p class="score-value" id="score-text">Moderate</p>
                 <div class="score-bar">
-                    <div class="score-bar-fill" id="score-bar-fill"></div>
+                    <div class="score-bar-fill" id="score-bar-fill">
+</div>
                 </div>
-                <p class="score-subtitle" id="score-subtitle"></p>
+                <p class="score-subtitle" id="score-subtitle">
+</p>
             </div>
 
-            <h3 style="font-family: var(--font-serif); font-weight: 400; margin-bottom: var(--space-sm);">How to improve your chances</h3>
-            <ul class="tips-list" id="tips-list"></ul>
+            <h3>How to improve your chances</h3>
+            <ul class="tips-list" id="tips-list">
+</ul>
 
             <div class="result-cta">
                 <p>Want a personalised upgrade request tailored to your exact booking?</p>
@@ -408,27 +235,58 @@
         <section class="related-links">
             <h3>Related Guides</h3>
             <ul>
-                <li><a href="/guides/how-to-ask-for-a-hotel-upgrade">How to Ask for a Hotel Room Upgrade</a></li>
-                <li><a href="/guides/best-time-to-ask-for-hotel-upgrade">Best Time to Email a Hotel for a Room Upgrade</a></li>
-                <li><a href="/guides/does-loyalty-status-get-upgrades">Does Loyalty Status Actually Get You Upgrades?</a></li>
-                <li><a href="/tools/send-timing">Best Time to Send Calculator</a></li>
+                <li>
+<a href="/guides/how-to-ask-for-a-hotel-upgrade">How to Ask for a Hotel Room Upgrade</a>
+</li>
+                <li>
+<a href="/guides/best-time-to-ask-for-hotel-upgrade">Best Time to Email a Hotel for a Room Upgrade</a>
+</li>
+                <li>
+<a href="/guides/does-loyalty-status-get-upgrades">Does Loyalty Status Actually Get You Upgrades?</a>
+</li>
+                <li>
+<a href="/tools/send-timing">Best Time to Send Calculator</a>
+</li>
             </ul>
         </section>
     </main>
+<footer class="site-footer">
+<div class="wrap">
+<div class="footer-top">
+<div>
+<a class="brand" href="/">
+<span class="brand-mark">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<path d="M5 21V3h14v18M3 21h18M9 7h1m4 0h1M9 11h1m4 0h1m-5 10v-5h4v5"/>
+</svg>
+</span>StayHustler</a>
+<p>A little preparation for a better hotel stay.<br>Your request. Your conversation.</p>
+</div>
+<div class="footer-menu">
+<div>
+<strong>Plan your request</strong>
+<a href="/booking">Create a request</a>
+<a href="/guides/">Travel guides</a>
+<a href="/tools/">Free tools</a>
+</div>
+<div>
+<strong>StayHustler</strong>
+<a href="/about">About us</a>
+<a href="mailto:support@stayhustler.com">Contact &amp; support</a>
+<a href="/#faq">Common questions</a>
+</div>
+</div>
+</div>
+<div class="footer-bottom">
+<span>© 2026 StayHustler · Hotel benefits are subject to availability and hotel policy.</span>
+<span>
+<a href="/privacy">Privacy</a> &nbsp; · &nbsp; <a href="/terms">Terms</a> &nbsp; · &nbsp; <a href="/assets/photos/CREDITS.txt">Photography</a>
+</span>
+</div>
+</div>
+</footer>
 
-    <footer class="footer">
-        <div class="footer-inner">
-            <nav class="footer-links">
-                <a href="/" class="footer-link">Home</a>
-                <a href="/guides/" class="footer-link">Guides</a>
-                <a href="/tools/" class="footer-link">Tools</a>
-                <a href="/about" class="footer-link">About</a>
-                <a href="/privacy" class="footer-link">Privacy</a>
-                <a href="/terms" class="footer-link">Terms</a>
-            </nav>
-            <p class="footer-copyright">&copy; 2026 StayHustler</p>
-        </div>
-    </footer>
+
 
     <script>
     (function() {

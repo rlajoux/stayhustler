@@ -4,6 +4,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { Pool } = require('pg');
 const crypto = require('node:crypto');
+const path = require('node:path');
 const Stripe = require('stripe');
 const sgMail = require('@sendgrid/mail');
 const { initialiseOrders, createOrderService } = require('./orders');
@@ -52,6 +53,7 @@ async function createApp({ env = process.env, pool: suppliedPool, stripe: suppli
         next();
     });
     app.use(cors({ origin: [siteBase, apiBase], credentials: true, methods: ['GET','POST','OPTIONS'], allowedHeaders: ['Content-Type'], maxAge: 600 }));
+    app.use('/assets', express.static(path.join(__dirname, 'assets'), { index: false, dotfiles: 'deny' }));
     // Signature verification must see the original bytes, before express.json().
     app.post('/api/stripe/webhook', express.raw({ type: 'application/json', limit: '256kb' }), async (req, res) => {
         let event;
