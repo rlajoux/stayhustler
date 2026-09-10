@@ -22,7 +22,7 @@ if (!recipientEmail) {
 }
 
 // Check required env vars
-const required = ['SENDGRID_API_KEY', 'SENDGRID_FROM_EMAIL', 'PUBLIC_BASE_URL', 'UNSUBSCRIBE_SECRET'];
+const required = ['SENDGRID_API_KEY', 'SENDGRID_FROM_EMAIL', 'API_BASE_URL', 'UNSUBSCRIBE_SECRET'];
 const missing = required.filter(v => !process.env[v]);
 
 if (missing.length > 0) {
@@ -39,7 +39,7 @@ function signEmail(email) {
 }
 
 function getUnsubscribeLink(email) {
-    const baseUrl = process.env.PUBLIC_BASE_URL;
+    const baseUrl = process.env.API_BASE_URL;
     const token = signEmail(email);
     return `${baseUrl}/unsubscribe?email=${encodeURIComponent(email)}&token=${token}`;
 }

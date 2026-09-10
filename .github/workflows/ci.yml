@@ -1,0 +1,38 @@
+name: Code checks
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_call:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: stayhustler_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: api/package-lock.json
+      - run: npm ci --ignore-scripts
+        working-directory: api
+      - run: npm test
+        working-directory: api
+        env:
+          TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/stayhustler_test
+      - run: npm audit --omit=dev --audit-level=moderate
+        working-directory: api
+      - run: node scripts/check-site.js
+      - run: node scripts/build-headers.js --check
+      - run: node scripts/sync-public.js --check
+      - run: bash -n scripts/validate-sitemap.sh

@@ -33,13 +33,12 @@
     <meta property="og:site_name" content="StayHustler">
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://stayhustler.com/results">
+    <link rel="canonical" href="https://app.stayhustler.com/results">
 
     <!-- Robots meta -->
     <meta name="robots" content="noindex, nofollow">
 
-    <!-- Crazy Egg -->
-    <script type="text/javascript" src="//script.crazyegg.com/pages/scripts/0131/7760.js" async="async"></script>
+
 
     <style>
         :root {
@@ -783,7 +782,7 @@
                     <span id="free-request-badge-text">Free request</span>
                 </div>
                 <h1 id="page-headline">Your insider request is ready</h1>
-                <p class="page-subheadline" id="page-subheadline">Crafted using hospitality industry language that front-desk staff recognize and respond to.</p>
+                <p class="page-subheadline" id="page-subheadline">Your request is saved against your paid order.</p>
             </header>
 
             <!-- Personalization confirmation -->
@@ -811,23 +810,16 @@
                 </div>
 
                 <p class="timing-line"><strong>Subject:</strong> <span id="email-subject">Upcoming stay inquiry</span></p>
-                <p class="timing-line"><strong>When to send:</strong> 24–36 hours before arrival</p>
+
 
                 <div id="loading-indicator" style="text-align: center; padding: var(--space-lg); color: var(--color-text-muted);">
                     Generating your personalized request...
                 </div>
 
-                <textarea class="request-textarea" id="email-request" readonly style="display: none;">Hello,
-
-I'm very much looking forward to my upcoming stay at your property. If any premium rooms or suites are forecasted to remain available around my arrival, I would be grateful to be considered for an upgrade.
-
-I understand availability drives these decisions and appreciate any consideration.
-
-Warm regards,
-[Your name]</textarea>
+                <textarea class="request-textarea" id="email-request" readonly style="display: none;"></textarea>
 
                 <p id="fallback-notice" style="display: none; font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: var(--space-sm); font-style: italic;">
-                    Using our proven template — works well for most hotel stays.
+
                 </p>
 
                 <div class="button-row">
@@ -847,7 +839,7 @@ Warm regards,
                     </button>
                 </div>
 
-                <p class="why-this-works" id="why-this-works">This wording mirrors how hospitality staff are trained to phrase internal upgrade offers — professional, flexible, and easy to approve.</p>
+                <p class="why-this-works" id="why-this-works">Review the wording and add your name and booking reference before sending it to the hotel.</p>
             </section>
 
             <!-- Primary CTA: Send Email -->
@@ -859,7 +851,7 @@ Warm regards,
                     </svg>
                     Send this email now
                 </a>
-                <p class="urgency-nudge">Most guests send this within 24–48 hours of arrival, when availability is clearest.</p>
+                <p class="urgency-nudge">Use the hotel’s official contact address. StayHustler does not send requests to hotels.</p>
             </div>
 
             <!-- Section B: Timing Guidance -->
@@ -922,7 +914,7 @@ Warm regards,
 
             <!-- Section D: Expectation Setting -->
             <div class="expectation-note">
-                <p>Based on hospitality industry best practices. Upgrades depend on availability and hotel discretion — this guidance improves your odds, not guarantees outcomes.</p>
+                <p>Hotel decisions depend on availability and policy. This request does not guarantee an upgrade or other benefit.</p>
             </div>
 
             <!-- Learn More Section -->
@@ -949,7 +941,7 @@ Warm regards,
 
                 <div style="padding-top: var(--space-sm);">
                     <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: var(--space-sm);">
-                        Didn't receive it? Enter your email to resend.
+                        Didn't receive it? Resend to the email used for this order.
                     </p>
 
                     <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap; margin-bottom: var(--space-sm);">
@@ -982,7 +974,7 @@ Warm regards,
 
             <!-- Feedback Prompt -->
             <div class="feedback-prompt">
-                <p>We'll ask one quick question after your stay to help improve future guidance.</p>
+                <p><a href="https://stayhustler.com/feedback">Share your outcome after your stay</a>. Your recovery link remains available for 30 days after purchase.</p>
             </div>
         </div>
     </main>
@@ -990,641 +982,85 @@ Warm regards,
     <div aria-live="polite" id="aria-live" style="position: absolute; left: -9999px;"></div>
 
     <script>
-        // ============================================================
-        // SECURE RESULTS PAGE
-        // ============================================================
-        // This page is served by the API server only after verifying
-        // the sh_access cookie (set after Stripe payment verification).
-        // No client-side access check needed - server already verified.
-        // ============================================================
-
-        // Check for data in URL params (cross-domain transfer from stayhustler.com)
-        const urlParams = new URLSearchParams(window.location.search);
-        const dataParam = urlParams.get('data');
-        if (dataParam) {
+        const byId = id => document.getElementById(id);
+        let savedOrder = null;
+        let polls = 0;
+        const loading = byId('loading-indicator');
+        const actions = ['copy-email-btn','copy-subject-btn','resend-btn','save-btn'];
+        actions.forEach(id => { byId(id).disabled = true; });
+        byId('send-email-btn').hidden = true;
+        byId('page-headline').textContent = 'Preparing your request';
+        byId('timing-list').replaceChildren();
+        function announce(message) { byId('aria-live').textContent = message; }
+        function render(order) {
+            savedOrder = order;
+            const result = order.result;
+            byId('page-headline').textContent = 'Your request is ready';
+            byId('page-subheadline').textContent = 'Saved for this booking. Replace the name and confirmation number before sending.';
+            byId('personalization-details').textContent = `${order.booking.hotel}, ${order.booking.city} · ${order.booking.checkin} to ${order.booking.checkout}`;
+            byId('email-subject').textContent = result.email_subject;
+            byId('email-request').value = result.email_body;
+            byId('email-request').style.display = 'block';
+            byId('timing-list').replaceChildren(...result.timing_guidance.map(tip => {
+                const item = document.createElement('li'); item.textContent = tip; return item;
+            }));
+            byId('desk-ask-script-intro').textContent = 'You can say:';
+            byId('desk-ask-script-lines').textContent = result.fallback_script;
+            byId('desk-ask-tone').textContent = 'Be polite. Respect the hotel’s decision.';
+            byId('resend-email').value = order.email;
+            byId('resend-email').readOnly = true;
+            byId('resend-status').textContent = order.delivery_status === 'accepted'
+                ? 'Email accepted by our delivery provider. Check your spam folder if needed.'
+                : 'Your request is saved here. Email delivery is not yet confirmed; you can resend below.';
+            loading.hidden = true;
+            actions.forEach(id => { byId(id).disabled = false; });
+            byId('send-email-btn').hidden = false;
+            byId('send-email-btn').href = `mailto:?subject=${encodeURIComponent(result.email_subject)}&body=${encodeURIComponent(result.email_body)}`;
+            if (!order.purchase) byId('free-request-badge').style.display = 'inline-flex';
+        }
+        async function load() {
+            polls++;
             try {
-                const decoded = JSON.parse(atob(dataParam));
-                if (decoded.booking) localStorage.setItem('stayhustler_booking', JSON.stringify(decoded.booking));
-                if (decoded.context) localStorage.setItem('stayhustler_context', JSON.stringify(decoded.context));
-                if (decoded.order) localStorage.setItem('stayhustler_order', JSON.stringify(decoded.order));
-                // Clean URL after storing data
-                window.history.replaceState({}, document.title, window.location.pathname);
-            } catch (e) {
-                console.error('Failed to parse data from URL:', e);
-            }
-        }
-
-        // Read stored data from localStorage (for content personalization)
-        let contextData = {};
-        let bookingData = {};
-        let orderData = {};
-
-        try {
-            const contextRaw = localStorage.getItem('stayhustler_context');
-            if (contextRaw) contextData = JSON.parse(contextRaw);
-        } catch (e) {}
-
-        try {
-            const bookingRaw = localStorage.getItem('stayhustler_booking');
-            if (bookingRaw) bookingData = JSON.parse(bookingRaw);
-        } catch (e) {}
-
-        try {
-            const orderRaw = localStorage.getItem('stayhustler_order');
-            if (orderRaw) orderData = JSON.parse(orderRaw);
-        } catch (e) {}
-
-        // Request type configuration for frontend display
-        const REQUEST_TYPE_CONFIG = {
-            upgrade: {
-                label: 'Room upgrade',
-                headline: 'Your upgrade request is ready',
-                subheadline: 'Crafted using hospitality industry language that front-desk staff recognize and respond to.',
-                whyItWorks: [
-                    'Uses phrasing hotels recognize from internal upgrade protocols',
-                    'Shows flexibility — easier to approve than rigid demands',
-                    'Timing aligned with when inventory decisions are made'
-                ]
-            },
-            late_checkout: {
-                label: 'Late checkout',
-                headline: 'Your late checkout request is ready',
-                subheadline: 'Phrased to fit housekeeping and front-desk workflows.',
-                whyItWorks: [
-                    'References housekeeping timing — shows you understand operations',
-                    'Gives hotel flexibility to offer partial extension if needed',
-                    'Polite phrasing makes approval easier for staff'
-                ]
-            },
-            breakfast_lounge: {
-                label: 'Breakfast / lounge access',
-                headline: 'Your breakfast & lounge request is ready',
-                subheadline: 'Framed as a trial or courtesy — lower friction for hotels.',
-                whyItWorks: [
-                    'Positions request as trial access, not entitlement',
-                    'Acknowledges hotel discretion — easier to approve',
-                    'References loyalty potential, appealing to hotel goals'
-                ]
-            },
-            better_view: {
-                label: 'Better room view',
-                headline: 'Your room view request is ready',
-                subheadline: 'Framed around availability, not demands.',
-                whyItWorks: [
-                    'Focuses on forecast availability, not demands',
-                    'Shows appreciation for any consideration',
-                    'Easy for front desk to fulfill if rooms are open'
-                ]
-            },
-            credit_spa_fb: {
-                label: 'Spa / F&B credit',
-                headline: 'Your spa & dining credit request is ready',
-                subheadline: 'Phrased to encourage on-property spending.',
-                whyItWorks: [
-                    'Frames credit as encouraging on-property spending',
-                    'Hotels often prefer guests use amenities over upgrades',
-                    'Shows you value their facilities, not just the room'
-                ]
-            },
-            any_upgrade: {
-                label: 'Any enhancement',
-                headline: 'Your enhancement request is ready',
-                subheadline: 'Maximum flexibility gives the hotel more options.',
-                whyItWorks: [
-                    'Flexibility makes approval much easier for staff',
-                    'Hotels appreciate guests who are easy to please',
-                    'Opens the door to whatever is most available'
-                ]
-            }
-        };
-
-        // Get request type from context
-        const requestType = contextData.requestType || 'upgrade';
-        const rtConfig = REQUEST_TYPE_CONFIG[requestType] || REQUEST_TYPE_CONFIG.upgrade;
-
-        // Update page headline and subheadline based on request type
-        const pageHeadline = document.getElementById('page-headline');
-        const pageSubheadline = document.getElementById('page-subheadline');
-        if (pageHeadline && rtConfig.headline) {
-            pageHeadline.textContent = rtConfig.headline;
-        }
-        if (pageSubheadline && rtConfig.subheadline) {
-            pageSubheadline.textContent = rtConfig.subheadline;
-        }
-
-        // Update "why this works" section
-        const whyThisWorks = document.getElementById('why-this-works');
-        if (whyThisWorks && rtConfig.whyItWorks && rtConfig.whyItWorks.length > 0) {
-            whyThisWorks.innerHTML = '<strong>Why this works:</strong> ' + rtConfig.whyItWorks.join(' • ');
-        }
-
-        // Show free request badge if applicable
-        if (orderData && orderData.is_free_request) {
-            const freeRequestBadge = document.getElementById('free-request-badge');
-            const freeRequestBadgeText = document.getElementById('free-request-badge-text');
-            if (freeRequestBadge) {
-                freeRequestBadge.classList.add('visible');
-                // Set dynamic text based on coupon used
-                if (freeRequestBadgeText && orderData.coupon) {
-                    freeRequestBadgeText.textContent = `Free request (${orderData.coupon})`;
-                }
-            }
-        }
-
-        // Copy email functionality
-        const copyBtn = document.getElementById('copy-email-btn');
-        const copyText = document.getElementById('copy-email-text');
-        const emailTextarea = document.getElementById('email-request');
-        const ariaLive = document.getElementById('aria-live');
-
-        copyBtn.addEventListener('click', async () => {
-            try {
-                await navigator.clipboard.writeText(emailTextarea.value);
-
-                // Visual feedback
-                copyBtn.classList.add('copied');
-                copyText.textContent = 'Copied!';
-                ariaLive.textContent = 'Email copied to clipboard';
-
-                // Reset after 2 seconds
-                setTimeout(() => {
-                    copyBtn.classList.remove('copied');
-                    copyText.textContent = 'Copy email';
-                    ariaLive.textContent = '';
-                }, 2000);
-            } catch (err) {
-                // Fallback for older browsers
-                emailTextarea.select();
-                document.execCommand('copy');
-
-                copyBtn.classList.add('copied');
-                copyText.textContent = 'Copied!';
-
-                setTimeout(() => {
-                    copyBtn.classList.remove('copied');
-                    copyText.textContent = 'Copy email';
-                }, 2000);
-            }
-        });
-
-        // Copy subject functionality
-        const copySubjectBtn = document.getElementById('copy-subject-btn');
-        const copySubjectText = document.getElementById('copy-subject-text');
-
-        copySubjectBtn.addEventListener('click', async () => {
-            const subject = document.getElementById('email-subject').textContent;
-            try {
-                await navigator.clipboard.writeText(subject);
-                copySubjectBtn.classList.add('copied');
-                copySubjectText.textContent = 'Copied!';
-                ariaLive.textContent = 'Subject copied to clipboard';
-
-                setTimeout(() => {
-                    copySubjectBtn.classList.remove('copied');
-                    copySubjectText.textContent = 'Copy subject';
-                    ariaLive.textContent = '';
-                }, 2000);
-            } catch (err) {
-                copySubjectBtn.classList.add('copied');
-                copySubjectText.textContent = 'Copied!';
-                setTimeout(() => {
-                    copySubjectBtn.classList.remove('copied');
-                    copySubjectText.textContent = 'Copy subject';
-                }, 2000);
-            }
-        });
-
-        // Send email (mailto) functionality
-        const sendEmailBtn = document.getElementById('send-email-btn');
-
-        function updateMailtoLink() {
-            const subject = document.getElementById('email-subject').textContent;
-            const body = document.getElementById('email-request').value;
-            const mailtoUrl = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-            sendEmailBtn.href = mailtoUrl;
-        }
-
-        // Update mailto link when content changes
-        sendEmailBtn.addEventListener('click', function(e) {
-            updateMailtoLink();
-        });
-
-        // Also update on mouseenter for better UX
-        sendEmailBtn.addEventListener('mouseenter', updateMailtoLink);
-        sendEmailBtn.addEventListener('focus', updateMailtoLink);
-
-        // Save/Print functionality
-        const saveBtn = document.getElementById('save-btn');
-        saveBtn.addEventListener('click', () => {
-            window.print();
-        });
-
-        // API Integration - use relative URLs since we're on the same origin
-        const API_BASE = "";
-
-        const loadingIndicator = document.getElementById('loading-indicator');
-        const fallbackNotice = document.getElementById('fallback-notice');
-        const emailSubject = document.getElementById('email-subject');
-        const timingList = document.getElementById('timing-list');
-
-        // Default fallback content
-        const defaultContent = {
-            email_subject: 'Upcoming stay inquiry',
-            email_body: `Hello,
-
-I'm very much looking forward to my upcoming stay at your property. If any premium rooms or suites are forecasted to remain available around my arrival, I would be grateful to be considered for an upgrade.
-
-I understand availability drives these decisions and appreciate any consideration.
-
-Warm regards,
-[Your Name]`,
-            timing_guidance: [
-                '<strong>Email:</strong> 24-36 hours before arrival',
-                '<strong>In person:</strong> At check-in, before ID is handed over',
-                'Be polite, specific, and flexible'
-            ]
-        };
-
-        // Render timing guidance list
-        function renderTimingList(timingItems) {
-            const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>`;
-
-            timingList.innerHTML = timingItems.map(item => `
-                <li>
-                    ${checkIcon}
-                    <span>${item}</span>
-                </li>
-            `).join('');
-        }
-
-        // Populate personalization block with booking details
-        function showPersonalization(booking, isCustomized) {
-            const block = document.getElementById('personalization-block');
-            const details = document.getElementById('personalization-details');
-
-            if (!booking.hotel) {
-                block.style.display = 'none';
-                return;
-            }
-
-            // Build details string
-            const parts = [];
-            if (booking.hotel) parts.push(booking.hotel);
-            if (booking.checkin && booking.checkout) {
-                const checkin = new Date(booking.checkin);
-                const checkout = new Date(booking.checkout);
-                const options = { month: 'short', day: 'numeric' };
-                parts.push(`${checkin.toLocaleDateString('en-US', options)} – ${checkout.toLocaleDateString('en-US', options)}`);
-            }
-
-            details.textContent = parts.join(' • ');
-            block.style.display = 'block';
-        }
-
-        // Show generation success flash briefly
-        function showSuccessFlash() {
-            const flash = document.getElementById('generation-success');
-            flash.style.display = 'flex';
-            // Animation handles fade out via CSS, then hide element
-            setTimeout(() => {
-                flash.style.display = 'none';
-            }, 3000);
-        }
-
-        // Apply content to DOM
-        function applyContent(data, isCustomized = true) {
-            emailSubject.textContent = data.email_subject;
-            emailTextarea.value = data.email_body;
-            emailTextarea.style.display = 'block';
-
-            // Handle timing guidance
-            const timingItems = Array.isArray(data.timing_guidance)
-                ? data.timing_guidance
-                : defaultContent.timing_guidance;
-            renderTimingList(timingItems);
-
-            loadingIndicator.style.display = 'none';
-
-            // Show personalization block with booking context
-            const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
-            showPersonalization(booking, isCustomized);
-
-            // Show success flash for customized content
-            if (isCustomized) {
-                showSuccessFlash();
-            }
-
-            // Update mailto link with new content
-            updateMailtoLink();
-        }
-
-        // Show fallback content with notice
-        function showFallback(reason = 'unknown') {
-            fallbackNotice.style.display = 'block';
-            applyContent(defaultContent, false);
-        }
-
-        // Generate request from API
-        async function generateRequest() {
-            // Parse stored data
-            const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
-            const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
-
-            // Validate required fields are present
-            const missingFields = [];
-            if (!booking.hotel) missingFields.push('hotel');
-            if (!booking.city) missingFields.push('city');
-            if (!booking.checkin) missingFields.push('checkin');
-            if (!booking.checkout) missingFields.push('checkout');
-            if (!context.arrivalDay) missingFields.push('arrivalDay');
-            if (!context.lengthOfStay) missingFields.push('lengthOfStay');
-            if (!context.askPreference) missingFields.push('askPreference');  // Backend requires this!
-
-            if (missingFields.length > 0) {
-                console.error('[Frontend] Missing required fields:', missingFields.join(', '));
-                showMissingFieldsError(missingFields);
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_BASE}/api/generate-request`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ booking, context })
-                });
-
-                // Extract headers
-                const generationSource = response.headers.get('X-Generation-Source');
-                const retryAfter = response.headers.get('Retry-After');
-
-                // Handle rate limiting (429)
-                if (response.status === 429) {
-                    console.warn('[Frontend] Rate limited, retry_after:', retryAfter);
-                    showRateLimitError(retryAfter);
-                    return;
-                }
-
-                if (!response.ok) {
-                    console.error('[Frontend] API error:', response.status, 'source:', generationSource);
-                    // For 502 errors, show fallback with notice
-                    if (response.status === 502 || response.status === 500) {
-                        showFallback('backend-error-' + response.status);
-                        return;
-                    }
-                    throw new Error(`API error: ${response.status}`);
-                }
-
+                const response = await fetch('/api/results', { credentials: 'same-origin', cache: 'no-store', signal: AbortSignal.timeout(10000) });
                 const data = await response.json();
-
-                // Validate response has required fields
-                if (!data.email_subject || !data.email_body) {
-                    console.error('[Frontend] Invalid API response - missing required fields');
-                    throw new Error('Invalid API response');
+                if (!response.ok) throw new Error(data.error || 'Could not load your saved order.');
+                // Only verified paid orders emit purchase. Transaction ID also deduplicates in GA4.
+                if (data.purchase && typeof gtag === 'function') {
+                    const key = `stayhustler_purchase_${data.purchase.transaction_id}`;
+                    try {
+                        if (!localStorage.getItem(key)) { gtag('event', 'purchase', data.purchase); localStorage.setItem(key, '1'); }
+                    } catch { gtag('event', 'purchase', data.purchase); }
                 }
-
-                // Determine if this is customized content
-                const isCustomized = generationSource !== 'fallback';
-
-                // Only show fallback notice if source is explicitly 'fallback'
-                if (!isCustomized) {
-                    fallbackNotice.style.display = 'block';
-                } else {
-                    fallbackNotice.style.display = 'none';
-                }
-
-                // Apply content with customization flag
-                applyContent(data, isCustomized);
-
+                if (data.result) { render(data); return; }
+                loading.textContent = data.status === 'failed' && data.generation_attempts >= 3
+                    ? 'We could not prepare your request after three attempts. Contact support@stayhustler.com with order ' + data.order_id + ' for assistance or a refund.'
+                    : data.status === 'failed'
+                    ? 'Generation is temporarily unavailable. Your paid order is saved and will retry automatically. Contact support@stayhustler.com with order ' + data.order_id + ' if it remains unavailable.'
+                    : 'Your paid order is saved. We are preparing your request and will email a recovery link when it is ready.';
+                if (polls < 24) setTimeout(load, 5000);
+                else loading.textContent += ' You can safely close this page and check your email, or reload later.';
             } catch (error) {
-                console.error('[Frontend] Exception caught during API call:', error.message, error.stack);
-                showFallback('api-error');
+                loading.textContent = error.message + ' Reload to retry, or use the recovery link in your order email.';
             }
         }
-
-        // Show rate limit error with retry option
-        function showRateLimitError(retryAfter) {
-            loadingIndicator.style.display = 'none';
-            fallbackNotice.style.display = 'block';
-            fallbackNotice.innerHTML = `
-                Temporarily rate-limited. Please retry in ${retryAfter || 60} seconds.
-                <button id="retry-btn" style="margin-left: 10px; padding: 5px 10px; cursor: pointer;">Retry Now</button>
-            `;
-
-            // Add retry button handler
-            setTimeout(() => {
-                const retryBtn = document.getElementById('retry-btn');
-                if (retryBtn) {
-                    retryBtn.addEventListener('click', () => {
-                        fallbackNotice.innerHTML = 'Retrying...';
-                        generateRequest();
-                    });
-                }
-            }, 100);
+        async function copy(text, button) {
+            try { await navigator.clipboard.writeText(text); announce('Copied'); }
+            catch { announce('Copy is unavailable. Select the text and copy it manually.'); }
         }
-
-        // Show missing fields error with link to go back
-        function showMissingFieldsError(missingFields) {
-            loadingIndicator.style.display = 'none';
-            fallbackNotice.style.display = 'block';
-            fallbackNotice.innerHTML = `
-                Missing trip details: ${missingFields.join(', ')}.
-                <a href="https://stayhustler.com/booking.html" style="color: var(--color-accent); text-decoration: underline;">Please go back and complete the booking step.</a>
-            `;
-            // Still show default template so page isn't empty
-            emailTextarea.value = defaultContent.email_body;
-            emailTextarea.style.display = 'block';
-            emailSubject.textContent = defaultContent.email_subject;
-            renderTimingList(defaultContent.timing_guidance);
-        }
-
-        // Initialize on page load
-        generateRequest();
-
-        // ===== DESK-ASK CONTENT (Gemini-generated) =====
-        const DESK_ASK_FALLBACK = {
-            title: "If you ask at the desk",
-            sections: [
-                {
-                    heading: "When to ask",
-                    bullets: [
-                        "Ask during check-in, before handing over your ID or credit card",
-                        "Mid-afternoon arrivals often have better availability",
-                        "Avoid asking when the lobby is busy or staff seem rushed"
-                    ]
-                },
-                {
-                    heading: "How to reference the email",
-                    bullets: [
-                        "Mention you sent an email ahead of time, but don't push",
-                        "Say something like: 'I reached out earlier about availability'",
-                        "If they haven't seen it, move on gracefully"
-                    ]
-                },
-                {
-                    heading: "What to say",
-                    bullets: [
-                        "Ask if any upgraded rooms happen to be available tonight",
-                        "Express flexibility: 'I'm happy with whatever works best'",
-                        "Thank them regardless of the outcome"
-                    ]
-                }
-            ],
-            script: {
-                intro: "Here's a natural way to ask at check-in:",
-                line1: "Hi, I sent an email earlier about my stay. If any upgraded rooms are expected to be available this evening, I'd be grateful to be considered.",
-                line2: "I completely understand if not — just thought I'd ask."
-            },
-            tone_reminders: [
-                "Smile and make eye contact",
-                "Keep a calm, unhurried demeanor",
-                "Avoid sounding entitled or demanding"
-            ]
-        };
-
-        function renderDeskAskContent(data) {
-            // Render title
-            const titleEl = document.getElementById('desk-ask-title');
-            if (titleEl && data.title) {
-                titleEl.textContent = data.title;
-            }
-
-            // Render sections
-            const contentEl = document.getElementById('desk-ask-content');
-            if (contentEl && data.sections) {
-                contentEl.innerHTML = data.sections.map(section => `
-                    <div class="desk-ask-section">
-                        <h3 class="desk-ask-heading">${section.heading}</h3>
-                        <ul class="desk-ask-bullets">
-                            ${section.bullets.map(bullet => `<li>${bullet}</li>`).join('')}
-                        </ul>
-                    </div>
-                `).join('');
-            }
-
-            // Render script
-            const scriptIntroEl = document.getElementById('desk-ask-script-intro');
-            const scriptLinesEl = document.getElementById('desk-ask-script-lines');
-            if (scriptIntroEl && data.script?.intro) {
-                scriptIntroEl.textContent = data.script.intro;
-            }
-            if (scriptLinesEl && data.script) {
-                scriptLinesEl.innerHTML = `"${data.script.line1}"<br><br>"${data.script.line2}"`;
-            }
-
-            // Render tone reminders
-            const toneEl = document.getElementById('desk-ask-tone');
-            if (toneEl && data.tone_reminders) {
-                toneEl.innerHTML = data.tone_reminders.map(reminder =>
-                    `<span class="desk-ask-tone-item">${reminder}</span>`
-                ).join('');
-            }
-        }
-
-        async function fetchDeskAskContent() {
+        byId('copy-email-btn').addEventListener('click', () => copy(savedOrder.result.email_body));
+        byId('copy-subject-btn').addEventListener('click', () => copy(savedOrder.result.email_subject));
+        byId('save-btn').addEventListener('click', () => window.print());
+        byId('resend-btn').addEventListener('click', async () => {
+            byId('resend-btn').disabled = true;
             try {
-                const response = await fetch(`${API_BASE}/api/desk-ask-copy`);
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
+                const response = await fetch('/api/resend-delivery', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ delivery_id: savedOrder.order_id }), signal: AbortSignal.timeout(30000) });
                 const data = await response.json();
-                renderDeskAskContent(data);
-            } catch (error) {
-                console.error('[DeskAsk] Failed to fetch, using fallback:', error.message);
-                renderDeskAskContent(DESK_ASK_FALLBACK);
-            }
-        }
-
-        // Fetch desk-ask content on page load
-        fetchDeskAskContent();
-
-        // ===== RESEND EMAIL FUNCTIONALITY =====
-        const resendEmailInput = document.getElementById('resend-email');
-        const resendBtn = document.getElementById('resend-btn');
-        const resendStatus = document.getElementById('resend-status');
-
-        // Pre-fill email from localStorage
-        const storedEmail = localStorage.getItem('stayhustler_email');
-        if (storedEmail) {
-            resendEmailInput.value = storedEmail;
-        }
-
-        // Check if delivery_id exists
-        const deliveryId = localStorage.getItem('stayhustler_delivery_id');
-
-        if (!deliveryId) {
-            resendStatus.textContent = 'Complete checkout first to enable resend.';
-            resendStatus.style.color = 'var(--color-text-muted)';
-            resendBtn.disabled = true;
-            resendBtn.style.opacity = '0.5';
-            resendBtn.style.cursor = 'not-allowed';
-        } else {
-            // Resend button click handler
-            resendBtn.addEventListener('click', async () => {
-                const email = resendEmailInput.value.trim();
-
-                // Validate email
-                if (!email) {
-                    resendStatus.textContent = 'Please enter an email address.';
-                    resendStatus.style.color = '#d9534f';
-                    return;
-                }
-
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(email)) {
-                    resendStatus.textContent = 'Please enter a valid email address.';
-                    resendStatus.style.color = '#d9534f';
-                    return;
-                }
-
-                // Disable button during request
-                resendBtn.disabled = true;
-                resendBtn.style.opacity = '0.5';
-                resendStatus.textContent = 'Sending...';
-                resendStatus.style.color = 'var(--color-text-muted)';
-
-                try {
-                    const response = await fetch(`${API_BASE}/api/resend-delivery`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            delivery_id: deliveryId,
-                            email: email
-                        })
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok && data.ok) {
-                        resendStatus.textContent = 'Email sent successfully!';
-                        resendStatus.style.color = 'var(--color-success)';
-
-                        // Update stored email
-                        localStorage.setItem('stayhustler_email', email);
-                    } else if (response.status === 429) {
-                        resendStatus.textContent = 'Rate limit exceeded. Please try again later.';
-                        resendStatus.style.color = '#d9534f';
-                    } else {
-                        throw new Error(data.error || 'Failed to resend');
-                    }
-                } catch (error) {
-                    console.error('Resend error:', error);
-                    resendStatus.textContent = 'Failed to send. Please try again.';
-                    resendStatus.style.color = '#d9534f';
-                } finally {
-                    // Re-enable button after 2 seconds
-                    setTimeout(() => {
-                        resendBtn.disabled = false;
-                        resendBtn.style.opacity = '1';
-                    }, 2000);
-                }
-            });
-        }
+                if (!response.ok) throw new Error(data.error || 'Email delivery was not confirmed. Your result remains available here.');
+                byId('resend-status').textContent = 'Email accepted by our delivery provider.';
+            } catch (error) { byId('resend-status').textContent = error.message; }
+            finally { byId('resend-btn').disabled = false; }
+        });
+        void load();
     </script>
 </body>
 </html>

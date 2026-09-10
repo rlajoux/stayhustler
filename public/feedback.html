@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="/assets/flow.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
     <script>
@@ -457,7 +458,7 @@
         });
 
         // Form submission
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const selectedOutcome = document.querySelector('input[name="outcome"]:checked');
@@ -469,7 +470,17 @@
                 ts: Date.now()
             };
             
-            localStorage.setItem('stayhustler_feedback', JSON.stringify(feedbackData));
+            try {
+                const response = await fetch(StayHustler.apiBase + '/api/orders/feedback', {
+                    method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ outcome: selectedOutcome.value === 'no' ? 'not_received' : 'received', note: commentTextarea.value.trim() }),
+                    signal: AbortSignal.timeout(10000)
+                });
+                if (!response.ok) throw new Error('Open your order recovery link before submitting feedback.');
+            } catch (error) {
+                document.getElementById('aria-live').textContent = error.message;
+                const message = document.createElement('p'); message.textContent = error.message; form.append(message); return;
+            }
             
             window.location.href = 'reengage.html?outcome=' + encodeURIComponent(selectedOutcome.value);
         });

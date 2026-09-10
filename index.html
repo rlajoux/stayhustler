@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>How to Get a Hotel Room Upgrade — Free Upgrade Request Tool</title>
+    <title>Personalised Hotel Upgrade Requests | $7 per Stay | StayHustler</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>">
     <meta name="description" content="Generate a personalized hotel upgrade request email in under 2 minutes. Tailored to your booking, timed for when hotels have the most flexibility. $7 per stay.">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="How to Get a Hotel Room Upgrade — Free Upgrade Request Tool">
+    <meta property="og:title" content="Personalised Hotel Upgrade Requests | $7 per Stay | StayHustler">
     <meta property="og:description" content="Generate a personalized hotel upgrade request email in under 2 minutes. Tailored to your booking, timed for when hotels have the most flexibility.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://stayhustler.com/">
     <meta property="og:image" content="https://stayhustler.com/og-image.png">
     <meta property="og:site_name" content="StayHustler">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="How to Get a Hotel Room Upgrade — Free Upgrade Request Tool">
+    <meta name="twitter:title" content="Personalised Hotel Upgrade Requests | $7 per Stay | StayHustler">
     <meta name="twitter:description" content="Generate a personalized hotel upgrade request email in under 2 minutes.">
     <meta name="twitter:image" content="https://stayhustler.com/og-image.png">
 
@@ -68,7 +68,7 @@
           "name": "Is my booking information safe?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes. We use your booking details only to personalize your request. We do not store payment information, contact hotels on your behalf, or share your data with third parties."
+            "text": "We save your order details and result for 30 days so you can recover them. Stripe processes payments, Google Gemini generates the wording, and SendGrid delivers email. We do not receive your card number or contact hotels on your behalf. See our privacy policy for details."
           }
         }
       ]
@@ -1112,7 +1112,7 @@
                     </details>
                     <details class="faq-item">
                         <summary>Is my booking information safe?</summary>
-                        <p class="faq-answer">Yes. We use your booking details only to personalize your request. We do not store payment information, contact hotels on your behalf, or share your data with third parties.</p>
+                        <p class="faq-answer">We save your order details and result for 30 days so you can recover them. Stripe processes payments, Google Gemini generates the wording, and SendGrid delivers email. We do not receive your card number or contact hotels on your behalf. See our privacy policy for details.</p>
                     </details>
                 </div>
             </div>
@@ -1211,7 +1211,7 @@
             errorMsg.classList.remove('show');
             
             // Store to localStorage
-            localStorage.setItem('stayhustler_email', email);
+            try { localStorage.setItem('stayhustler_email', email); } catch { /* Subscription can proceed without browser storage. */ }
             
             // Disable button during submission
             submitBtn.disabled = true;
@@ -1231,15 +1231,11 @@
                     successMsg.textContent = "You're on the list.";
                     successMsg.classList.add('show', 'success');
                 } else {
-                    // API returned error, but we saved locally
-                    form.classList.add('hidden');
-                    successMsg.textContent = "Saved locally. We'll sync when available.";
+                    successMsg.textContent = "We could not subscribe you. Please try again later.";
                     successMsg.classList.add('show', 'offline');
                 }
             } catch (err) {
-                // Network error - still show partial success since localStorage saved
-                form.classList.add('hidden');
-                successMsg.textContent = "Saved locally. We'll sync when available.";
+                successMsg.textContent = "We could not subscribe you. Please try again later.";
                 successMsg.classList.add('show', 'offline');
             }
         });

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="/assets/flow.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
     <script>
@@ -11,7 +12,7 @@
       gtag('config', 'G-H8G7MYD59K');
     </script>
     <script>
-      fetch('https://app.stayhustler.com/api/track', {
+      fetch(StayHustler.apiBase + '/api/track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ page: 'booking', referrer: document.referrer })
@@ -38,8 +39,7 @@
     <!-- Robots meta -->
     <meta name="robots" content="noindex, nofollow">
 
-    <!-- Crazy Egg -->
-    <script type="text/javascript" src="//script.crazyegg.com/pages/scripts/0131/7760.js" async="async"></script>
+
 
     <style>
         :root {
@@ -434,45 +434,38 @@
     <script>
         const form = document.getElementById('booking-form');
         const submitBtn = document.getElementById('submit-btn');
-
-        const requiredFields = [
-            document.getElementById('hotel-name'),
-            document.getElementById('city'),
-            document.getElementById('check-in'),
-            document.getElementById('check-out'),
-            document.getElementById('booking-channel')
-        ];
-
-        // Check form validity
-        function checkFormValidity() {
-            const allFilled = requiredFields.every(field => field.value.trim() !== '');
-            submitBtn.disabled = !allFilled;
+        const fields = { hotel: 'hotel-name', city: 'city', checkin: 'check-in', checkout: 'check-out', room: 'room-type', channel: 'booking-channel', hotel_type: 'hotel-type' };
+        const saved = StayHustler.read('booking');
+        const message = document.createElement('p');
+        message.setAttribute('role', 'alert');
+        form.append(message);
+        for (const [key, id] of Object.entries(fields)) {
+            const field = document.getElementById(id);
+            if (typeof saved[key] === 'string') field.value = saved[key];
+            if (field.type === 'text') field.maxLength = 200;
         }
-
-        // Listen to input changes
-        requiredFields.forEach(field => {
-            field.addEventListener('input', checkFormValidity);
-            field.addEventListener('change', checkFormValidity);
+        function validateDates() {
+            const checkin = document.getElementById('check-in').value;
+            const checkout = document.getElementById('check-out');
+            const nights = (Date.parse(checkout.value) - Date.parse(checkin)) / 86400000;
+            const error = checkin && checkout.value && (!Number.isFinite(nights) || nights < 1 || nights > 365) ? 'Check-out must be after check-in, within 365 nights.' : '';
+            checkout.setCustomValidity(error);
+            message.textContent = error;
+            submitBtn.disabled = !['hotel','city','checkin','checkout','channel'].every(key => document.getElementById(fields[key]).value.trim());
+        }
+        form.addEventListener('input', validateDates);
+        form.addEventListener('change', validateDates);
+        form.addEventListener('submit', event => {
+            event.preventDefault();
+            validateDates();
+            if (!form.reportValidity()) return;
+            const booking = Object.fromEntries(Object.entries(fields).map(([key, id]) => [key, document.getElementById(id).value.trim()]));
+            try {
+                localStorage.setItem('stayhustler_booking', JSON.stringify(booking));
+                location.href = 'context.html';
+            } catch { message.textContent = 'Your browser blocked saving these answers. Enable site storage to continue.'; }
         });
-
-        // Form submission
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (!submitBtn.disabled) {
-                // Store booking data to localStorage
-                const bookingData = {
-                    hotel: document.getElementById('hotel-name').value,
-                    city: document.getElementById('city').value,
-                    checkin: document.getElementById('check-in').value,
-                    checkout: document.getElementById('check-out').value,
-                    room: document.getElementById('room-type').value,
-                    channel: document.getElementById('booking-channel').value,
-                    hotel_type: document.getElementById('hotel-type').value
-                };
-                localStorage.setItem('stayhustler_booking', JSON.stringify(bookingData));
-                window.location.href = 'context.html';
-            }
-        });
+        validateDates();
     </script>
 </body>
 </html>
