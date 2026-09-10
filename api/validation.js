@@ -1,3 +1,4 @@
+const loyalty = require('./assets/loyalty');
 const REQUEST_TYPES = ['upgrade', 'late_checkout', 'breakfast_lounge', 'better_view', 'credit_spa_fb', 'any_upgrade'];
 const EMAIL_REGEX = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
 const DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -16,6 +17,7 @@ function validateRequest(body) {
         if (!body[section] || typeof body[section] !== 'object' || Array.isArray(body[section])) errors.push(`${section} must be an object`);
     }
     if (errors.length) return errors;
+    errors.push(...loyalty.selectionErrors(body.context));
     for (const name of ['hotel', 'city']) {
         if (typeof body.booking[name] !== 'string' || !body.booking[name].trim() || body.booking[name].length > 200) errors.push(`booking.${name} must contain 1–200 characters`);
     }
@@ -51,6 +53,7 @@ function sanitizeInput(body) {
     if (errors.length) throw Object.assign(new Error(errors.join('; ')), { status: 400 });
     const text = value => typeof value === 'string' ? value.trim() : '';
     const { booking, context } = body;
+    const selectedLoyalty = loyalty.describe(context, booking);
     return {
         booking: { hotel: text(booking.hotel), city: text(booking.city), checkin: booking.checkin, checkout: booking.checkout, room: text(booking.room), channel: booking.channel || 'direct', hotel_type: booking.hotel_type || 'unknown' },
         context: {
@@ -58,7 +61,13 @@ function sanitizeInput(body) {
             lengthOfStay: String((Date.parse(booking.checkout) - Date.parse(booking.checkin)) / 86400000),
             arrivalDay: DAYS[new Date(booking.checkin).getUTCDay()],
             checkinTimePref: text(context.checkinTime || context.checkinTimePref),
-            loyalty: text(context.loyaltyStatus || context.loyalty) || 'none', occasion: text(context.occasion) || 'none',
+            ...(context.loyaltyProgramme !== undefined ? {
+                loyaltyProgramme: context.loyaltyProgramme || '', loyaltyTier: context.loyaltyTier || '',
+                loyaltyHotelConfirmed: context.loyaltyHotelConfirmed === true,
+                loyaltyRulesVersion: selectedLoyalty ? loyalty.version : ''
+            } : {}),
+            loyalty: context.loyaltyProgramme !== undefined ? selectedLoyalty?.label || 'none' : text(context.loyaltyStatus || context.loyalty) || 'none',
+            occasion: text(context.occasion) || 'none',
             flexibility: text(context.flexibility) || 'any',
             flexibility_primary: text(context.flexibility_primary) || (['any', 'category', 'view', 'timing', 'none'].includes(context.flexibility) ? context.flexibility : 'any'),
             flexibility_detail: text(context.flexibility_detail), preferredRoomType: text(context.preferredRoom || context.preferredRoomType),

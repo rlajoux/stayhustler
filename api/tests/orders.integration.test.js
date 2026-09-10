@@ -33,6 +33,8 @@ test('paid order lifecycle, security, refunds and retention against PostgreSQL',
     const env = { NODE_ENV: 'test', DATABASE_URL: databaseUrl, DATABASE_SSL: 'disable', STRIPE_SECRET_KEY: 'sk_test_fixture', STRIPE_WEBHOOK_SECRET: 'whsec_fixture', GEMINI_API_KEY: 'test', SENDGRID_API_KEY: 'test', SENDGRID_FROM_EMAIL: 'support@example.test', ACCESS_TOKEN_SECRET: 'a'.repeat(40), UNSUBSCRIBE_SECRET: 'b'.repeat(40), ADMIN_USER: 'test-admin', ADMIN_PASS: 'a:secure:password:123', API_BASE_URL: 'http://127.0.0.1:3000', PUBLIC_BASE_URL: 'http://127.0.0.1:8080' };
     const runtime = await createApp({ env, pool, stripe, generate: async (booking, context) => {
         generated++; assert.equal(context.requestType, 'late_checkout'); assert.equal(context.flexibility_detail, '4pm');
+        assert.equal(context.loyaltyProgramme, 'gha'); assert.equal(context.loyaltyTier, 'platinum');
+        assert.equal(context.loyaltyHotelConfirmed, true); assert.equal(context.loyalty, 'GHA DISCOVERY Platinum');
         if (failGeneration) throw new Error('provider down');
         await new Promise(resolve => setTimeout(resolve, 25));
         return { result: output, finalSource: 'first' };
@@ -40,7 +42,7 @@ test('paid order lifecycle, security, refunds and retention against PostgreSQL',
     const server = runtime.app.listen(0, '127.0.0.1');
     await new Promise(resolve => server.once('listening', resolve));
     const base = `http://127.0.0.1:${server.address().port}`;
-    const body = () => ({ email: 'buyer@example.test', booking: { hotel: 'โรงแรม Audit', city: 'Bangkok', checkin: '2026-10-13', checkout: '2026-10-15', channel: 'direct' }, context: { requestType: 'late_checkout', flexibility_primary: 'timing', flexibility_detail: '4pm' }, checkout_key: crypto.randomUUID() });
+    const body = () => ({ email: 'buyer@example.test', booking: { hotel: 'โรงแรม Audit', city: 'Bangkok', checkin: '2026-10-13', checkout: '2026-10-15', channel: 'direct' }, context: { requestType: 'late_checkout', flexibility_primary: 'timing', flexibility_detail: '4pm', loyaltyProgramme: 'gha', loyaltyTier: 'platinum', loyaltyHotelConfirmed: true }, checkout_key: crypto.randomUUID() });
     const request = (route, payload, extra = {}) => fetch(base + route, { method: payload === undefined ? 'GET' : 'POST', redirect: 'manual', headers: { ...(payload === undefined ? {} : { 'Content-Type': 'application/json' }), ...extra.headers }, body: payload === undefined ? undefined : JSON.stringify(payload), ...Object.fromEntries(Object.entries(extra).filter(([key]) => key !== 'headers')) });
     const admin = { Authorization: 'Basic ' + Buffer.from(`${env.ADMIN_USER}:${env.ADMIN_PASS}`).toString('base64') };
     const event = session => ({ id: 'evt_' + crypto.randomUUID(), type: 'checkout.session.completed', data: { object: { id: session.id } } });

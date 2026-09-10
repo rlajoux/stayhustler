@@ -20,13 +20,13 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your insider request – StayHustler</title>
+    <title>Your hotel request – StayHustler</title>
 
-    <meta name="description" content="Your personalized hotel upgrade request is ready. Use this wording and timing to make a polite, hotel-appropriate request.">
+    <meta name="description" content="Your personalised hotel upgrade request is ready. Use this wording and timing to make a polite, hotel-appropriate request.">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Your insider request – StayHustler">
-    <meta property="og:description" content="Your personalized hotel upgrade request is ready.">
+    <meta property="og:title" content="Your hotel request – StayHustler">
+    <meta property="og:description" content="Your personalised hotel upgrade request is ready.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://stayhustler.com/results">
     <meta property="og:image" content="https://stayhustler.com/og-image.png">
@@ -56,13 +56,13 @@
 </span>StayHustler</a>
 <nav class="desktop-nav" aria-label="Main navigation">
 <a href="https://stayhustler.com/">Hotel requests</a>
-<a href="https://stayhustler.com/guides/">Travel guides</a>
+<a href="https://stayhustler.com/guides/">Hotel guides</a>
 <a href="https://stayhustler.com/tools/">Free tools</a>
 </nav>
 <div class="nav-actions">
 <span class="nav-currency">Prices in USD</span>
 <a href="mailto:support@stayhustler.com">Help</a>
-<a class="outline-btn" href="https://stayhustler.com/booking">Create a request</a>
+<a class="outline-btn" href="https://stayhustler.com/booking">Build my hotel request</a>
 </div>
 <details class="mobile-nav">
 <summary aria-label="Open navigation">
@@ -72,7 +72,7 @@
 </summary>
 <nav aria-label="Mobile navigation">
 <a href="https://stayhustler.com/">Hotel requests</a>
-<a href="https://stayhustler.com/guides/">Travel guides</a>
+<a href="https://stayhustler.com/guides/">Hotel guides</a>
 <a href="https://stayhustler.com/tools/">Free tools</a>
 <a href="https://stayhustler.com/about">About us</a>
 <a href="mailto:support@stayhustler.com">Get help</a>
@@ -90,7 +90,7 @@
 <span id="free-request-badge-text">Free request</span>
 </span>
 <h1 id="page-headline">Preparing your request</h1>
-<p class="page-subheadline" id="page-subheadline">Your order keeps everything together for your stay.</p>
+<p class="page-subheadline" id="page-subheadline">Your package will appear here when it is ready.</p>
 </header>
 <div id="generation-success" hidden>
 </div>
@@ -101,7 +101,7 @@
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 <path d="M3 5h18v14H3V5Zm0 1 9 7 9-7"/>
 </svg>
-<h2 class="card-title">Your email request</h2>
+<h2 class="card-title">Your email</h2>
 </div>
 <p class="timing-line">
 <strong>Subject:</strong> <span id="email-subject">Preparing your subject…</span>
@@ -150,6 +150,7 @@
 <div class="desk-ask-tone" id="desk-ask-tone">
 </div>
 </section>
+<p class="field-hint">Add your hotel’s email address before sending from your email app.</p>
 <div class="expectation-note">Hotel benefits depend on availability and policy. Your request does not guarantee an upgrade or perk.</div>
 </div>
 <aside class="results-aside">
@@ -204,7 +205,7 @@
 </a>
 </div>
 <div class="feedback-prompt">
-<a href="https://stayhustler.com/feedback">Tell us how your stay went</a>. Your recovery link is available for 30 days after purchase.</div>
+<a href="https://stayhustler.com/feedback">Tell us how your stay went</a>. Keep a copy for your trip. Your saved request is available for 30 days after purchase.</div>
 </div>
 </main>
 <div aria-live="polite" id="aria-live" class="sr-only">
@@ -219,13 +220,13 @@
 <path d="M5 21V3h14v18M3 21h18M9 7h1m4 0h1M9 11h1m4 0h1m-5 10v-5h4v5"/>
 </svg>
 </span>StayHustler</a>
-<p>A little preparation for a better hotel stay.<br>Your request. Your conversation.</p>
+<p>Personalised requests for the hotel you’ve booked.</p>
 </div>
 <div class="footer-menu">
 <div>
 <strong>Plan your request</strong>
-<a href="https://stayhustler.com/booking">Create a request</a>
-<a href="https://stayhustler.com/guides/">Travel guides</a>
+<a href="https://stayhustler.com/booking">Build my hotel request</a>
+<a href="https://stayhustler.com/guides/">Hotel guides</a>
 <a href="https://stayhustler.com/tools/">Free tools</a>
 </div>
 <div>
@@ -258,8 +259,8 @@
         function render(order) {
             savedOrder = order;
             const result = order.result;
-            byId('page-headline').textContent = 'Your request is ready';
-            byId('page-subheadline').textContent = 'Saved for this booking. Replace the name and confirmation number before sending.';
+            byId('page-headline').textContent = 'Your hotel request is ready';
+            byId('page-subheadline').textContent = 'Check the details, add your name and reservation number, and send the message to your hotel.';
             byId('personalization-details').textContent = `${order.booking.hotel}, ${order.booking.city} · ${order.booking.checkin} to ${order.booking.checkout}`;
             byId('email-subject').textContent = result.email_subject;
             byId('email-request').value = result.email_body;
@@ -276,7 +277,7 @@
             byId('resend-email').readOnly = true;
             byId('resend-status').textContent = order.delivery_status === 'accepted'
                 ? 'Email accepted by our delivery provider. Check your spam folder if needed.'
-                : 'Your request is saved here. Email delivery is not yet confirmed; you can resend below.';
+                : 'Your request is saved here. Email delivery is not confirmed yet. You can copy it now or resend the email below.';
             loading.hidden = true;
             actions.forEach(id => { byId(id).disabled = false; });
             byId('send-email-btn').hidden = false;
@@ -298,10 +299,10 @@
                 }
                 if (data.result) { render(data); return; }
                 loading.textContent = data.status === 'failed' && data.generation_attempts >= 3
-                    ? 'We could not prepare your request after three attempts. Contact support@stayhustler.com with order ' + data.order_id + ' for assistance or a refund.'
+                    ? 'We couldn’t prepare your request. Contact support@stayhustler.com with order ' + data.order_id + ' for assistance or a refund.'
                     : data.status === 'failed'
-                    ? 'Generation is temporarily unavailable. Your paid order is saved and will retry automatically. Contact support@stayhustler.com with order ' + data.order_id + ' if it remains unavailable.'
-                    : 'Your paid order is saved. We are preparing your request and will email a recovery link when it is ready.';
+                    ? 'Your order is saved. We’re still preparing your request. Contact support@stayhustler.com with order ' + data.order_id + ' if it remains unavailable.'
+                    : (data.purchase ? 'Payment received. ' : 'Your order is saved. ') + 'We’re preparing your hotel request and will email you when it’s ready.';
                 if (polls < 24) setTimeout(load, 5000);
                 else loading.textContent += ' You can safely close this page and check your email, or reload later.';
             } catch (error) {

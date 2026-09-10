@@ -1,89 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>How Hotel Inventory Systems Work | StayHustler</title>
-    <meta name="description" content="A practical explanation of how modern hotel inventory and revenue systems actually work, and why most upgrade advice fails to account for them.">
-
-    <!-- Open Graph -->
-    <meta property="og:title" content="How Hotel Inventory Systems Work">
-    <meta property="og:description" content="A practical explanation of how modern hotel inventory and revenue systems actually work, and why most upgrade advice fails.">
-    <meta property="og:type" content="article">
-    <meta property="og:url" content="https://stayhustler.com/guides/how-hotel-inventory-systems-work">
-    <meta property="og:site_name" content="StayHustler">
-    <meta property="og:image" content="https://stayhustler.com/og-image.png">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="https://stayhustler.com/og-image.png">
-    <meta property="article:published_time" content="2026-01-16">
-    <meta property="article:modified_time" content="2026-01-16">
-
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://stayhustler.com/guides/how-hotel-inventory-systems-work">
-
-    <!-- Article Schema -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Article",
-        "headline": "How Hotel Inventory Systems Work",
-        "description": "A practical explanation of how modern hotel inventory and revenue systems actually work, and why most upgrade advice fails.",
-        "image": "https://stayhustler.com/og-image.png",
-        "datePublished": "2026-01-16",
-        "dateModified": "2026-01-16",
-        "author": {
-            "@type": "Person",
-            "name": "Raphael L.",
-            "url": "https://stayhustler.com/about",
-            "jobTitle": "Founder",
-            "knowsAbout": ["hotel operations", "revenue management", "travel technology"]
-        },
-        "publisher": {
-            "@type": "Organization",
-            "name": "StayHustler",
-            "url": "https://stayhustler.com"
-        },
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "https://stayhustler.com/guides/how-hotel-inventory-systems-work"
-        }
-    }
-    </script>
-
-    <!-- Breadcrumb Schema -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-            {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Home",
-                "item": "https://stayhustler.com/"
-            },
-            {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Guides",
-                "item": "https://stayhustler.com/guides/"
-            },
-            {
-                "@type": "ListItem",
-                "position": 3,
-                "name": "How Hotel Inventory Systems Work",
-                "item": "https://stayhustler.com/guides/how-hotel-inventory-systems-work"
-            }
-        ]
-    }
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How room availability affects hotel upgrade requests | StayHustler</title>
+<meta name="description" content="Understand what room availability can and cannot tell you when asking a hotel for an upgrade.">
+<link rel="canonical" href="https://stayhustler.com/guides/how-hotel-inventory-systems-work">
+<meta property="og:title" content="How room availability affects hotel upgrade requests | StayHustler">
+<meta property="og:description" content="Understand what room availability can and cannot tell you when asking a hotel for an upgrade.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://stayhustler.com/guides/how-hotel-inventory-systems-work">
+<meta property="og:image" content="https://stayhustler.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
 
 
-    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/assets/site.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
+<script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-H8G7MYD59K');</script>
 </head>
 <body class="editorial-page">
-    <a href="#main-content" class="skip-link">Skip to content</a>
+<a href="#main-content" class="skip-link">Skip to content</a>
 <header class="site-header">
 <div class="site-nav">
 <a class="brand" href="/">
@@ -93,14 +30,15 @@
 </svg>
 </span>StayHustler</a>
 <nav class="desktop-nav" aria-label="Main navigation">
-<a href="/">Hotel requests</a>
-<a href="/guides/" aria-current="page">Travel guides</a>
+<a href="/#how-it-works">How it works</a>
+<a href="/#example-package">Example package</a>
+<a href="/guides/">Hotel guides</a>
 <a href="/tools/">Free tools</a>
 </nav>
 <div class="nav-actions">
 <span class="nav-currency">Prices in USD</span>
 <a href="mailto:support@stayhustler.com">Help</a>
-<a class="outline-btn" href="/booking">Create a request</a>
+<a class="outline-btn" href="/booking"><span class="nav-full">Build my hotel request</span><span class="nav-short">Start request</span></a>
 </div>
 <details class="mobile-nav">
 <summary aria-label="Open navigation">
@@ -109,8 +47,9 @@
 </svg>
 </summary>
 <nav aria-label="Mobile navigation">
-<a href="/">Hotel requests</a>
-<a href="/guides/" aria-current="page">Travel guides</a>
+<a href="/#how-it-works">How it works</a>
+<a href="/#example-package">Example package</a>
+<a href="/guides/">Hotel guides</a>
 <a href="/tools/">Free tools</a>
 <a href="/about">About us</a>
 <a href="mailto:support@stayhustler.com">Get help</a>
@@ -118,236 +57,14 @@
 </details>
 </div>
 </header>
-
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href="/">Home</a>
-        <span>&rsaquo;</span>
-        <a href="/guides/">Guides</a>
-        <span>&rsaquo;</span>
-        <span>How Hotel Inventory Systems Work</span>
-    </nav>
-
-    <main id="main-content">
-        <article>
-            <h1>How Hotel Inventory Systems Work</h1>
-            <p class="byline">By <a href="/about">Raphael L.</a>
-</p>
-
-            <p>Most travellers imagine hotel room allocation as fluid and human-driven. A front desk agent looks at availability, makes a judgement call, and assigns a room.</p>
-
-            <p>That mental model is outdated - and it explains why most upgrade advice fails.</p>
-
-            <p>Modern hotels run on inventory systems designed to maximise revenue, reduce risk, and minimise last-minute decision-making. Upgrades are not handed out casually. They are the byproduct of a tightly controlled process that starts days before you arrive.</p>
-
-            <p>Understanding how these systems work is the single most important step to understanding why <a href="/guides/upgrade-myths-that-dont-work-anymore">most upgrade advice doesn't work anymore</a>.</p>
-
-            <div class="learn-box">
-                <h4>What this article explains</h4>
-                <ul>
-                    <li>What hotel inventory systems actually optimise for</li>
-                    <li>Why rooms are held back even when they appear available</li>
-                    <li>When upgrade decisions are really made</li>
-                    <li>Why asking at check-in rarely changes anything</li>
-                    <li>What this means for your approach</li>
-                </ul>
-            </div>
-
-            <!-- CTA #1: After intro -->
-            <div class="guide-cta">
-                <h3 class="guide-cta-headline">Upgrades Are Decided Before You Arrive</h3>
-                <p class="guide-cta-body">Inventory decisions lock 24-72 hours before check-in. StayHustler helps you influence that window - not waste effort at the desk.</p>
-                <a href="https://stayhustler.com/booking" class="guide-cta-btn">Generate my upgrade message</a>
-                <a href="/guides/how-stayhustler-improves-your-upgrade-chances" class="guide-cta-secondary">See how StayHustler works</a>
-            </div>
-
-            <h2>The Core Objective of Hotel Inventory Systems</h2>
-
-            <p>Hotel inventory systems are not built to please individual guests. They are built to optimise three things:</p>
-
-            <ul>
-                <li>
-<strong>Revenue per available room (RevPAR)</strong> - the primary metric</li>
-                <li>
-<strong>Occupancy certainty</strong> - predictable fill rates reduce risk</li>
-                <li>
-<strong>Operational predictability</strong> - housekeeping, staffing, maintenance</li>
-            </ul>
-
-            <p>Everything else is secondary. Upgrades are not a benefit in isolation. They are a tool used when they serve one of those objectives.</p>
-
-            <h2>Hotels Think in Categories, Not Rooms</h2>
-
-            <p>Guests think in terms of rooms. Hotels think in terms of <strong>room categories</strong>.</p>
-
-            <p>Inventory systems track:</p>
-            <ul>
-                <li>How many rooms exist in each category</li>
-                <li>How many are sold, blocked, or held back</li>
-                <li>How likely demand is to exceed supply</li>
-            </ul>
-
-            <p>A "Deluxe King" is not a specific room. It is a bucket.</p>
-
-            <p>Upgrading a guest means moving them between buckets, which has ripple effects across pricing, overbooking buffers, and availability forecasts. This is why upgrades are constrained - even when rooms look empty.</p>
-
-            <h2>Revenue Management Controls Room Allocation</h2>
-
-            <p>Most meaningful decisions about room allocation are made by revenue management systems, not people at the desk.</p>
-
-            <p>These systems:</p>
-            <ul>
-                <li>Forecast demand by date, segment, and channel</li>
-                <li>Set pricing and availability rules dynamically</li>
-                <li>Decide how much inventory to protect in each category</li>
-            </ul>
-
-            <p>By the time you check in, the system has already decided what flexibility exists. Front desk agents are executors, not architects.</p>
-
-            <h2>When Upgrade Decisions Are Actually Made</h2>
-
-            <p>Hotels routinely withhold inventory until late in the booking window. This "hidden availability" is not random - it is strategic.</p>
-
-            <p>The critical decision window is typically <strong>24-72 hours before arrival</strong>. This is when:</p>
-
-            <ul>
-                <li>Cancellation patterns become clear</li>
-                <li>No-show probabilities are reassessed</li>
-                <li>Inventory buffers are adjusted or released</li>
-                <li>Automatic loyalty upgrades are processed</li>
-            </ul>
-
-            <p>By check-in, these decisions are largely final. Polite requests at the desk rarely override what the system has already determined. For more on timing, see our guide on <a href="/guides/best-time-to-ask-for-hotel-upgrade">the best time to ask for an upgrade</a>.</p>
-
-            <h2>Why Hotels Hold Back Rooms</h2>
-
-            <p>Hotels withhold inventory for several operational reasons:</p>
-
-            <ul>
-                <li>Protecting against overbooking risk</li>
-                <li>Allowing for maintenance issues or room defects</li>
-                <li>Preserving flexibility for high-value arrivals</li>
-                <li>Managing group blocks and potential extensions</li>
-            </ul>
-
-            <p>This is resolved in the 24-72 hour window, not at check-in.</p>
-
-            <h2>Overbooking Is Intentional</h2>
-
-            <p>Overbooking is not a mistake. It is a calculated practice.</p>
-
-            <p>Inventory systems assume a percentage of cancellations, no-shows, and early departures. The model is calibrated to maximise occupancy without regularly "walking" guests (relocating them to another property).</p>
-
-            <p>Upgrades are one of the pressure-release valves when these assumptions fail. This is why some upgrades happen automatically - and others never do.</p>
-
-            <div class="constraints-box">
-                <h3>Key Constraints Hotels Cannot Ignore</h3>
-                <ul>
-                    <li>
-<strong>Revenue protection:</strong> Premium inventory won't be given away if it might sell</li>
-                    <li>
-<strong>Loyalty obligations:</strong> Elite members are processed first through automated queues (see <a href="/guides/does-loyalty-status-get-upgrades">does loyalty status get upgrades?</a>)</li>
-                    <li>
-<strong>Rate fences:</strong> Some booking rates are contractually excluded from upgrades</li>
-                    <li>
-<strong>Housekeeping schedules:</strong> Late changes disrupt cleaning rotations (this is why <a href="/guides/late-checkout-vs-room-upgrade">late checkout</a> involves different constraints than upgrades)</li>
-                    <li>
-<strong>Overbooking buffers:</strong> Rooms may be held as fallback inventory</li>
-                    <li>
-<strong>Arrival timing:</strong> Late arrivals reduce flexibility, not increase it</li>
-                </ul>
-            </div>
-
-            <h2>Loyalty, Rate Type, and Channel All Matter</h2>
-
-            <p>When systems evaluate who gets moved up, they look at signals:</p>
-
-            <ul>
-                <li>Loyalty tier (processed through automated queues)</li>
-                <li>Rate flexibility (higher rates signal more value)</li>
-                <li>Booking channel (direct bookings preferred over OTAs)</li>
-                <li>Length of stay (longer stays = more revenue impact)</li>
-                <li>Past behaviour (repeat guests, complaints, spend history)</li>
-            </ul>
-
-            <p>Not all bookings are equal. Discounted, opaque, or inflexible rates are often deprioritised because they reduce revenue upside. See our comparison of <a href="/guides/independent-vs-chain-hotel-upgrades">chain vs independent hotel upgrades</a> for how this differs by property type.</p>
-
-            <h2>Why Asking at Check-In Rarely Works</h2>
-
-            <p>By check-in:</p>
-
-            <ul>
-                <li>Inventory buffers are already allocated</li>
-                <li>Housekeeping schedules are locked</li>
-                <li>Upgrade decisions are mostly final</li>
-            </ul>
-
-            <p>Changing assignments late introduces risk. This is why polite requests are often declined - not because staff are unwilling, but because the system resists late changes.</p>
-
-            <p>An agent declining your request isn't being unhelpful. They're reading a room map that was assigned hours earlier.</p>
-
-            <h2>Implications for Guests</h2>
-
-            <p>If you want to influence outcomes, you must:</p>
-
-            <ul>
-                <li>Act before the system locks decisions (24-72 hours pre-arrival)</li>
-                <li>Align requests with operational logic, not emotional appeals</li>
-                <li>Avoid creating friction at the desk</li>
-                <li>Understand that visibility is limited until close to arrival</li>
-            </ul>
-
-            <p>Understanding the system changes how you approach upgrades. Instead of hoping for luck at check-in, you work with the hotel's actual decision timeline. For practical application of these principles, see our guide on <a href="/guides/how-to-ask-for-a-hotel-upgrade">how to ask for a hotel upgrade</a>.</p>
-
-            <!-- CTA #2: Before conclusion -->
-            <div class="guide-cta">
-                <h3 class="guide-cta-headline">Stop Guessing How Hotels Work</h3>
-                <p class="guide-cta-body">StayHustler generates messages designed around real hotel operations:</p>
-                <ol class="guide-cta-steps">
-                    <li>Tell us where you're staying</li>
-                    <li>We generate an operationally realistic message</li>
-                    <li>You send it at the right moment</li>
-                </ol>
-                <a href="https://stayhustler.com/booking" class="guide-cta-btn">Get my message</a>
-                <p class="guide-cta-trust">Designed around real hotel operations - not internet folklore.</p>
-            </div>
-
-            <h2>The Real Insight</h2>
-
-            <p>Upgrades are not favours. They are <strong>controlled reallocations of inventory</strong> made when they reduce risk or increase long-term value.</p>
-
-            <p>Once you understand that hotels optimise for revenue and predictability - not guest satisfaction in isolation - everything else becomes clearer. The system isn't hostile. It's just indifferent to tactics that ignore how it actually works.</p>
-
-            <section class="related-guides">
-                <h2>Related Guides</h2>
-                <div class="related-grid">
-                    <a href="/guides/upgrade-myths-that-dont-work-anymore" class="related-card">
-                        <h3>Upgrade Myths That Don't Work Anymore</h3>
-                        <p>The tactics that used to work and why they fail now.</p>
-                    </a>
-                    <a href="/guides/how-stayhustler-improves-your-upgrade-chances" class="related-card">
-                        <h3>How StayHustler Improves Your Chances</h3>
-                        <p>Why timing and framing matter more than politeness.</p>
-                    </a>
-                    <a href="/guides/best-time-to-ask-for-hotel-upgrade" class="related-card">
-                        <h3>Best Time to Ask for an Upgrade</h3>
-                        <p>The 24-36 hour window explained.</p>
-                    </a>
-                    <a href="/guides/independent-vs-chain-hotel-upgrades" class="related-card">
-                        <h3>Independent vs Chain Upgrades</h3>
-                        <p>How systems differ by property type.</p>
-                    </a>
-                    <a href="/guides/does-loyalty-status-get-upgrades" class="related-card">
-                        <h3>Does Loyalty Status Get Upgrades?</h3>
-                        <p>What elite status actually gets you.</p>
-                    </a>
-                    <a href="/guides/late-checkout-vs-room-upgrade" class="related-card">
-                        <h3>Late Checkout vs Room Upgrade</h3>
-                        <p>Sometimes flexibility gets you more.</p>
-                    </a>
-                </div>
-            </section>
-        </article>
-    </main>
+<main id="main-content"><article class="guide-body"><p class="eyebrow">Hotel request guide</p><h1>How room availability affects hotel upgrade requests</h1><p class="byline">By <a href="/about">Raphael L.</a> · Reviewed 10 September 2026</p>
+<p>An upgrade depends on whether the hotel can offer a suitable room for your booking. A customer-facing website cannot see every operational constraint, so an online room listing is not proof that a complimentary upgrade is available.</p>
+<h2>The full stay matters</h2><p>A higher category may be open for one night and unavailable for another. Asking for an upgrade for the complete stay lets the hotel assess the same dates as the reservation. If you would consider changing rooms during the stay, state that as a preference rather than assuming it is possible.</p>
+<h2>Available to sell is not the whole picture</h2><p>The hotel may need to consider room readiness, maintenance, accessibility, connecting-room requirements, group commitments and existing benefits or confirmed bookings. These factors can change. StayHustler does not access the hotel’s reservation or inventory system.</p>
+<h2>Published benefit or discretionary request?</h2><p>A loyalty programme may state that a category change is available subject to conditions. That is different from a traveller without such a benefit asking for a discretionary upgrade. Check the programme terms and ask the hotel whether they apply.</p>
+<div class="article-example"><h2>A request that accounts for availability</h2><p>If a higher room category is available for my full stay, would you be able to consider an upgrade? Please let me know the category and any additional charge before changing the reservation.</p></div>
+<h2>What the hotel can clarify</h2><ul><li>Whether it can record the request now.</li><li>When it can confirm availability.</li><li>Which category could be offered.</li><li>Whether the change is complimentary or paid.</li><li>Whether a programme benefit applies to the rate and property.</li></ul>
+<p>A useful request makes those questions easy to answer. It does not pretend to predict the hotel’s internal decision.</p><aside class="guide-cta"><h2>Want this tailored to your booking?</h2><p>Get a personalised email, three timing tips and a reception script for your stay.</p><a class="btn-primary" href="/booking?request=upgrade">Tailor this to my stay</a><p class="guide-cta-trust">$7 USD. One payment. No subscription. You send the request; your hotel confirms what’s possible.</p></aside></article></main>
 <footer class="site-footer">
 <div class="wrap">
 <div class="footer-top">
@@ -358,13 +75,13 @@
 <path d="M5 21V3h14v18M3 21h18M9 7h1m4 0h1M9 11h1m4 0h1m-5 10v-5h4v5"/>
 </svg>
 </span>StayHustler</a>
-<p>A little preparation for a better hotel stay.<br>Your request. Your conversation.</p>
+<p>Personalised requests for the hotel you’ve booked.</p>
 </div>
 <div class="footer-menu">
 <div>
 <strong>Plan your request</strong>
-<a href="/booking">Create a request</a>
-<a href="/guides/">Travel guides</a>
+<a href="/booking">Build my hotel request</a>
+<a href="/guides/">Hotel guides</a>
 <a href="/tools/">Free tools</a>
 </div>
 <div>
@@ -383,16 +100,5 @@
 </div>
 </div>
 </footer>
-
-
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-H8G7MYD59K');
-    </script>
 </body>
 </html>

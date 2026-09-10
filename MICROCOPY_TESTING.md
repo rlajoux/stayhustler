@@ -1,3 +1,5 @@
+> Superseded: historical odds-copy instructions below must not be used for the current product. The request planner does not calculate probabilities. See CMO_WEBSITE_COPY_REVIEW.md.
+
 # Odds Microcopy Testing Guide
 
 ## Overview
