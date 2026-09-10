@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="/assets/flow.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
     <script>
@@ -11,7 +12,7 @@
       gtag('config', 'G-H8G7MYD59K');
     </script>
     <script>
-      fetch('https://app.stayhustler.com/api/track', {
+      fetch(StayHustler.apiBase + '/api/track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ page: 'payment', referrer: document.referrer })
@@ -38,8 +39,7 @@
     <!-- Robots meta -->
     <meta name="robots" content="noindex, nofollow">
 
-    <!-- Crazy Egg -->
-    <script type="text/javascript" src="//script.crazyegg.com/pages/scripts/0131/7760.js" async="async"></script>
+
 
     <style>
         :root {
@@ -798,8 +798,8 @@
                         
                         <div class="email-field">
                             <label for="email-input" class="email-label">Email address</label>
-                            <input type="email" id="email-input" class="email-input" placeholder="you@example.com" required>
-                            <p class="email-helper">We'll send your upgrade request here.</p>
+                            <input type="email" id="email-input" maxlength="254" class="email-input" placeholder="you@example.com" required>
+                            <p class="email-helper">We'll send your saved request and recovery link here.</p>
                         </div>
 
                         <div class="validation-message" id="validation-message" role="alert" aria-live="polite">
@@ -819,7 +819,7 @@
                         <div class="cta-section">
                             <button type="submit" class="btn-primary" id="pay-btn" disabled>Pay & unlock</button>
 
-                            <p class="conversion-hint cta-hint">After payment, you'll get your ready-to-send request instantly.</p>
+                            <p class="conversion-hint cta-hint">After payment, your saved request will appear when ready. We will also email a recovery link.</p>
 
                             <p class="trust-note">We can't access or change your reservation.<br>We don't contact hotels or booking systems.<br>Your details are used only to generate your request.</p>
 
@@ -846,7 +846,7 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
-                            Instant delivery
+                            Email delivery
                         </li>
                         <li>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -914,7 +914,7 @@
 
         // Price constants
         const BASE_PRICE_CENTS = 700;
-        const API_BASE = 'https://app.stayhustler.com';
+        const API_BASE = StayHustler.apiBase;
 
         // Stripe is pre-selected, so set it as default
         let selectedMethod = 'stripe';
@@ -964,35 +964,9 @@
             }
         }
 
-        // Load coupon from localStorage
         function loadCoupon() {
-            try {
-                const saved = localStorage.getItem('stayhustler_coupon');
-                if (saved) {
-                    const parsed = JSON.parse(saved);
-                    // Don't restore TRYITFREE if it's already been used
-                    if (parsed.code === 'TRYITFREE' && isTryItFreeUsed()) {
-                        localStorage.removeItem('stayhustler_coupon');
-                        return;
-                    }
-                    activeCoupon = parsed;
-                    updatePriceDisplay();
-                    updatePayButton();
-                    // Note: checkFormValidity will be called after this in the init flow
-                }
-            } catch (e) {
-                localStorage.removeItem('stayhustler_coupon');
-            }
-        }
-
-        // Check if TRYITFREE has been used
-        function isTryItFreeUsed() {
-            return localStorage.getItem('stayhustler_tryitfree_used') === 'true';
-        }
-
-        // Mark TRYITFREE as used
-        function markTryItFreeUsed() {
-            localStorage.setItem('stayhustler_tryitfree_used', 'true');
+            const saved = StayHustler.read('coupon');
+            if (saved.code) void applyCoupon(saved.code);
         }
 
         // Apply coupon via API
@@ -1003,13 +977,6 @@
                 return;
             }
 
-            // Check if TRYITFREE has already been used
-            const normalizedCode = trimmed.toUpperCase();
-            if (normalizedCode === 'TRYITFREE' && isTryItFreeUsed()) {
-                showCouponFeedback('This code has already been used', 'error');
-                return;
-            }
-
             couponApplyBtn.disabled = true;
             couponApplyBtn.textContent = '...';
 
@@ -1017,7 +984,7 @@
                 const response = await fetch(`${API_BASE}/api/validate-coupon`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ code: trimmed })
+                    body: JSON.stringify({ code: trimmed }), signal: AbortSignal.timeout(10000)
                 });
 
                 const data = await response.json();
@@ -1040,7 +1007,8 @@
                     // Track analytics
                     trackCouponApplied();
                 } else {
-                    showCouponFeedback('Invalid code', 'error');
+                    activeCoupon = null; saveCoupon(); updatePriceDisplay();
+                    showCouponFeedback(data.error || 'Invalid code', 'error');
                 }
             } catch (error) {
                 showCouponFeedback('Could not verify code', 'error');
@@ -1091,20 +1059,6 @@
                 gtag('event', 'coupon_applied', eventData);
             } else {
                 console.log('[Analytics] coupon_applied', eventData);
-            }
-        }
-
-        // Track free request used event
-        function trackFreeRequestUsed(couponCode) {
-            const eventData = {
-                code: couponCode || 'UNKNOWN'
-            };
-
-            // GA4 event
-            if (typeof gtag === 'function') {
-                gtag('event', 'free_request_used', eventData);
-            } else {
-                console.log('[Analytics] free_request_used', eventData);
             }
         }
 
@@ -1164,165 +1118,53 @@
             });
         });
 
-        // Form submission
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const email = emailInput.value.trim();
-            if (!email || !emailInput.checkValidity()) {
+        // Persist the full draft before Stripe; retry with the same key after a network failure.
+        form.addEventListener('submit', async event => {
+            event.preventDefault();
+            if (!form.reportValidity()) return;
+            payBtn.disabled = true;
+            payBtn.textContent = 'Opening secure checkout…';
+            try {
+                const email = emailInput.value.trim();
+                localStorage.setItem('stayhustler_email', email);
+                const payload = { booking: StayHustler.read('booking'), context: StayHustler.read('context'), email, coupon_code: activeCoupon?.code || null };
+                const signature = JSON.stringify(payload);
+                let checkout = StayHustler.read('checkout');
+                if (checkout.signature !== signature) {
+                    checkout = { signature, key: crypto.randomUUID() };
+                    localStorage.setItem('stayhustler_checkout', JSON.stringify(checkout));
+                }
+                const response = await fetch(`${API_BASE}/api/checkout`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...payload, checkout_key: checkout.key }), signal: AbortSignal.timeout(30000)
+                });
+                const data = await response.json();
+                if (data.code === 'checkout_expired') localStorage.removeItem('stayhustler_checkout');
+                if (!response.ok) throw new Error(data.error || 'Checkout is temporarily unavailable. Please try again.');
+                if (data.recovery_url) {
+                    const recovery = new URL(data.recovery_url);
+                    if (recovery.origin !== API_BASE || recovery.pathname !== '/post-checkout') throw new Error('Unexpected recovery address.');
+                    location.assign(recovery.href); return;
+                }
+                if (!data.checkout_url) throw new Error('Checkout is temporarily unavailable. Please try again.');
+                const target = new URL(data.checkout_url);
+                if (target.protocol !== 'https:' || target.hostname !== 'checkout.stripe.com') throw new Error('Unexpected checkout address. Please contact support.');
+                location.assign(target.href);
+            } catch (error) {
+                validationMessage.textContent = error.name === 'TimeoutError' ? 'Checkout took too long. Please try again; your order is saved.' : error.message;
                 validationMessage.classList.add('visible');
-                emailInput.focus();
-                return;
+                updatePayButton();
+                checkFormValidity();
+                validationMessage.classList.add('visible');
             }
-
-            // Save email to localStorage
-            localStorage.setItem('stayhustler_email', email);
-
-            // Check if this is a free request (100% discount)
-            const isFreeRequest = activeCoupon && activeCoupon.final_cents === 0;
-
-            if (isFreeRequest) {
-                // Free request flow - get server-side access token
-                payBtn.textContent = 'Processing...';
-                payBtn.disabled = true;
-
-                // Handle one-time vs unlimited free coupons
-                if (activeCoupon.code === 'TRYITFREE') {
-                    // TRYITFREE is one-time use - mark as used
-                    markTryItFreeUsed();
-                    trackFreeRequestUsed('TRYITFREE');
-                } else if (activeCoupon.code === 'ADMINFREE100') {
-                    // ADMINFREE100 is unlimited - just track analytics
-                    trackFreeRequestUsed('ADMINFREE100');
-                }
-
-                // Save order as free request (for localStorage-based content)
-                const order = {
-                    price: 0,
-                    currency: 'USD',
-                    ts: Date.now(),
-                    method: 'free',
-                    coupon: activeCoupon.code,
-                    is_free_request: true
-                };
-                localStorage.setItem('stayhustler_order', JSON.stringify(order));
-
-                // Clear the coupon from storage after use
-                localStorage.removeItem('stayhustler_coupon');
-
-                // Get booking and context data
-                const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
-                const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
-
-                // Trigger email delivery (fire and forget)
-                fetch(`${API_BASE}/api/deliver-request`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, booking, context, order })
-                }).then(response => response.json())
-                  .then(data => {
-                    if (data.ok && data.delivery_id) {
-                        localStorage.setItem('stayhustler_delivery_id', data.delivery_id);
-                    }
-                }).catch(() => {});
-
-                // Encode booking and context data for cross-domain transfer
-                const dataPayload = btoa(JSON.stringify({ booking, context, order }));
-
-                // Redirect to API server to set cookie (avoids third-party cookie issues)
-                // The server will validate the coupon, set the cookie, and redirect to /results
-                const redirectUrl = `${API_BASE}/free-access?code=${encodeURIComponent(activeCoupon.code)}&email=${encodeURIComponent(email)}&data=${encodeURIComponent(dataPayload)}`;
-                window.location.href = redirectUrl;
-                return;
-            }
-
-            // Handle Stripe Checkout for paid requests
-            if (selectedMethod === 'stripe') {
-                payBtn.textContent = 'Redirecting to Stripe...';
-                payBtn.disabled = true;
-
-                try {
-                    // Include coupon code and request type if available
-                    const requestBody = {};
-                    if (activeCoupon) {
-                        requestBody.coupon_code = activeCoupon.code;
-                    }
-
-                    // Get request type from context
-                    const contextData = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
-                    if (contextData.requestType) {
-                        requestBody.request_type = contextData.requestType;
-                    }
-
-                    const response = await fetch(`${API_BASE}/api/stripe/test`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(requestBody)
-                    });
-
-                    const data = await response.json();
-
-                    if (data.ok && data.checkout_url) {
-                        // Save that we initiated Stripe payment
-                        localStorage.setItem('stayhustler_stripe_initiated', 'true');
-                        localStorage.setItem('stayhustler_payment_method', 'stripe');
-
-                        // Redirect to Stripe Checkout
-                        window.location.href = data.checkout_url;
-                        return; // Don't continue to results page
-                    } else {
-                        alert('Failed to create Stripe checkout session. Please try another payment method.');
-                        payBtn.textContent = 'Pay & unlock';
-                        payBtn.disabled = false;
-                        return;
-                    }
-                } catch (error) {
-                    alert('Failed to connect to payment processor. Please try again.');
-                    payBtn.textContent = 'Pay & unlock';
-                    payBtn.disabled = false;
-                    return;
-                }
-            }
-
-            // Calculate final price for non-Stripe methods
-            const finalPriceCents = activeCoupon ? activeCoupon.final_cents : BASE_PRICE_CENTS;
-
-            // Simulate successful payment (for non-Stripe methods)
-            localStorage.setItem('stayhustler_paid', 'true');
-            const order = {
-                price: finalPriceCents / 100,
-                currency: 'USD',
-                ts: Date.now(),
-                method: selectedMethod,
-                coupon: activeCoupon ? activeCoupon.code : null
-            };
-            localStorage.setItem('stayhustler_order', JSON.stringify(order));
-
-            // Try to deliver via email (non-blocking)
-            if (email) {
-                try {
-                    const booking = JSON.parse(localStorage.getItem('stayhustler_booking') || '{}');
-                    const context = JSON.parse(localStorage.getItem('stayhustler_context') || '{}');
-
-                    // POST to delivery endpoint (don't block navigation on failure)
-                    fetch(`${API_BASE}/api/deliver-request`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, booking, context, order })
-                    }).then(response => response.json())
-                      .then(data => {
-                        if (data.ok && data.delivery_id) {
-                            localStorage.setItem('stayhustler_delivery_id', data.delivery_id);
-                        }
-                    }).catch(() => {});
-                } catch (err) {
-                    // Silent fail - will show on results page
-                }
-            }
-
-            // Navigate to results immediately (don't wait for email)
-            window.location.href = 'results.html';
         });
+        const checkoutError = new URLSearchParams(location.search).get('error');
+        if (checkoutError) {
+            validationMessage.textContent = checkoutError === 'payment-verification'
+                ? 'We could not verify payment yet. If you paid, use the recovery email or contact support@stayhustler.com before paying again.'
+                : 'Open the recovery link in your order email, or enter your booking details to start a new request.';
+            validationMessage.classList.add('visible');
+        }
 
         // Why we charge toggle
         whyToggle.addEventListener('click', () => {

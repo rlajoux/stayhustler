@@ -239,44 +239,29 @@
         <div class="container">
             <article class="article">
                 <h1>Privacy Policy</h1>
-                <p class="article-meta">Last updated: February 2026</p>
+                <p class="article-meta">Last updated: September 2026</p>
 
-                <h2>What we collect</h2>
-                <p>When you use StayHustler, we collect only what is needed to generate your personalized upgrade request:</p>
+                <h2>What we collect and use</h2>
+                <p>We use your hotel, dates, room type and preferences to prepare your request. Your order email is used for payment confirmation, delivery and recovery. Feedback you submit is stored with that order.</p>
+                <p>Draft answers and your email are kept in your browser for up to 30 days. Paid order details and the generated result are stored on our server for recovery. We do not access hotel accounts or contact hotels for you.</p>
+                <h2>Services that process data</h2>
                 <ul>
-                    <li><strong>Booking details</strong> — hotel name, dates, room type, and preferences you enter into the form. These are used solely to personalize your request.</li>
-                    <li><strong>Email address</strong> — if you subscribe to the weekly newsletter or need results delivered.</li>
-                    <li><strong>Anonymous page views</strong> — basic analytics to understand how people use the site (pages visited, referral source). No personally identifiable information is tied to these views.</li>
+                    <li><strong>Stripe</strong> processes payments. We retain transaction identifiers, amounts and refund status, but do not receive or store your card number. See <a href="https://stripe.com/privacy">Stripe’s privacy policy</a>.</li>
+                    <li><strong>Google Gemini API</strong> processes the booking details and preferences needed to generate your wording. We do not include your order email in the generation prompt.</li>
+                    <li><strong>SendGrid</strong> processes your email address and email content for order delivery and newsletters.</li>
+                    <li><strong>Railway and Cloudflare</strong> provide database, application hosting and website delivery. Their infrastructure may process connection and request data.</li>
+                    <li><strong>Google Analytics and Crazy Egg</strong> process usage and device data. These services can use cookies and identifiers; this data is not necessarily anonymous. Crazy Egg is excluded from the payment and paid results pages. Verified paid purchases are reported to analytics using an order identifier, amount and currency, without booking details or email.</li>
                 </ul>
-
-                <h2>What we do not store</h2>
+                <h2>Cookies and browser storage</h2>
+                <p>A secure, HttpOnly session cookie grants access to your saved order for one hour. Your emailed recovery link can renew access during the 30-day recovery period. Keep that link private. Analytics tools also use browser identifiers and cookies. Browser settings can restrict these tools.</p>
+                <h2>Retention</h2>
                 <ul>
-                    <li><strong>Payment information</strong> — all payments are processed by Stripe. We never see, handle, or store your card number or billing details.</li>
-                    <li><strong>Hotel credentials</strong> — we do not access your hotel account, loyalty program, or reservation system. We never contact hotels on your behalf.</li>
+                    <li>Order email, booking details, generated wording and feedback become unavailable after 30 days and are removed by a daily cleanup job, normally within the following 24 hours. This also applies to older delivery records. Hosting backups and provider records follow their respective retention settings.</li>
+                    <li>Transaction identifiers, purchase amounts, refund records and event identifiers are retained for payment reconciliation and fraud prevention.</li>
+                    <li>First-party page-view records expire after 30 days. We do not store referrer URLs in those records. Temporary rate-limit identifiers expire after their limit window.</li>
+                    <li>Newsletter emails remain until you unsubscribe. Unsubscribed addresses and status are retained as a suppression record unless you request removal. Old newsletter IP addresses and user-agent records are removed by the daily cleanup job.</li>
                 </ul>
-
-                <h2>Third-party services</h2>
-                <p>We rely on a small number of third-party services to operate:</p>
-                <ul>
-                    <li><strong>Stripe</strong> — payment processing. Subject to <a href="https://stripe.com/privacy" target="_blank" rel="noopener">Stripe's Privacy Policy</a>.</li>
-                    <li><strong>SendGrid</strong> — email delivery for the newsletter and result emails.</li>
-                    <li><strong>Google Analytics</strong> — anonymous site usage data (page views, traffic sources).</li>
-                    <li><strong>Crazy Egg</strong> — anonymous heatmap and scroll tracking to improve the site experience.</li>
-                </ul>
-
-                <h2>Cookies</h2>
-                <p>We use a minimal number of cookies:</p>
-                <ul>
-                    <li><strong>JWT token</strong> — a short-lived session token stored in your browser so you can access your generated results.</li>
-                    <li><strong>Google Analytics cookies</strong> — standard GA cookies (_ga, _gid) for anonymous usage tracking. You can opt out via your browser settings or a GA opt-out extension.</li>
-                </ul>
-                <p>We do not use advertising cookies or sell data to ad networks.</p>
-
-                <h2>Data retention</h2>
-                <ul>
-                    <li><strong>Booking data</strong> — not stored long-term. Your booking details are used to generate your request and are not retained after delivery.</li>
-                    <li><strong>Newsletter subscription</strong> — your email is stored until you unsubscribe. Every email includes an unsubscribe link.</li>
-                </ul>
+                <p>Processor retention and analytics settings are separate from our application cleanup. Contact us for deletion requests or questions about your data.</p>
 
                 <h2>Contact</h2>
                 <p>If you have questions about this policy or want your data removed, email <a href="mailto:support@stayhustler.com">support@stayhustler.com</a>.</p>

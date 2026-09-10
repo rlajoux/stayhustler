@@ -1,11 +1,11 @@
 # Railway API deployment
-FROM node:20-alpine
+FROM node:24-alpine
 
 WORKDIR /app
 
 COPY api/package*.json ./
 
-RUN npm install --production
+RUN npm ci --omit=dev
 
 COPY api/ .
 

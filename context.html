@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="/assets/flow.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
     <script>
@@ -11,7 +12,7 @@
       gtag('config', 'G-H8G7MYD59K');
     </script>
     <script>
-      fetch('https://app.stayhustler.com/api/track', {
+      fetch(StayHustler.apiBase + '/api/track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ page: 'context', referrer: document.referrer })
@@ -28,18 +29,17 @@
     <meta property="og:title" content="Quick details – StayHustler">
     <meta property="og:description" content="Answer a few quick questions to personalize your hotel upgrade request.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://stayhustler.com/context">
+    <meta property="og:url" content="https://stayhustler.com/context.html">
     <meta property="og:image" content="https://stayhustler.com/og-image.png">
     <meta property="og:site_name" content="StayHustler">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://stayhustler.com/context">
+    <link rel="canonical" href="https://stayhustler.com/context.html">
     
     <!-- Robots meta -->
     <meta name="robots" content="noindex, nofollow">
 
-    <!-- Crazy Egg -->
-    <script type="text/javascript" src="//script.crazyegg.com/pages/scripts/0131/7760.js" async="async"></script>
+
 
     <style>
         :root {
@@ -613,8 +613,8 @@
 <body>
     <header class="header">
         <div class="header-inner">
-            <a href="/" class="logo">StayHustler</a>
-            <a href="booking" class="back-link">Back</a>
+            <a href="index.html" class="logo">StayHustler</a>
+            <a href="booking.html" class="back-link">Back</a>
         </div>
     </header>
 
@@ -864,7 +864,7 @@
                 </div>
 
                 <div class="cta-section">
-                    <button type="submit" class="btn-primary" id="submit-btn" disabled>See my chances</button>
+                    <button type="submit" class="btn-primary" id="submit-btn" disabled>Review my request</button>
                     <p class="privacy-note">Stored locally in your browser for this flow. No hotel is contacted.</p>
                 </div>
             </form>
@@ -998,16 +998,7 @@
         }
         
         // Toggle edit mode for derived fields
-        derivedEditBtn.addEventListener('click', () => {
-            const isVisible = derivedFieldsEditable.classList.contains('visible');
-            if (isVisible) {
-                derivedFieldsEditable.classList.remove('visible');
-                derivedEditBtn.textContent = 'Edit';
-            } else {
-                derivedFieldsEditable.classList.add('visible');
-                derivedEditBtn.textContent = 'Done';
-            }
-        });
+        derivedEditBtn.addEventListener('click', () => { window.location.href = 'booking.html'; });
         
         // Update display when derived fields are edited
         lengthOfStay.addEventListener('change', () => {
@@ -1112,7 +1103,8 @@
             };
             
             // Store to localStorage
-            localStorage.setItem('stayhustler_context', JSON.stringify(contextData));
+            try { localStorage.setItem('stayhustler_context', JSON.stringify(contextData)); }
+            catch { document.getElementById('aria-live').textContent = 'Enable site storage to continue.'; return; }
             
             // Navigate to preview
             window.location.href = 'preview.html';
@@ -1120,7 +1112,14 @@
         
         // Initialize immediately (script is at bottom of body, DOM is ready)
         (function init() {
-            const derived = initDerivedFields();
+            const saved = StayHustler.read('context');
+            for (const [key, id] of [['checkinTime','checkin-time'], ['loyaltyStatus','loyalty-status'], ['occasion','occasion']]) {
+                if (typeof saved[key] === 'string') document.getElementById(id).value = saved[key];
+            }
+            for (const [key, name] of [['requestType','request-type'], ['askPreference','ask-preference']]) {
+                document.querySelectorAll(`input[name="${name}"]`).forEach(input => { if (saved[key] === input.value) input.checked = true; });
+            }
+            initDerivedFields();
             checkFormValidity();
         })();
     </script>

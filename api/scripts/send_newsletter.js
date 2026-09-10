@@ -17,6 +17,7 @@
  */
 
 const { Pool } = require('pg');
+const { databaseOptions } = require('../security');
 const sgMail = require('@sendgrid/mail');
 const crypto = require('crypto');
 require('dotenv').config();
@@ -51,7 +52,8 @@ function parseArgs() {
 
 // Generate unsubscribe token (same as server.js)
 function signEmail(email) {
-    const secret = process.env.UNSUBSCRIBE_SECRET || 'change-me-in-production';
+    const secret = process.env.UNSUBSCRIBE_SECRET;
+    if (!secret || secret.length < 32) throw new Error('UNSUBSCRIBE_SECRET must contain at least 32 characters');
     const hmac = crypto.createHmac('sha256', secret);
     hmac.update(email.toLowerCase().trim());
     return hmac.digest('hex');
@@ -59,7 +61,7 @@ function signEmail(email) {
 
 // Generate unsubscribe link
 function getUnsubscribeLink(email) {
-    const baseUrl = process.env.PUBLIC_BASE_URL || 'https://stayhustler.com';
+    const baseUrl = process.env.API_BASE_URL || 'https://app.stayhustler.com';
     const token = signEmail(email);
     return `${baseUrl}/unsubscribe?email=${encodeURIComponent(email)}&token=${token}`;
 }
@@ -101,9 +103,10 @@ async function main() {
 
     // Configure SendGrid
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    sgMail.client.setDefaultRequest('timeout', 10000);
 
     // Connect to database
-    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    const pool = new Pool(databaseOptions(process.env));
 
     try {
         // Fetch subscribers
@@ -167,7 +170,7 @@ async function main() {
                 };
 
                 await sgMail.send(msg);
-                console.log(`✓ sent: ${recipient.email}`);
+                console.log('Message accepted');
                 successCount++;
 
                 // Rate limiting: 100ms delay between sends
