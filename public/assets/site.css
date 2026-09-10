@@ -3196,3 +3196,82 @@ input:focus,select:focus,textarea:focus {
     .comparison-grid { grid-template-columns: 1fr; }
     .comparison-box, .constraints-box, .instead-box, .learn-box, .rules-box, .not-for-box { padding: 18px; }
 }
+
+/* Request package, examples and the simplified start form. */
+.nav-short { display: none; }
+.home .travel-hero { height: auto; min-height: 330px; padding-bottom: 96px; }
+.home .hero-copy { padding-bottom: 28px; }
+.home .request-panel { margin-top: -72px; }
+.home .request-tabs { display: block; overflow: visible; }
+.primary-request-options { display: grid; grid-template-columns: repeat(3, 1fr); }
+.other-request-toggle { border: 0; background: none; color: var(--blue); padding: 20px 8px; min-height: 64px; font-weight: 700; }
+.other-request-toggle[aria-expanded="true"] { background: var(--pale); }
+.alternative-requests { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); }
+.home .request-tabs label { min-width: 0; white-space: normal; text-align: center; }
+.example-link { display: inline-block; padding: 12px 0 0; font-weight: 700; }
+.example-package { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--bg); }
+.example-intro { padding: 24px; border-bottom: 1px solid var(--line); }
+.example-intro h3 { margin: 12px 0 6px; }
+.example-intro p, .example-caption { color: var(--muted); font-size: 13px; }
+.example-caption { margin-top: 16px; }
+.example-grid { display: grid; grid-template-columns: 1.35fr 1fr; }
+.example-grid .mail-example { border: 0; border-radius: 0; box-shadow: none; }
+.example-advice { padding: 26px; }
+.example-advice section + section { margin-top: 30px; padding-top: 26px; border-top: 1px solid var(--line); }
+.example-advice h3 { font-size: 17px; }
+.package-price { padding: 28px; border-radius: 12px; border: 1px solid var(--line); background: #fff; }
+.package-price .btn-primary { margin: 10px 0 18px; }
+.package-price .price-final small { font-size: 15px; }
+.loyalty-intro { display: grid; grid-template-columns: 1.6fr 1fr; gap: 36px; padding: 32px; align-items: center; }
+.loyalty-intro > p { color: var(--muted); }
+.trust-section { max-width: 800px; }
+.text-links { display: flex; flex-wrap: wrap; gap: 12px 24px; margin: 22px 0; }
+.closing-cta { padding: 36px; text-align: center; background: var(--pale); border-radius: 12px; }
+.closing-cta .btn-primary { margin: 10px 0 16px; }
+.guide-cta { padding: 26px; margin: 30px 0; background: var(--pale); border: 1px solid var(--line); border-radius: 12px; }
+.guide-cta h2 { font-size: 23px; }
+.guide-cta p { margin-top: 12px; }
+.article-source { font-size: 13px; color: var(--muted); }
+.article-example { padding: 24px; border: 1px solid var(--line); border-left: 3px solid var(--blue); border-radius: 8px; margin: 24px 0; background: white; }
+.article-example p { white-space: pre-line; }
+.guide-body h2 { margin-top: 32px; }
+.guide-body .guide-cta h2 { margin-top: 0; }
+.programme-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.programme-list details { padding: 18px; background: #fff; border: 1px solid var(--line); border-radius: 8px; }
+.programme-list summary { cursor: pointer; font-weight: 700; min-height: 28px; }
+.programme-list p { margin-top: 14px; }
+.tool-content { max-width: 800px; margin: auto; padding: 40px 0 64px; }
+.tool-content form { padding: 26px; }
+.tool-content .tool-result { margin-top: 24px; padding: 26px; }
+.tool-content .form-row { align-items: start; }
+.tool-result:focus { outline-offset: 4px; }
+.landing-layout { display: grid; grid-template-columns: 1.4fr 1fr; align-items: center; gap: 42px; padding: 48px 0; }
+.landing-layout img { border-radius: 12px; width: 100%; max-height: 340px; object-fit: cover; }
+.landing-layout .btn-primary { margin: 10px 0 16px; }
+.landing-page main { padding-bottom: 48px; }
+@media (max-width: 1000px) {
+    .site-nav { gap: 22px; }
+    .desktop-nav { gap: 18px; }
+    .nav-currency { display: none; }
+}
+@media (max-width: 760px) {
+    .nav-full { display: none; }
+    .nav-short { display: inline; }
+    .nav-actions .outline-btn { padding: 10px 12px; min-height: 44px; }
+    .home .travel-hero { min-height: 0; padding-bottom: 70px; }
+    .home .hero-copy { padding-top: 34px; padding-bottom: 22px; }
+    .home .hero-copy h1 { font-size: clamp(28px, 8.2vw, 36px); }
+    .home .hero-copy > p:last-child { font-size: 16px; }
+    .home .request-panel { margin-top: -50px; padding: 0 16px 20px; }
+    .home .request-tabs label { padding: 18px 6px 14px; font-size: 12px; }
+    .other-request-toggle { font-size: 12px; }
+    .alternative-requests { grid-template-columns: 1fr 1fr; }
+    .example-grid, .loyalty-intro, .landing-layout, .programme-list { grid-template-columns: 1fr; }
+    .example-intro, .example-advice, .package-price, .loyalty-intro { padding: 22px 18px; }
+    .example-grid .mail-example { border-bottom: 1px solid var(--line); }
+    .closing-cta { padding: 28px 18px; }
+    .tool-content form, .tool-content .tool-result { padding: 22px 18px; }
+    .landing-layout { gap: 24px; padding: 30px 0; }
+    .landing-layout h1 { font-size: 32px; }
+    .landing-layout img { max-height: 200px; }
+}

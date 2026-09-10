@@ -1,67 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hotel Upgrade Probability Checker — Free Tool | StayHustler</title>
-    <meta name="description" content="Check your hotel upgrade chances for free. Enter your booking details and get a personalised assessment with tips to improve your odds.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hotel request planner | StayHustler</title>
+<meta name="description" content="Check the details to consider before asking your hotel for an upgrade.">
+<link rel="canonical" href="https://stayhustler.com/tools/upgrade-checker">
+<meta property="og:title" content="Hotel request planner | StayHustler">
+<meta property="og:description" content="Check the details to consider before asking your hotel for an upgrade.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://stayhustler.com/tools/upgrade-checker">
+<meta property="og:image" content="https://stayhustler.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
 
-
-    <!-- Open Graph -->
-    <meta property="og:title" content="Hotel Upgrade Probability Checker — Free Tool">
-    <meta property="og:description" content="Check your hotel upgrade chances for free. Enter your booking details and get a personalised assessment.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://stayhustler.com/tools/upgrade-checker">
-    <meta property="og:site_name" content="StayHustler">
-    <meta property="og:image" content="https://stayhustler.com/og-image.png">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="https://stayhustler.com/og-image.png">
-
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://stayhustler.com/tools/upgrade-checker">
-
-    <!-- Schema: WebApplication -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "Hotel Upgrade Probability Checker",
-      "description": "Free tool to assess your hotel upgrade chances based on booking details, timing, loyalty status, and hotel type.",
-      "url": "https://stayhustler.com/tools/upgrade-checker",
-      "applicationCategory": "TravelApplication",
-      "operatingSystem": "Any",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "author": {
-        "@type": "Person",
-        "name": "Raphael L.",
-        "url": "https://stayhustler.com/about"
-      }
-    }
-    </script>
-
-    <!-- Schema: BreadcrumbList -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://stayhustler.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://stayhustler.com/tools/" },
-        { "@type": "ListItem", "position": 3, "name": "Upgrade Probability Checker", "item": "https://stayhustler.com/tools/upgrade-checker" }
-      ]
-    }
-    </script>
-
-
-    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/flow.js" defer></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
+<script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-H8G7MYD59K');</script>
 </head>
 <body class="tool-page">
-    <a href="#main-content" class="skip-link">Skip to content</a>
+<a href="#main-content" class="skip-link">Skip to content</a>
 <header class="site-header">
 <div class="site-nav">
 <a class="brand" href="/">
@@ -71,14 +30,15 @@
 </svg>
 </span>StayHustler</a>
 <nav class="desktop-nav" aria-label="Main navigation">
-<a href="/">Hotel requests</a>
-<a href="/guides/">Travel guides</a>
-<a href="/tools/" aria-current="page">Free tools</a>
+<a href="/#how-it-works">How it works</a>
+<a href="/#example-package">Example package</a>
+<a href="/guides/">Hotel guides</a>
+<a href="/tools/">Free tools</a>
 </nav>
 <div class="nav-actions">
 <span class="nav-currency">Prices in USD</span>
 <a href="mailto:support@stayhustler.com">Help</a>
-<a class="outline-btn" href="/booking">Create a request</a>
+<a class="outline-btn" href="/booking"><span class="nav-full">Build my hotel request</span><span class="nav-short">Start request</span></a>
 </div>
 <details class="mobile-nav">
 <summary aria-label="Open navigation">
@@ -87,169 +47,17 @@
 </svg>
 </summary>
 <nav aria-label="Mobile navigation">
-<a href="/">Hotel requests</a>
-<a href="/guides/">Travel guides</a>
-<a href="/tools/" aria-current="page">Free tools</a>
+<a href="/#how-it-works">How it works</a>
+<a href="/#example-package">Example package</a>
+<a href="/guides/">Hotel guides</a>
+<a href="/tools/">Free tools</a>
 <a href="/about">About us</a>
 <a href="mailto:support@stayhustler.com">Get help</a>
 </nav>
 </details>
 </div>
 </header>
-
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href="/">Home</a>
-        <span>&rsaquo;</span>
-        <a href="/tools/">Tools</a>
-        <span>&rsaquo;</span>
-        <span>Upgrade Probability Checker</span>
-    </nav>
-
-    <main id="main-content" class="tool-container">
-        <h1>Hotel Upgrade Probability Checker</h1>
-        <p class="tool-intro">Enter your booking details to get a free assessment of your upgrade chances, plus personalised tips to improve your odds.</p>
-
-        <form id="checker-form">
-            <div class="form-group">
-                <label for="hotel-type">Hotel type</label>
-                <select id="hotel-type" required>
-                    <option value="">Select...</option>
-                    <option value="chain">Major chain (Marriott, Hilton, IHG, Hyatt, Accor)</option>
-                    <option value="independent">Independent / boutique hotel</option>
-                    <option value="resort">Resort property</option>
-                    <option value="luxury">Luxury / five-star</option>
-                </select>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="booking-channel">How did you book?</label>
-                    <select id="booking-channel" required>
-                        <option value="">Select...</option>
-                        <option value="direct">Direct (hotel website / phone)</option>
-                        <option value="loyalty">Loyalty programme booking</option>
-                        <option value="ota">OTA (Booking.com, Expedia, etc.)</option>
-                        <option value="package">Package / tour operator</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="loyalty-status">Loyalty status</label>
-                    <select id="loyalty-status" required>
-                        <option value="">Select...</option>
-                        <option value="none">None</option>
-                        <option value="silver">Silver / base tier</option>
-                        <option value="gold">Gold / mid tier</option>
-                        <option value="platinum">Platinum+ / top tier</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="day-of-week">Arrival day</label>
-                    <select id="day-of-week" required>
-                        <option value="">Select...</option>
-                        <option value="weekday">Monday - Thursday</option>
-                        <option value="friday">Friday</option>
-                        <option value="weekend">Saturday - Sunday</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="season">Season / demand</label>
-                    <select id="season" required>
-                        <option value="">Select...</option>
-                        <option value="off-peak">Off-peak / low season</option>
-                        <option value="shoulder">Shoulder season</option>
-                        <option value="peak">Peak / high season</option>
-                        <option value="event">Major event / holiday</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="stay-length">Length of stay</label>
-                    <select id="stay-length" required>
-                        <option value="">Select...</option>
-                        <option value="1">1 night</option>
-                        <option value="2-3">2-3 nights</option>
-                        <option value="4-6">4-6 nights</option>
-                        <option value="7+">7+ nights</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="room-booked">Room type booked</label>
-                    <select id="room-booked" required>
-                        <option value="">Select...</option>
-                        <option value="standard">Standard / entry-level</option>
-                        <option value="superior">Superior / deluxe</option>
-                        <option value="junior-suite">Junior suite</option>
-                        <option value="suite">Suite / top category</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="occasion">Special occasion?</label>
-                <select id="occasion">
-                    <option value="none">No special occasion</option>
-                    <option value="anniversary">Anniversary</option>
-                    <option value="birthday">Birthday</option>
-                    <option value="honeymoon">Honeymoon</option>
-                    <option value="other">Other celebration</option>
-                </select>
-            </div>
-
-            <button type="submit" class="check-btn">Check my upgrade chances</button>
-        </form>
-
-        <div class="result-panel" id="result-panel">
-            <div class="score-display">
-                <p class="score-label">Your upgrade probability</p>
-                <p class="score-value" id="score-text">Moderate</p>
-                <div class="score-bar">
-                    <div class="score-bar-fill" id="score-bar-fill">
-</div>
-                </div>
-                <p class="score-subtitle" id="score-subtitle">
-</p>
-            </div>
-
-            <h3>How to improve your chances</h3>
-            <ul class="tips-list" id="tips-list">
-</ul>
-
-            <div class="result-cta">
-                <p>Want a personalised upgrade request tailored to your exact booking?</p>
-                <a href="/booking" class="result-cta-btn">Generate my upgrade request</a>
-            </div>
-        </div>
-
-        <section class="methodology">
-            <h2>How This Assessment Works</h2>
-            <p>This tool evaluates your upgrade probability based on factors that hotel revenue managers and front office teams actually consider: booking channel, loyalty status, demand forecasting, length of stay, and room category.</p>
-            <p>It does not predict outcomes. Hotels make upgrade decisions based on real-time inventory, and no tool can forecast that. What it does is assess how many factors are working in your favour, so you can adjust what's within your control.</p>
-            <p>The methodology is based on common revenue management practices across major hotel chains and independent properties. For a detailed explanation, see our guide on <a href="/guides/how-hotel-inventory-systems-work">how hotel inventory systems work</a>.</p>
-        </section>
-
-        <section class="related-links">
-            <h3>Related Guides</h3>
-            <ul>
-                <li>
-<a href="/guides/how-to-ask-for-a-hotel-upgrade">How to Ask for a Hotel Room Upgrade</a>
-</li>
-                <li>
-<a href="/guides/best-time-to-ask-for-hotel-upgrade">Best Time to Email a Hotel for a Room Upgrade</a>
-</li>
-                <li>
-<a href="/guides/does-loyalty-status-get-upgrades">Does Loyalty Status Actually Get You Upgrades?</a>
-</li>
-                <li>
-<a href="/tools/send-timing">Best Time to Send Calculator</a>
-</li>
-            </ul>
-        </section>
-    </main>
+<main id="main-content"><div class="container tool-content"><p class="eyebrow">Free planning tool</p><h1>Hotel request planner</h1><p>Check the details to consider before asking your hotel for an upgrade.</p><form class="panel" id="planner-form"><div class="form-grid"><div class="form-group"><label class="form-label" for="planner-channel">How did you book?</label><select class="form-select" id="planner-channel" required><option value="">Select</option><option value="direct">Direct with the hotel</option><option value="ota">Online travel agency</option><option value="corporate">Corporate or negotiated rate</option></select></div><div class="form-group"><label class="form-label" for="planner-programme">Hotel loyalty membership</label><select class="form-select" id="planner-programme"><option value="none">No membership or not sure</option><option value="known">I know my programme and tier</option></select></div><div class="form-group"><label class="form-label" for="planner-room">Room category</label><select class="form-select" id="planner-room" required><option value="">Select</option><option value="base">Entry or standard room</option><option value="higher">Higher category</option><option value="suite">Suite or premium category</option></select></div><div class="form-group"><label class="form-label" for="planner-arrival">When do you arrive?</label><select class="form-select" id="planner-arrival" required><option value="">Select</option><option value="today">Today</option><option value="soon">Within the next few days</option><option value="future">More than a few days away</option></select></div></div><button class="btn-primary" type="submit">Show my planning notes</button></form><section class="tool-result panel" id="tool-result" hidden tabindex="-1"></section><aside class="guide-cta"><h2>Want this tailored to your booking?</h2><p>Get a personalised email, three timing tips and a reception script for your stay.</p><a class="btn-primary" href="/booking?request=upgrade">Tailor this to my stay</a><p class="guide-cta-trust">$7 USD. One payment. No subscription. You send the request; your hotel confirms what’s possible.</p></aside></div><script>(function(){const form=document.getElementById('planner-form'),result=document.getElementById('tool-result');form.addEventListener('submit',event=>{event.preventDefault();if(!form.reportValidity())return;const channel=document.getElementById('planner-channel').value,programme=document.getElementById('planner-programme').value,room=document.getElementById('planner-room').value,arrival=document.getElementById('planner-arrival').value;const notes=[];notes.push(room==='suite'?'You have already booked a premium category. Ask what category the hotel could offer rather than assuming a specific next room.':'Use the exact room name from your confirmation so the hotel can compare it with any available option.');notes.push(programme==='known'?'Check that your programme, tier, hotel and booking are eligible before referring to a published benefit.':'Frame this as a discretionary request; do not imply a programme entitlement.');notes.push(channel==='ota'?'Third-party bookings can be excluded from some programme benefits. Check the applicable terms; you can still make a discretionary request.':'Check any programme or rate conditions that apply to this booking.');notes.push(arrival==='today'?'Ask through the hotel’s normal channel or at reception, and confirm any additional price before accepting a change.':arrival==='soon'?'Ask whether the hotel can consider the request now and, if not, when to check again.':'Ask the hotel to note the request and tell you when it can reasonably confirm availability.');result.replaceChildren(Object.assign(document.createElement('h2'),{textContent:'Your planning notes'}),Object.assign(document.createElement('p'),{textContent:'This is a checklist, not a prediction of hotel availability.'}),Object.assign(document.createElement('ul'),{}));const list=result.querySelector('ul');notes.forEach(note=>list.append(Object.assign(document.createElement('li'),{textContent:note})));result.hidden=false;result.focus();});})();</script></main>
 <footer class="site-footer">
 <div class="wrap">
 <div class="footer-top">
@@ -260,13 +68,13 @@
 <path d="M5 21V3h14v18M3 21h18M9 7h1m4 0h1M9 11h1m4 0h1m-5 10v-5h4v5"/>
 </svg>
 </span>StayHustler</a>
-<p>A little preparation for a better hotel stay.<br>Your request. Your conversation.</p>
+<p>Personalised requests for the hotel you’ve booked.</p>
 </div>
 <div class="footer-menu">
 <div>
 <strong>Plan your request</strong>
-<a href="/booking">Create a request</a>
-<a href="/guides/">Travel guides</a>
+<a href="/booking">Build my hotel request</a>
+<a href="/guides/">Hotel guides</a>
 <a href="/tools/">Free tools</a>
 </div>
 <div>
@@ -285,140 +93,5 @@
 </div>
 </div>
 </footer>
-
-
-
-    <script>
-    (function() {
-        var form = document.getElementById('checker-form');
-        var panel = document.getElementById('result-panel');
-
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            var score = 0;
-            var tips = [];
-            var maxScore = 100;
-
-            var hotelType = document.getElementById('hotel-type').value;
-            var channel = document.getElementById('booking-channel').value;
-            var loyalty = document.getElementById('loyalty-status').value;
-            var day = document.getElementById('day-of-week').value;
-            var season = document.getElementById('season').value;
-            var stay = document.getElementById('stay-length').value;
-            var room = document.getElementById('room-booked').value;
-            var occasion = document.getElementById('occasion').value;
-
-            // Booking channel (0-20)
-            if (channel === 'direct') { score += 20; }
-            else if (channel === 'loyalty') { score += 18; }
-            else if (channel === 'ota') { score += 6; tips.push('Book direct next time. Hotels keep more margin on direct bookings and are more willing to upgrade direct guests.'); }
-            else if (channel === 'package') { score += 2; tips.push('Package bookings have the lowest upgrade flexibility. The hotel may not even see your reservation until close to arrival.'); }
-
-            // Loyalty status (0-20)
-            if (loyalty === 'platinum') { score += 20; }
-            else if (loyalty === 'gold') { score += 14; tips.push('Gold status helps, but top-tier members are processed first. Time your request to the 24-36 hour window for best results.'); }
-            else if (loyalty === 'silver') { score += 8; tips.push('Silver status gives minimal upgrade priority. Focus on timing and tone rather than status.'); }
-            else { score += 0; tips.push('Without loyalty status, your request needs to be well-timed and well-phrased. Our guides can help.'); }
-
-            // Season / demand (0-20)
-            if (season === 'off-peak') { score += 20; }
-            else if (season === 'shoulder') { score += 14; }
-            else if (season === 'peak') { score += 5; tips.push('Peak season means fewer unsold premium rooms. Lower your expectations but still ask \u2014 cancellations happen.'); }
-            else if (season === 'event') { score += 0; tips.push('During major events, hotels sell out across all categories. Upgrade chances are near zero regardless of approach.'); }
-
-            // Day of week (0-10)
-            if (hotelType === 'resort') {
-                if (day === 'weekday') { score += 10; }
-                else if (day === 'friday') { score += 6; }
-                else { score += 3; }
-            } else {
-                if (day === 'weekend') { score += 10; }
-                else if (day === 'friday') { score += 7; }
-                else { score += 4; tips.push('Business hotels are busiest midweek. Weekend arrivals have better upgrade odds at city hotels.'); }
-            }
-
-            // Stay length (0-10)
-            if (stay === '7+') { score += 10; }
-            else if (stay === '4-6') { score += 8; }
-            else if (stay === '2-3') { score += 5; }
-            else { score += 2; tips.push('Single-night stays have the lowest upgrade incentive. Hotels gain more from upgrading longer stays.'); }
-
-            // Room type booked (0-10)
-            if (room === 'standard') { score += 10; }
-            else if (room === 'superior') { score += 7; }
-            else if (room === 'junior-suite') { score += 3; tips.push('You\'re already close to the top category. There may be fewer rooms above yours to upgrade into.'); }
-            else { score += 0; tips.push('Already booked a suite? There\'s often nothing to upgrade to. Consider requesting enhancements like late checkout instead.'); }
-
-            // Hotel type (0-10)
-            if (hotelType === 'independent') { score += 10; tips.push('Independent hotels have more discretion. A personal, well-timed email can go further than at chains.'); }
-            else if (hotelType === 'resort') { score += 7; }
-            else if (hotelType === 'chain') { score += 5; }
-            else if (hotelType === 'luxury') { score += 4; tips.push('Luxury properties are selective about upgrades. They often prefer to offer amenity enhancements instead.'); }
-
-            // Occasion bonus (not scored, but adds a tip)
-            if (occasion !== 'none') {
-                score += 0; // Occasions don't guarantee anything
-                tips.push('Mention your ' + occasion + ' briefly in your request. Don\'t expect special treatment, but it adds context that can help.');
-            }
-
-            // Determine rating
-            var rating, color, subtitle;
-            if (score >= 75) {
-                rating = 'Strong';
-                color = 'var(--color-green)';
-                subtitle = 'Multiple factors are working in your favour. A well-timed request has good odds.';
-            } else if (score >= 55) {
-                rating = 'Good';
-                color = 'var(--color-yellow)';
-                subtitle = 'Your situation is favourable. Timing and phrasing will make the difference.';
-            } else if (score >= 35) {
-                rating = 'Moderate';
-                color = 'var(--color-orange)';
-                subtitle = 'Some factors are against you, but a strategic request can still work.';
-            } else {
-                rating = 'Low';
-                color = 'var(--color-red)';
-                subtitle = 'Conditions are challenging. Focus on what you can control: timing, tone, and flexibility.';
-            }
-
-            // Always add timing tip if not already covered
-            var hasTimingTip = tips.some(function(t) { return t.indexOf('24') !== -1 || t.indexOf('timing') !== -1 || t.indexOf('Time your') !== -1; });
-            if (!hasTimingTip) {
-                tips.unshift('Send your request 24\u201336 hours before arrival. This is when hotels have the clearest picture of unsold inventory.');
-            }
-
-            // Cap tips at 4
-            tips = tips.slice(0, 4);
-
-            // Render
-            document.getElementById('score-text').textContent = rating;
-            document.getElementById('score-text').style.color = color;
-            document.getElementById('score-subtitle').textContent = subtitle;
-
-            var fill = document.getElementById('score-bar-fill');
-            fill.style.width = score + '%';
-            fill.style.background = color;
-
-            var tipsList = document.getElementById('tips-list');
-            tipsList.innerHTML = '';
-            tips.forEach(function(tip) {
-                var li = document.createElement('li');
-                li.innerHTML = '<span class="tip-icon">\u2192</span> ' + tip;
-                tipsList.appendChild(li);
-            });
-
-            panel.classList.add('visible');
-            panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-    })();
-    </script>
-
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-H8G7MYD59K');
-    </script>
 </body>
 </html>

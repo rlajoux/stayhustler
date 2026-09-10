@@ -21,13 +21,13 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout – StayHustler</title>
+    <title>Your Hotel Request Package | StayHustler</title>
 
-    <meta name="description" content="Complete your purchase to unlock your personalized hotel upgrade request and timing guidance.">
+    <meta name="description" content="One personalised email, three timing tips and a reception script for one stay. Secure payment through Stripe.">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Checkout – StayHustler">
-    <meta property="og:description" content="Unlock your personalized hotel upgrade request.">
+    <meta property="og:title" content="Your Hotel Request Package | StayHustler">
+    <meta property="og:description" content="One personalised email, three timing tips and a reception script for one stay. Secure payment through Stripe.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://stayhustler.com/payment.html">
     <meta property="og:image" content="https://stayhustler.com/og-image.png">
@@ -56,14 +56,15 @@
 </svg>
 </span>StayHustler</a>
 <nav class="desktop-nav" aria-label="Main navigation">
-<a href="/">Hotel requests</a>
-<a href="/guides/">Travel guides</a>
+<a href="/#how-it-works">How it works</a>
+<a href="/#example-package">Example package</a>
+<a href="/guides/">Hotel guides</a>
 <a href="/tools/">Free tools</a>
 </nav>
 <div class="nav-actions">
 <span class="nav-currency">Prices in USD</span>
 <a href="mailto:support@stayhustler.com">Help</a>
-<a class="outline-btn" href="/booking">Create a request</a>
+<a class="outline-btn" href="/booking"><span class="nav-full">Build my hotel request</span><span class="nav-short">Start request</span></a>
 </div>
 <details class="mobile-nav">
 <summary aria-label="Open navigation">
@@ -72,8 +73,9 @@
 </svg>
 </summary>
 <nav aria-label="Mobile navigation">
-<a href="/">Hotel requests</a>
-<a href="/guides/">Travel guides</a>
+<a href="/#how-it-works">How it works</a>
+<a href="/#example-package">Example package</a>
+<a href="/guides/">Hotel guides</a>
 <a href="/tools/">Free tools</a>
 <a href="/about">About us</a>
 <a href="mailto:support@stayhustler.com">Get help</a>
@@ -101,7 +103,7 @@
 <span class="step-number">4</span>Payment</li>
 </ol>
             <header class="page-header">
-                <h1>Checkout</h1>
+                <h1>Your hotel request package</h1><p id="checkout-summary">One personalised email, three timing tips and a reception script for your stay.</p>
             </header>
 
             <div class="checkout-layout">
@@ -126,39 +128,23 @@
                         </fieldset>
 
                         <div class="email-field">
-                            <label for="email-input" class="email-label">Email address</label>
-                            <input type="email" id="email-input" maxlength="254" class="email-input" placeholder="you@example.com" required>
-                            <p class="email-helper">We'll send your saved request and recovery link here.</p>
+                            <label for="email-input" class="email-label">Email for your request</label>
+                            <input type="email" id="email-input" autocomplete="email" aria-describedby="email-helper" maxlength="254" class="email-input" placeholder="you@example.com" required>
+                            <p class="email-helper" id="email-helper">We’ll send your request and a link to your saved package to this address.</p>
                         </div>
 
                         <div class="validation-message" id="validation-message" role="alert" aria-live="polite">
                             Please enter your email to continue.
                         </div>
 
-                        <section class="reassurance-block" aria-labelledby="reassurance-heading">
-                            <h3 class="reassurance-title" id="reassurance-heading">Your request, ready to send</h3>
-                            <ul class="reassurance-list">
-                                <li>This creates a hotel-ready request, tailored to your booking.</li>
-                                <li>It does not guarantee upgrades.</li>
-                                <li>Hotels decide based on availability, timing, and flexibility.</li>
-                            </ul>
-                            <p class="reassurance-footer">You review the wording and send it to your hotel.</p>
-                        </section>
+                        <section class="reassurance-block"><h2>What your package includes</h2><ul class="reassurance-list"><li>An email based on your booking and request.</li><li>Three timing tips and a short reception script.</li><li>Email delivery and saved access for 30 days after purchase.</li></ul></section>
 
                         <div class="cta-section">
-                            <button type="submit" class="btn-primary" id="pay-btn" disabled>Continue to secure payment</button>
+                            <button type="submit" class="btn-primary" id="pay-btn" disabled>Continue to Stripe · $7</button>
 
-                            <p class="conversion-hint cta-hint">After payment, your saved request will appear when ready. We will also email a recovery link.</p>
+                            <p class="conversion-hint cta-hint">Secure card payment through Stripe. Your personalised package is prepared after payment.</p>
 
-                            <p class="trust-note">We can't access or change your reservation.<br>We don't contact hotels or booking systems.<br>Your details are used only to generate your request.</p>
-
-                            <button type="button" class="why-link" id="why-toggle" aria-expanded="false">Why we charge</button>
-
-                            <div class="why-panel" id="why-panel">
-                                <div class="why-panel-inner">
-                                    We keep this independent and ad-free. The fee supports high-quality guidance and continuous improvement.
-                                </div>
-                            </div>
+                            <p class="trust-note">You’re buying the request package. Your hotel decides what it can offer and whether any hotel charge applies.</p>
                         </div>
                     </form>
                 </section>
@@ -192,13 +178,13 @@
                                 <polyline points="20 6 9 17 4 12">
 </polyline>
                             </svg>
-                            Includes: request + timing + fallback script
+                            Personalised email, timing tips and reception script
                         </li>
                     </ul>
 
                     <div class="order-hints">
-                        <p class="conversion-hint">Best used 24–72 hours before check-in</p>
-                        <p class="conversion-hint">One request per stay · No subscription</p>
+                        <p class="conversion-hint">Saved access for 30 days after purchase</p>
+                        <p class="conversion-hint">One payment for one stay. No subscription.</p>
                     </div>
 
                     <div class="coupon-section">
@@ -221,7 +207,7 @@
                 </aside>
             </div>
 
-            <p class="fine-print">You are buying a personalised request, not a guaranteed hotel benefit.</p>
+            <p class="fine-print">Read our <a href="/terms">terms and refund policy</a> and <a href="/privacy">privacy policy</a>. <a href="mailto:support@stayhustler.com">Contact support</a>.</p>
         </div>
     </main>
 <footer class="site-footer">
@@ -234,13 +220,13 @@
 <path d="M5 21V3h14v18M3 21h18M9 7h1m4 0h1M9 11h1m4 0h1m-5 10v-5h4v5"/>
 </svg>
 </span>StayHustler</a>
-<p>A little preparation for a better hotel stay.<br>Your request. Your conversation.</p>
+<p>Personalised requests for the hotel you’ve booked.</p>
 </div>
 <div class="footer-menu">
 <div>
 <strong>Plan your request</strong>
-<a href="/booking">Create a request</a>
-<a href="/guides/">Travel guides</a>
+<a href="/booking">Build my hotel request</a>
+<a href="/guides/">Hotel guides</a>
 <a href="/tools/">Free tools</a>
 </div>
 <div>
@@ -267,8 +253,6 @@
         const form = document.getElementById('payment-form');
         const payBtn = document.getElementById('pay-btn');
         const validationMessage = document.getElementById('validation-message');
-        const whyToggle = document.getElementById('why-toggle');
-        const whyPanel = document.getElementById('why-panel');
         const paymentInputs = document.querySelectorAll('input[name="payment-method"]');
         const emailInput = document.getElementById('email-input');
 
@@ -292,6 +276,10 @@
         // Stripe is pre-selected, so set it as default
         let selectedMethod = 'stripe';
         let activeCoupon = null;
+        let checkingCoupon = false;
+        let checkoutPending = false;
+        const currentBooking = StayHustler.read('booking');
+        if (currentBooking.hotel) document.getElementById('checkout-summary').textContent = `One personalised email, three timing tips and a reception script for your stay at ${currentBooking.hotel}.`;
 
         // Format cents to USD string
         function formatPrice(cents) {
@@ -350,6 +338,8 @@
                 return;
             }
 
+            checkingCoupon = true;
+            checkFormValidity();
             couponApplyBtn.disabled = true;
             couponApplyBtn.textContent = '...';
 
@@ -386,6 +376,9 @@
             } catch (error) {
                 showCouponFeedback('Could not verify code', 'error');
             } finally {
+                checkingCoupon = false;
+                updatePayButton();
+                checkFormValidity();
                 couponApplyBtn.disabled = false;
                 couponApplyBtn.textContent = 'Apply';
             }
@@ -396,7 +389,7 @@
             if (activeCoupon && activeCoupon.final_cents === 0) {
                 payBtn.textContent = 'Get my request';
             } else {
-                payBtn.textContent = 'Continue to secure payment';
+                payBtn.textContent = 'Continue to Stripe · ' + formatPrice(activeCoupon ? activeCoupon.final_cents : BASE_PRICE_CENTS);
             }
         }
 
@@ -471,7 +464,7 @@
         // Check form validity
         function checkFormValidity() {
             const emailValid = emailInput.value.trim() && emailInput.checkValidity();
-            payBtn.disabled = !emailValid;
+            payBtn.disabled = !emailValid || checkingCoupon || checkoutPending;
             if (emailValid) {
                 validationMessage.classList.remove('visible');
             }
@@ -495,6 +488,8 @@
         form.addEventListener('submit', async event => {
             event.preventDefault();
             if (!form.reportValidity()) return;
+            if (checkingCoupon || checkoutPending) return;
+            checkoutPending = true;
             payBtn.disabled = true;
             payBtn.textContent = 'Opening secure checkout…';
             try {
@@ -524,6 +519,7 @@
                 if (target.protocol !== 'https:' || target.hostname !== 'checkout.stripe.com') throw new Error('Unexpected checkout address. Please contact support.');
                 location.assign(target.href);
             } catch (error) {
+                checkoutPending = false;
                 validationMessage.textContent = error.name === 'TimeoutError' ? 'Checkout took too long. Please try again; your order is saved.' : error.message;
                 validationMessage.classList.add('visible');
                 updatePayButton();
@@ -539,12 +535,7 @@
             validationMessage.classList.add('visible');
         }
 
-        // Why we charge toggle
-        whyToggle.addEventListener('click', () => {
-            const isExpanded = whyPanel.classList.contains('visible');
-            whyPanel.classList.toggle('visible');
-            whyToggle.setAttribute('aria-expanded', !isExpanded);
-        });
+
     </script>
 </body>
 </html>

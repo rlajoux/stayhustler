@@ -18,7 +18,7 @@
 
     <!-- Open Graph -->
     <meta property="og:title" content="Next steps – StayHustler">
-    <meta property="og:description" content="Start another stay with personalized upgrade guidance.">
+    <meta property="og:description" content="Start another stay with personalised upgrade guidance.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://stayhustler.com/reengage.html">
     <meta property="og:image" content="https://stayhustler.com/og-image.png">
@@ -50,14 +50,15 @@
 </svg>
 </span>StayHustler</a>
 <nav class="desktop-nav" aria-label="Main navigation">
-<a href="/">Hotel requests</a>
-<a href="/guides/">Travel guides</a>
+<a href="/#how-it-works">How it works</a>
+<a href="/#example-package">Example package</a>
+<a href="/guides/">Hotel guides</a>
 <a href="/tools/">Free tools</a>
 </nav>
 <div class="nav-actions">
 <span class="nav-currency">Prices in USD</span>
 <a href="mailto:support@stayhustler.com">Help</a>
-<a class="outline-btn" href="/booking">Create a request</a>
+<a class="outline-btn" href="/booking"><span class="nav-full">Build my hotel request</span><span class="nav-short">Start request</span></a>
 </div>
 <details class="mobile-nav">
 <summary aria-label="Open navigation">
@@ -66,8 +67,9 @@
 </svg>
 </summary>
 <nav aria-label="Mobile navigation">
-<a href="/">Hotel requests</a>
-<a href="/guides/">Travel guides</a>
+<a href="/#how-it-works">How it works</a>
+<a href="/#example-package">Example package</a>
+<a href="/guides/">Hotel guides</a>
 <a href="/tools/">Free tools</a>
 <a href="/about">About us</a>
 <a href="mailto:support@stayhustler.com">Get help</a>
@@ -85,29 +87,13 @@
                     <polyline points="16 10 10.5 15.5 8 13">
 </polyline>
                 </svg>
-                <h1 id="page-title">Thanks.</h1>
-                <p class="page-body" id="page-body">If you have another stay, we can tailor guidance again.</p>
+                <h1 id="page-title">Thanks for sharing your experience.</h1>
+                <p class="page-body" id="page-body">Your feedback helps us improve the service.</p>
             </header>
 
             <section class="primary-cta-section">
-                <button type="button" class="btn-primary" id="start-btn">Start another stay</button>
-            </section>
-
-            <section class="offer-section">
-                <div class="offer-card">
-                    <span class="offer-badge">Coming soon</span>
-                    <h2 class="offer-title">Multi-stay packs</h2>
-                    <p class="offer-body">Save time on your next trips with faster, repeatable guidance.</p>
-                    <button type="button" class="btn-secondary" id="notify-btn">Notify me</button>
-
-                    <div class="notify-form-wrapper" id="notify-form-wrapper">
-                        <form class="notify-form" id="notify-form" data-subscribe-source="multi_stay_waitlist" data-subscribe-message="notify-success">
-                            <input type="email" class="notify-input" placeholder="you@example.com" required aria-label="Email for notification">
-                            <button type="submit" class="notify-btn">Join</button>
-                        </form>
-                        <p class="notify-success" id="notify-success" role="status">You're on the list.</p>
-                    </div>
-                </div>
+                <a class="btn-primary" id="start-btn" href="/booking">Prepare a request for another stay</a>
+                <p class="field-hint">$7 USD for one stay. One payment. No subscription.</p>
             </section>
 
 
@@ -123,13 +109,13 @@
 <path d="M5 21V3h14v18M3 21h18M9 7h1m4 0h1M9 11h1m4 0h1m-5 10v-5h4v5"/>
 </svg>
 </span>StayHustler</a>
-<p>A little preparation for a better hotel stay.<br>Your request. Your conversation.</p>
+<p>Personalised requests for the hotel you’ve booked.</p>
 </div>
 <div class="footer-menu">
 <div>
 <strong>Plan your request</strong>
-<a href="/booking">Create a request</a>
-<a href="/guides/">Travel guides</a>
+<a href="/booking">Build my hotel request</a>
+<a href="/guides/">Hotel guides</a>
 <a href="/tools/">Free tools</a>
 </div>
 <div>
@@ -179,30 +165,15 @@
 
         // Set dynamic content based on outcome
         if (outcome === 'upgrade' || outcome === 'perk') {
-            pageTitle.textContent = 'Glad it helped.';
-            pageBody.textContent = 'Nice result. If you have another stay coming up, you can use the same approach with tailored wording.';
+            pageTitle.textContent = 'Thanks for sharing your experience.';
+            pageBody.textContent = 'Your feedback helps us improve the service.';
         } else if (outcome === 'no') {
             pageTitle.textContent = 'Thanks for the update.';
-            pageBody.textContent = "Hotel availability and policy vary. If you have another stay coming up, we can prepare a new request for it.";
+            pageBody.textContent = 'Hotel availability and policy vary. Your feedback helps us improve the service.';
         } else {
             pageTitle.textContent = 'Thanks.';
-            pageBody.textContent = 'If you have another stay, we can tailor guidance again.';
+            pageBody.textContent = 'Your feedback helps us improve the service.';
         }
-
-        // Start another stay button
-        document.getElementById('start-btn').addEventListener('click', () => {
-            window.location.href = 'index.html';
-        });
-
-        // Notify me button
-        const notifyBtn = document.getElementById('notify-btn');
-        const notifyFormWrapper = document.getElementById('notify-form-wrapper');
-
-        notifyBtn.addEventListener('click', () => {
-            notifyFormWrapper.classList.add('visible');
-            notifyBtn.style.display = 'none';
-        });
-
 
     </script>
 </body>

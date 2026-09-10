@@ -72,9 +72,9 @@
                 : 'Choose your actual programme and tier. No account connection or membership number is needed.';
             return;
         }
-        note.textContent = selectedTier ? 'Your selected status is not independently verified.' : 'Select your tier, or choose “I do not know my tier”.';
+        note.textContent = selectedTier ? 'Based on the programme and tier you selected. Your membership is not verified.' : 'Select your tier, or choose “I do not know my tier”.';
         if (card.hidden) return;
-        card.append(element('p', 'Your selected status', 'loyalty-eyebrow'), element('h3', advice.label), element('p', advice.eligibility, 'loyalty-eligibility'));
+        card.append(element('p', 'Published programme guidance', 'loyalty-eyebrow'), element('h3', advice.label), element('p', advice.eligibility, 'loyalty-eligibility'));
         if (advice.benefits.length) {
             const requestType = document.querySelector('input[name="request-type"]:checked')?.value || 'upgrade';
             const relevantKeys = catalogue.requestCategories[requestType] || [];

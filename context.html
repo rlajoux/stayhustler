@@ -21,13 +21,13 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quick details – StayHustler</title>
+    <title>Your Preferences | StayHustler</title>
 
-    <meta name="description" content="Answer a few quick questions to help us tailor your hotel upgrade request with the right timing and wording.">
+    <meta name="description" content="Choose your hotel request and add relevant preferences and membership details.">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Quick details – StayHustler">
-    <meta property="og:description" content="Answer a few quick questions to personalize your hotel upgrade request.">
+    <meta property="og:title" content="Your Preferences | StayHustler">
+    <meta property="og:description" content="Choose your hotel request and add relevant preferences and membership details.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://stayhustler.com/context.html">
     <meta property="og:image" content="https://stayhustler.com/og-image.png">
@@ -56,14 +56,15 @@
 </svg>
 </span>StayHustler</a>
 <nav class="desktop-nav" aria-label="Main navigation">
-<a href="/">Hotel requests</a>
-<a href="/guides/">Travel guides</a>
+<a href="/#how-it-works">How it works</a>
+<a href="/#example-package">Example package</a>
+<a href="/guides/">Hotel guides</a>
 <a href="/tools/">Free tools</a>
 </nav>
 <div class="nav-actions">
 <span class="nav-currency">Prices in USD</span>
 <a href="mailto:support@stayhustler.com">Help</a>
-<a class="outline-btn" href="/booking">Create a request</a>
+<a class="outline-btn" href="/booking"><span class="nav-full">Build my hotel request</span><span class="nav-short">Start request</span></a>
 </div>
 <details class="mobile-nav">
 <summary aria-label="Open navigation">
@@ -72,8 +73,9 @@
 </svg>
 </summary>
 <nav aria-label="Mobile navigation">
-<a href="/">Hotel requests</a>
-<a href="/guides/">Travel guides</a>
+<a href="/#how-it-works">How it works</a>
+<a href="/#example-package">Example package</a>
+<a href="/guides/">Hotel guides</a>
 <a href="/tools/">Free tools</a>
 <a href="/about">About us</a>
 <a href="mailto:support@stayhustler.com">Get help</a>
@@ -97,9 +99,8 @@
 <span class="step-number">4</span>Payment</li>
 </ol>
             <header class="page-header">
-                <h1>A few quick details</h1>
-                <p class="page-subheadline">Choose what you would like to ask for. We’ll tailor the wording to your stay.</p>
-                <p class="time-note">Takes about 30 seconds.</p>
+                <h1>What would make your stay better?</h1>
+                <p class="page-subheadline">Choose your main request. Add any relevant preferences so the wording fits your stay.</p>
             </header>
 <div class="journey-layout">
 <div class="journey-main">
@@ -125,7 +126,6 @@
                                     <span class="request-type-content">
                                         <span class="request-type-title">Room upgrade</span>
                                         <span class="request-type-desc">Ask for a better room category</span>
-                                        <span class="request-type-hint">Best when: mid-week arrivals, longer stays</span>
                                     </span>
                                 </label>
                             </div>
@@ -143,7 +143,6 @@
                                     <span class="request-type-content">
                                         <span class="request-type-title">Late checkout</span>
                                         <span class="request-type-desc">More time on your departure day</span>
-                                        <span class="request-type-hint">Best when: flexible hotel occupancy</span>
                                     </span>
                                 </label>
                             </div>
@@ -165,9 +164,8 @@
                                         </svg>
                                     </span>
                                     <span class="request-type-content">
-                                        <span class="request-type-title">Breakfast / lounge</span>
+                                        <span class="request-type-title">Breakfast &amp; lounge</span>
                                         <span class="request-type-desc">Request breakfast or lounge access</span>
-                                        <span class="request-type-hint">Best when: special occasions, loyalty members</span>
                                     </span>
                                 </label>
                             </div>
@@ -185,7 +183,6 @@
                                     <span class="request-type-content">
                                         <span class="request-type-title">Better view</span>
                                         <span class="request-type-desc">A nicer view within your room category</span>
-                                        <span class="request-type-hint">Best when: already booked a good room</span>
                                     </span>
                                 </label>
                             </div>
@@ -201,9 +198,8 @@
                                         </svg>
                                     </span>
                                     <span class="request-type-content">
-                                        <span class="request-type-title">Spa / dining credit</span>
+                                        <span class="request-type-title">Spa &amp; dining credit</span>
                                         <span class="request-type-desc">Request property credit instead of room</span>
-                                        <span class="request-type-hint">Best when: celebrating, boutique hotels</span>
                                     </span>
                                 </label>
                             </div>
@@ -217,9 +213,8 @@
                                         </svg>
                                     </span>
                                     <span class="request-type-content">
-                                        <span class="request-type-title">Any enhancement</span>
-                                        <span class="request-type-desc">I'm flexible — any improvement works</span>
-                                        <span class="request-type-hint">Best when: you want to maximize chances</span>
+                                        <span class="request-type-title">I’m flexible</span>
+                                        <span class="request-type-desc">A better room, more time or another available benefit</span>
                                     </span>
                                 </label>
                             </div>
@@ -304,7 +299,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="checkin-time" class="form-label">Check-in time preference <span class="required">*</span>
+                        <label for="checkin-time" class="form-label">When do you expect to arrive? <span class="required">*</span>
 </label>
                         <select id="checkin-time" class="form-select" required>
                             <option value="">Select</option>
@@ -312,13 +307,13 @@
                             <option value="afternoon">Afternoon (12–4pm)</option>
                             <option value="evening">Evening (after 4pm)</option>
                         </select>
-                        <p class="form-helper">Timing affects upgrade availability.</p>
+                        <p class="form-helper">This helps us phrase your request for check-in.</p>
                     </div>
                 </div>
 
                 <div class="form-section">
                     <div class="form-group">
-                        <label for="loyalty-programme" class="form-label">Hotel loyalty programme</label>
+                        <h2>Your hotel membership</h2><p class="form-helper">Choose your programme and tier to see relevant published benefits.</p><label for="loyalty-programme" class="form-label">Programme</label>
                         <select id="loyalty-programme" class="form-select" aria-describedby="loyalty-selection-note">
                             <option value="">Select programme (optional)</option>
                             <option value="none">No membership</option>
@@ -332,12 +327,12 @@
                     <div id="loyalty-benefits" class="loyalty-benefits" aria-live="polite" hidden></div>
                     <div id="loyalty-confirmation" class="loyalty-confirmation" hidden>
                         <label><input type="checkbox" id="loyalty-hotel-confirmed"><span id="loyalty-confirmation-label"></span></label>
-                        <p class="form-helper">Confirm participation to include your selected status in the request. If unsure, leave this unticked; the request will not claim loyalty benefits.</p>
+                        <p class="form-helper">Confirm this before we include your selected membership in the request. Leave it unticked if you are unsure.</p>
                     </div>
 
                     <div class="form-group">
-                        <label for="occasion" class="form-label">Occasion</label>
-                        <select id="occasion" class="form-select">
+                        <label for="occasion" class="form-label">Special occasion? Optional.</label>
+                        <p class="form-helper" id="occasion-hint">Include it only if you’d like it mentioned in your request.</p><select aria-describedby="occasion-hint" id="occasion" class="form-select">
                             <option value="">Select (optional)</option>
                             <option value="none">None</option>
                             <option value="birthday">Birthday</option>
@@ -351,7 +346,7 @@
 
                 <div class="form-section">
                     <fieldset class="form-group">
-                        <legend>How do you prefer to ask? <span class="required">*</span>
+                        <legend>How do you expect to ask? <span class="required">*</span>
 </legend>
                         <div class="radio-group" id="ask-preference-group">
                             <div class="radio-option">
@@ -364,7 +359,7 @@
                             </div>
                             <div class="radio-option">
                                 <input type="radio" id="ask-both" name="ask-preference" value="both" class="radio-input">
-                                <label for="ask-both" class="radio-label">Both (recommended)</label>
+                                <label for="ask-both" class="radio-label">Both</label>
                             </div>
                         </div>
                         <p class="conditional-note" id="email-note">We'll generate an email you can copy and send.</p>
@@ -372,7 +367,7 @@
                 </div>
 
                 <div class="cta-section">
-                    <button type="submit" class="btn-primary" id="submit-btn" disabled>Review my request</button>
+                    <button type="submit" class="btn-primary" id="submit-btn" disabled>Review my details</button>
                     <p class="privacy-note">Stored locally in your browser for this flow. No hotel is contacted.</p>
                 </div>
             </form>
@@ -383,11 +378,11 @@
 <div class="trip-summary-body">
 <span class="tag">Made for your stay</span>
 <h2>Your hotel request package</h2>
-<p>The right words, ready when you need them.</p>
+<p>An email, timing advice and a reception script for one stay.</p>
 <ul class="check-list">
 <li>A personalised email request</li>
-<li>Advice on when to send it</li>
-<li>A polite script for check-in</li>
+<li>Three timing tips</li>
+<li>A short reception script</li>
 <li>Saved request and email delivery</li>
 </ul>
 <div class="summary-total">
@@ -416,13 +411,13 @@
 <path d="M5 21V3h14v18M3 21h18M9 7h1m4 0h1M9 11h1m4 0h1m-5 10v-5h4v5"/>
 </svg>
 </span>StayHustler</a>
-<p>A little preparation for a better hotel stay.<br>Your request. Your conversation.</p>
+<p>Personalised requests for the hotel you’ve booked.</p>
 </div>
 <div class="footer-menu">
 <div>
 <strong>Plan your request</strong>
-<a href="/booking">Create a request</a>
-<a href="/guides/">Travel guides</a>
+<a href="/booking">Build my hotel request</a>
+<a href="/guides/">Hotel guides</a>
 <a href="/tools/">Free tools</a>
 </div>
 <div>

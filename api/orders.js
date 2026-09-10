@@ -163,7 +163,7 @@ function createOrderService({ pool, stripe, generate, sendMail, secret, fromEmai
                 await connection.query("UPDATE orders SET receipt_status='sending' WHERE id=$1", [id]);
                 try {
                     await sendMail({ to: order.email, from: fromEmail, subject: 'Your StayHustler order is saved',
-                        text: `Your order ${order.id} is saved. We will send your request separately when it is ready.\n\nOpen your saved order for up to 30 days after purchase:\n${recoveryLink(order)}\n\nIf preparation fails, contact support@stayhustler.com with this order number.` });
+                        text: `Your order ${order.id} for ${order.booking.hotel} is saved. Your request is still being prepared. We’ll send another email when it is ready.\n\nOpen your saved order for up to 30 days after purchase:\n${recoveryLink(order)}\n\nIf preparation fails, contact support@stayhustler.com with this order number.` });
                     await connection.query("UPDATE orders SET receipt_status='accepted' WHERE id=$1", [id]);
                 } catch { await connection.query("UPDATE orders SET receipt_status='failed' WHERE id=$1", [id]); }
             }
@@ -197,8 +197,8 @@ function createOrderService({ pool, stripe, generate, sendMail, secret, fromEmai
             if (!sending.rowCount) return getOrder(id, connection);
             const result = order.result;
             try {
-                await sendMail({ to: order.email, from: fromEmail, subject: 'Your StayHustler request is ready',
-                    text: `${result.email_subject}\n\n${result.email_body}\n\nWhen to ask:\n${result.timing_guidance.join('\n')}\n\nAt the hotel:\n${result.fallback_script}\n\nYou send this request to the hotel yourself.\n\nRecover your result (available for ${RETENTION_DAYS} days after purchase):\n${recoveryLink(order)}`,
+                await sendMail({ to: order.email, from: fromEmail, subject: 'Your hotel request is ready | StayHustler',
+                    text: `Your request for ${order.booking.hotel} is ready. Review the wording, add your name and reservation number, and send it to your hotel.\n\n${result.email_subject}\n\n${result.email_body}\n\nWhen to ask:\n${result.timing_guidance.join('\n')}\n\nAt the hotel:\n${result.fallback_script}\n\nYou send this request to the hotel yourself.\n\nOpen my request (available for ${RETENTION_DAYS} days after purchase):\n${recoveryLink(order)}`,
                     customArgs: { order_id: order.id } });
                 await connection.query("UPDATE orders SET delivery_status='accepted' WHERE id=$1", [id]);
             } catch (error) {
