@@ -78,464 +78,46 @@
     }
     </script>
 
-    <style>
-        :root {
-            --color-bg: #faf9f7;
-            --color-bg-warm: #f5f3ef;
-            --color-text: #2d2a26;
-            --color-text-muted: #6b6560;
-            --color-accent: #c9a962;
-            --color-accent-hover: #b8963f;
-            --color-border: #e8e4de;
-            --color-white: #ffffff;
 
-            --font-serif: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
-            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-
-            --space-xs: 0.5rem;
-            --space-sm: 1rem;
-            --space-md: 1.5rem;
-            --space-lg: 2.5rem;
-            --space-xl: 4rem;
-            --space-2xl: 6rem;
-
-            --max-width: 1140px;
-            --max-width-article: 720px;
-            --radius: 6px;
-            --shadow-soft: 0 2px 16px rgba(45, 42, 38, 0.06);
-            --transition: 0.2s ease;
-        }
-
-        *, *::before, *::after { box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-
-        body {
-            margin: 0;
-            font-family: var(--font-sans);
-            font-size: 1rem;
-            line-height: 1.7;
-            color: var(--color-text);
-            background-color: var(--color-bg);
-            -webkit-font-smoothing: antialiased;
-        }
-
-        h1, h2, h3, h4 {
-            font-family: var(--font-serif);
-            font-weight: 400;
-            line-height: 1.3;
-            margin: 0;
-        }
-
-        .byline {
-            font-size: 0.85rem;
-            color: var(--color-text-muted);
-            margin-top: var(--space-xs);
-            margin-bottom: var(--space-lg);
-        }
-
-        p { margin: 0 0 var(--space-md); }
-
-        a {
-            color: var(--color-accent);
-            text-decoration: none;
-            transition: color var(--transition);
-        }
-
-        a:hover { color: var(--color-accent-hover); }
-
-        ul, ol {
-            margin: 0 0 var(--space-md);
-            padding-left: var(--space-lg);
-        }
-
-        li {
-            margin-bottom: var(--space-xs);
-            line-height: 1.8;
-        }
-
-        .container {
-            width: 100%;
-            max-width: var(--max-width);
-            margin: 0 auto;
-            padding: 0 var(--space-md);
-        }
-
-        /* Navigation */
-        .nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            background: rgba(250, 249, 247, 0.92);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        .nav-inner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 64px;
-            max-width: var(--max-width);
-            margin: 0 auto;
-            padding: 0 var(--space-md);
-        }
-
-        .nav-logo {
-            font-family: var(--font-serif);
-            font-size: 1.25rem;
-            letter-spacing: -0.01em;
-            color: var(--color-text);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: var(--space-lg);
-        }
-
-        .nav-link {
-            font-size: 0.9rem;
-            color: var(--color-text-muted);
-            transition: color var(--transition);
-        }
-
-        .nav-link:hover { color: var(--color-text); }
-
-        /* Article */
-        article {
-            max-width: var(--max-width-article);
-            margin: 0 auto;
-            padding: calc(64px + var(--space-xl)) var(--space-md) var(--space-xl);
-        }
-
-        article h1 {
-            font-size: clamp(2rem, 4vw, 2.75rem);
-            letter-spacing: -0.02em;
-            margin-bottom: var(--space-lg);
-            color: var(--color-text);
-        }
-
-        article h2 {
-            font-size: 1.75rem;
-            margin: var(--space-xl) 0 var(--space-md);
-            color: var(--color-text);
-        }
-
-        article h3 {
-            font-size: 1.35rem;
-            margin: var(--space-lg) 0 var(--space-md);
-            color: var(--color-text);
-        }
-
-        article h4 {
-            font-size: 1.15rem;
-            margin: var(--space-md) 0 var(--space-sm);
-            color: var(--color-text);
-        }
-
-        article p {
-            font-size: 1.05rem;
-            line-height: 1.8;
-            color: var(--color-text);
-        }
-
-        /* What You'll Learn Box */
-        .learn-box {
-            background: var(--color-bg-warm);
-            border-left: 3px solid var(--color-accent);
-            padding: var(--space-md);
-            margin: var(--space-lg) 0;
-            border-radius: var(--radius);
-        }
-
-        .learn-box h4 {
-            margin: 0 0 var(--space-sm);
-            font-size: 1rem;
-            color: var(--color-text);
-        }
-
-        .learn-box ul {
-            margin: 0;
-            padding-left: var(--space-md);
-        }
-
-        .learn-box li {
-            font-size: 0.95rem;
-            margin-bottom: var(--space-xs);
-        }
-
-        /* Quick Rules Box */
-        .rules-box {
-            background: var(--color-white);
-            border: 1px solid var(--color-border);
-            padding: var(--space-lg);
-            margin: var(--space-xl) 0;
-            border-radius: var(--radius);
-        }
-
-        .rules-box h3 {
-            margin: 0 0 var(--space-md);
-            font-size: 1.25rem;
-        }
-
-        .rules-box ol {
-            margin: 0;
-            padding-left: var(--space-md);
-        }
-
-        .rules-box li {
-            font-size: 0.95rem;
-            margin-bottom: var(--space-sm);
-            padding-left: var(--space-xs);
-        }
-
-        /* Myth Section */
-        .myth-section {
-            margin: var(--space-xl) 0;
-            padding-bottom: var(--space-lg);
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        .myth-section:last-of-type {
-            border-bottom: none;
-        }
-
-        .myth-label {
-            display: inline-block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--color-text-muted);
-            background: var(--color-bg-warm);
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--radius);
-            margin-bottom: var(--space-sm);
-        }
-
-        .instead-box {
-            background: var(--color-bg-warm);
-            padding: var(--space-md);
-            border-radius: var(--radius);
-            margin-top: var(--space-md);
-        }
-
-        .instead-box strong {
-            display: block;
-            margin-bottom: var(--space-xs);
-            color: var(--color-text);
-        }
-
-        /* Related Guides */
-        .related-guides {
-            margin-top: var(--space-2xl);
-            padding-top: var(--space-xl);
-            border-top: 1px solid var(--color-border);
-        }
-
-        .related-guides h2 {
-            font-size: 1.5rem;
-            margin-bottom: var(--space-lg);
-        }
-
-        .related-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--space-md);
-        }
-
-        .related-card {
-            padding: var(--space-md);
-            background: var(--color-white);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius);
-            transition: box-shadow var(--transition), transform var(--transition);
-        }
-
-        .related-card:hover {
-            box-shadow: var(--shadow-soft);
-            transform: translateY(-2px);
-        }
-
-        .related-card h3 {
-            font-size: 1.1rem;
-            margin: 0 0 var(--space-xs);
-            color: var(--color-text);
-        }
-
-        .related-card p {
-            font-size: 0.9rem;
-            color: var(--color-text-muted);
-            margin: 0;
-            line-height: 1.6;
-        }
-
-        /* Footer */
-        .footer {
-            padding: var(--space-xl) 0;
-            border-top: 1px solid var(--color-border);
-            margin-top: var(--space-2xl);
-        }
-
-        .footer-inner {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: var(--space-md);
-            text-align: center;
-            max-width: var(--max-width);
-            margin: 0 auto;
-            padding: 0 var(--space-md);
-        }
-
-        .footer-links {
-            display: flex;
-            gap: var(--space-lg);
-        }
-
-        .footer-link {
-            font-size: 0.9rem;
-            color: var(--color-text-muted);
-            transition: color var(--transition);
-        }
-
-        .footer-link:hover { color: var(--color-text); }
-
-        .footer-copyright {
-            font-size: 0.8rem;
-            color: var(--color-text-muted);
-        }
-
-        /* Guide CTA */
-        .guide-cta {
-            margin: var(--space-xl) 0;
-            padding: var(--space-lg);
-            background: var(--color-white);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius);
-            text-align: center;
-        }
-
-        .guide-cta-headline {
-            font-family: var(--font-serif);
-            font-size: 1.35rem;
-            font-weight: 400;
-            color: var(--color-text);
-            margin: 0 0 var(--space-xs);
-        }
-
-        .guide-cta-body {
-            font-size: 0.95rem;
-            color: var(--color-text-muted);
-            margin: 0 0 var(--space-md);
-            line-height: 1.6;
-        }
-
-        .guide-cta-steps {
-            text-align: left;
-            max-width: 400px;
-            margin: 0 auto var(--space-md);
-            padding-left: var(--space-md);
-        }
-
-        .guide-cta-steps li {
-            font-size: 0.9rem;
-            color: var(--color-text-muted);
-            margin-bottom: var(--space-xs);
-        }
-
-        .guide-cta-btn {
-            display: inline-block;
-            padding: 0.875rem 1.75rem;
-            font-family: var(--font-sans);
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--color-white);
-            background: var(--color-text);
-            border: none;
-            border-radius: var(--radius);
-            cursor: pointer;
-            text-decoration: none;
-            transition: background var(--transition), transform var(--transition);
-        }
-
-        .guide-cta-btn:hover {
-            background: #1a1816;
-            transform: translateY(-1px);
-            color: var(--color-white);
-        }
-
-        .guide-cta-secondary {
-            display: block;
-            margin-top: var(--space-sm);
-            font-size: 0.85rem;
-            color: var(--color-text-muted);
-        }
-
-        .guide-cta-trust {
-            margin-top: var(--space-md);
-            font-size: 0.8rem;
-            color: var(--color-text-muted);
-            font-style: italic;
-        }
-
-        /* Breadcrumbs */
-        .breadcrumbs {
-            max-width: var(--max-width-article);
-            margin: var(--space-md) auto;
-            padding: 0 var(--space-md);
-            font-size: 0.85rem;
-            color: var(--color-text-muted);
-        }
-
-        .breadcrumbs a {
-            color: var(--color-text-muted);
-            text-decoration: none;
-        }
-
-        .breadcrumbs a:hover { color: var(--color-accent); }
-        .breadcrumbs span { margin: 0 0.5rem; }
-
-        /* Mobile */
-        @media (max-width: 768px) {
-            article {
-                padding-left: var(--space-sm);
-                padding-right: var(--space-sm);
-            }
-            article h1 { font-size: 2rem; }
-            article h2 { font-size: 1.5rem; }
-            article h3 { font-size: 1.2rem; }
-            .related-grid { grid-template-columns: 1fr; }
-            .footer-links {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: var(--space-sm);
-            }
-        }
-
-        @media (max-width: 480px) {
-            article h1 { font-size: 1.75rem; }
-            article h2 { font-size: 1.35rem; }
-            article p { font-size: 1rem; }
-            .nav-inner { padding: 0 var(--space-sm); }
-            .guide-cta { padding: var(--space-md); }
-            .guide-cta-btn { display: block; width: 100%; }
-        }
-    </style>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/assets/site.css">
 </head>
-<body>
-    <header class="nav">
-        <div class="nav-inner">
-            <a href="/" class="nav-logo">StayHustler</a>
-            <nav class="nav-links">
-                <a href="/" class="nav-link">Home</a>
-                <a href="/guides/" class="nav-link">Guides</a>
-                <a href="/tools/" class="nav-link">Tools</a>
-            </nav>
-        </div>
-    </header>
+<body class="editorial-page">
+    <a href="#main-content" class="skip-link">Skip to content</a>
+<header class="site-header">
+<div class="site-nav">
+<a class="brand" href="/">
+<span class="brand-mark">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<path d="M5 21V3h14v18M3 21h18M9 7h1m4 0h1M9 11h1m4 0h1m-5 10v-5h4v5"/>
+</svg>
+</span>StayHustler</a>
+<nav class="desktop-nav" aria-label="Main navigation">
+<a href="/">Hotel requests</a>
+<a href="/guides/" aria-current="page">Travel guides</a>
+<a href="/tools/">Free tools</a>
+</nav>
+<div class="nav-actions">
+<span class="nav-currency">Prices in USD</span>
+<a href="mailto:support@stayhustler.com">Help</a>
+<a class="outline-btn" href="/booking">Create a request</a>
+</div>
+<details class="mobile-nav">
+<summary aria-label="Open navigation">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<path d="M4 6h16M4 12h16M4 18h16"/>
+</svg>
+</summary>
+<nav aria-label="Mobile navigation">
+<a href="/">Hotel requests</a>
+<a href="/guides/" aria-current="page">Travel guides</a>
+<a href="/tools/">Free tools</a>
+<a href="/about">About us</a>
+<a href="mailto:support@stayhustler.com">Get help</a>
+</nav>
+</details>
+</div>
+</header>
 
     <nav class="breadcrumbs" aria-label="Breadcrumb">
         <a href="/">Home</a>
@@ -545,10 +127,11 @@
         <span>Upgrade Myths That Don't Work</span>
     </nav>
 
-    <main>
+    <main id="main-content">
         <article>
             <h1>Hotel Upgrade Myths That Don't Work Anymore</h1>
-            <p class="byline">By <a href="/about">Raphael L.</a></p>
+            <p class="byline">By <a href="/about">Raphael L.</a>
+</p>
 
             <p>For years, travellers have traded folklore about how to score a free hotel upgrade. Dress smartly. Mention your honeymoon. Slip the concierge a twenty. Ask nicely at the desk.</p>
 
@@ -583,10 +166,14 @@
             <p>Modern hotels use <a href="/guides/how-hotel-inventory-systems-work">revenue management systems</a> that forecast demand, optimise pricing, and control inventory allocation. Upgrades are not random acts of generosity. They're controlled outcomes driven by:</p>
 
             <ul>
-                <li><strong>Timing:</strong> Most upgrade decisions happen 24-72 hours before arrival, when cancellations have cleared and forecasts stabilise</li>
-                <li><strong>Inventory position:</strong> If premium rooms are forecasted to remain unsold, upgrading creates value. If they might sell, they're held</li>
-                <li><strong>Status priority:</strong> Loyalty members are processed through automated queues before general requests</li>
-                <li><strong>Rate fences:</strong> Some booking rates are contractually excluded from upgrades altogether</li>
+                <li>
+<strong>Timing:</strong> Most upgrade decisions happen 24-72 hours before arrival, when cancellations have cleared and forecasts stabilise</li>
+                <li>
+<strong>Inventory position:</strong> If premium rooms are forecasted to remain unsold, upgrading creates value. If they might sell, they're held</li>
+                <li>
+<strong>Status priority:</strong> Loyalty members are processed through automated queues before general requests</li>
+                <li>
+<strong>Rate fences:</strong> Some booking rates are contractually excluded from upgrades altogether</li>
             </ul>
 
             <p>By the time you're standing at the front desk, the meaningful decisions have already been made. The agent isn't being unhelpful when they say nothing's available - they're reading a room map that was assigned hours earlier.</p>
@@ -598,14 +185,17 @@
                 <span class="myth-label">Myth #1</span>
                 <h2>"Just Ask Nicely at the Front Desk"</h2>
 
-                <p><strong>Why people believe it:</strong></p>
+                <p>
+<strong>Why people believe it:</strong>
+</p>
                 <ul>
                     <li>Hotels used to have more manual discretion</li>
                     <li>Occasional successes create memorable stories</li>
                     <li>It feels proactive and costs nothing to try</li>
                 </ul>
 
-                <p><strong>Why it fails now:</strong> Front desk agents see a pre-assigned room map, not open inventory. Changing assignments at check-in creates downstream problems: housekeeping schedules, overbooking buffers, status prioritisation. The decision window closed hours before you arrived.</p>
+                <p>
+<strong>Why it fails now:</strong> Front desk agents see a pre-assigned room map, not open inventory. Changing assignments at check-in creates downstream problems: housekeeping schedules, overbooking buffers, status prioritisation. The decision window closed hours before you arrived.</p>
 
                 <p>Asking at check-in doesn't hurt, but it rarely creates an upgrade. At most, it surfaces one that was already allocated.</p>
 
@@ -619,14 +209,17 @@
                 <span class="myth-label">Myth #2</span>
                 <h2>"Dress Well and Look Important"</h2>
 
-                <p><strong>Why people believe it:</strong></p>
+                <p>
+<strong>Why people believe it:</strong>
+</p>
                 <ul>
                     <li>It worked when hotels were more manual and walk-ins were common</li>
                     <li>It feels like common sense</li>
                     <li>High-end hotels seem to care about appearances</li>
                 </ul>
 
-                <p><strong>Why it fails now:</strong> Hotels identify guests by reservation data, not appearance. Your loyalty status, rate type, booking channel, and stay history matter far more than your blazer. Front desk agents are trained to avoid bias and inconsistency.</p>
+                <p>
+<strong>Why it fails now:</strong> Hotels identify guests by reservation data, not appearance. Your loyalty status, rate type, booking channel, and stay history matter far more than your blazer. Front desk agents are trained to avoid bias and inconsistency.</p>
 
                 <p>Looking presentable is fine. Expecting a suit to unlock a suite is fantasy.</p>
 
@@ -640,14 +233,17 @@
                 <span class="myth-label">Myth #3</span>
                 <h2>"Mention Your Anniversary or Honeymoon"</h2>
 
-                <p><strong>Why people believe it:</strong></p>
+                <p>
+<strong>Why people believe it:</strong>
+</p>
                 <ul>
                     <li>Hotels market themselves as experience-driven</li>
                     <li>Staff are encouraged to acknowledge milestones</li>
                     <li>Sometimes it results in small gestures</li>
                 </ul>
 
-                <p><strong>Why it fails now:</strong> Special occasions are extremely common - hotels hear "honeymoon" and "anniversary" daily. Systems can't prioritise everyone celebrating something. Hotels prefer low-cost gestures (cards, chocolates) over inventory upgrades.</p>
+                <p>
+<strong>Why it fails now:</strong> Special occasions are extremely common - hotels hear "honeymoon" and "anniversary" daily. Systems can't prioritise everyone celebrating something. Hotels prefer low-cost gestures (cards, chocolates) over inventory upgrades.</p>
 
                 <p>Unless your occasion was logged before arrival and aligned with availability, it won't change your room category.</p>
 
@@ -661,14 +257,17 @@
                 <span class="myth-label">Myth #4</span>
                 <h2>"Book the Cheapest Room for Better Upgrade Odds"</h2>
 
-                <p><strong>Why people believe it:</strong></p>
+                <p>
+<strong>Why people believe it:</strong>
+</p>
                 <ul>
                     <li>The logic seems sound: more room to upgrade</li>
                     <li>Some assume hotels want to "surprise" budget guests</li>
                     <li>It's a common tip in travel forums</li>
                 </ul>
 
-                <p><strong>Why it fails now:</strong> This myth is actively harmful. Upgrade priority often correlates with rate quality, not just loyalty status. Discounted or opaque bookings are less attractive to upgrade. Some rates are contractually excluded from upgrades altogether.</p>
+                <p>
+<strong>Why it fails now:</strong> This myth is actively harmful. Upgrade priority often correlates with rate quality, not just loyalty status. Discounted or opaque bookings are less attractive to upgrade. Some rates are contractually excluded from upgrades altogether.</p>
 
                 <p>Hotels protect revenue first. Upgrading someone who paid the lowest possible rate rarely aligns with that goal.</p>
 
@@ -682,14 +281,17 @@
                 <span class="myth-label">Myth #5</span>
                 <h2>"Loyalty Status Guarantees an Upgrade"</h2>
 
-                <p><strong>Why people believe it:</strong></p>
+                <p>
+<strong>Why people believe it:</strong>
+</p>
                 <ul>
                     <li>Programmes advertise "complimentary upgrades" prominently</li>
                     <li>Elite members occasionally receive visible benefits</li>
                     <li>Marketing language is deliberately vague</li>
                 </ul>
 
-                <p><strong>Why it fails now:</strong> Loyalty upgrades are subject to availability - and availability is often defined narrowly. Higher-tier members compete with each other. In busy properties, even top-tier elites may receive nothing.</p>
+                <p>
+<strong>Why it fails now:</strong> Loyalty upgrades are subject to availability - and availability is often defined narrowly. Higher-tier members compete with each other. In busy properties, even top-tier elites may receive nothing.</p>
 
                 <p>Loyalty increases eligibility, not certainty.</p>
 
@@ -703,14 +305,17 @@
                 <span class="myth-label">Myth #6</span>
                 <h2>"Arrive Late for Better Chances"</h2>
 
-                <p><strong>Why people believe it:</strong></p>
+                <p>
+<strong>Why people believe it:</strong>
+</p>
                 <ul>
                     <li>Late arrivals used to let hotels see no-shows</li>
                     <li>Unsold inventory could be redistributed</li>
                     <li>Night auditors had more flexibility</li>
                 </ul>
 
-                <p><strong>Why it fails now:</strong> Hotels overbook intentionally and predictably. No-show risk is modelled in advance. Inventory buffers are allocated earlier in the day. Arriving late often means fewer options, not more.</p>
+                <p>
+<strong>Why it fails now:</strong> Hotels overbook intentionally and predictably. No-show risk is modelled in advance. Inventory buffers are allocated earlier in the day. Arriving late often means fewer options, not more.</p>
 
                 <div class="instead-box">
                     <strong>What to do instead:</strong>
@@ -722,13 +327,16 @@
                 <span class="myth-label">Myth #7</span>
                 <h2>"All Hotels Play by the Same Rules"</h2>
 
-                <p><strong>Why people believe it:</strong></p>
+                <p>
+<strong>Why people believe it:</strong>
+</p>
                 <ul>
                     <li>It's simpler to assume universal tactics work everywhere</li>
                     <li>Travel advice rarely distinguishes between hotel types</li>
                 </ul>
 
-                <p><strong>Why it fails now:</strong> Chain hotels and independent hotels operate very differently. Chains use centralised systems and strict policies. Independents may have more discretion but less inventory flexibility. Advice that works in one context can fail completely in another.</p>
+                <p>
+<strong>Why it fails now:</strong> Chain hotels and independent hotels operate very differently. Chains use centralised systems and strict policies. Independents may have more discretion but less inventory flexibility. Advice that works in one context can fail completely in another.</p>
 
                 <div class="instead-box">
                     <strong>What to do instead:</strong>
@@ -740,14 +348,17 @@
                 <span class="myth-label">Myth #8</span>
                 <h2>"Hotels Want to Please You at Any Cost"</h2>
 
-                <p><strong>Why people believe it:</strong></p>
+                <p>
+<strong>Why people believe it:</strong>
+</p>
                 <ul>
                     <li>Hospitality marketing emphasises guest satisfaction</li>
                     <li>Staff are trained to be accommodating</li>
                     <li>It feels like the customer should always be right</li>
                 </ul>
 
-                <p><strong>Why it fails now:</strong> Hotels want satisfied guests - within constraints. Staff are measured on efficiency, accuracy, and compliance. Giving away upgrades creates operational risk. Guest satisfaction is one input among many.</p>
+                <p>
+<strong>Why it fails now:</strong> Hotels want satisfied guests - within constraints. Staff are measured on efficiency, accuracy, and compliance. Giving away upgrades creates operational risk. Guest satisfaction is one input among many.</p>
 
                 <p>An agent declining an upgrade isn't being unhelpful. They're protecting the system from cascading issues.</p>
 
@@ -842,20 +453,43 @@
             </section>
         </article>
     </main>
+<footer class="site-footer">
+<div class="wrap">
+<div class="footer-top">
+<div>
+<a class="brand" href="/">
+<span class="brand-mark">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<path d="M5 21V3h14v18M3 21h18M9 7h1m4 0h1M9 11h1m4 0h1m-5 10v-5h4v5"/>
+</svg>
+</span>StayHustler</a>
+<p>A little preparation for a better hotel stay.<br>Your request. Your conversation.</p>
+</div>
+<div class="footer-menu">
+<div>
+<strong>Plan your request</strong>
+<a href="/booking">Create a request</a>
+<a href="/guides/">Travel guides</a>
+<a href="/tools/">Free tools</a>
+</div>
+<div>
+<strong>StayHustler</strong>
+<a href="/about">About us</a>
+<a href="mailto:support@stayhustler.com">Contact &amp; support</a>
+<a href="/#faq">Common questions</a>
+</div>
+</div>
+</div>
+<div class="footer-bottom">
+<span>© 2026 StayHustler · Hotel benefits are subject to availability and hotel policy.</span>
+<span>
+<a href="/privacy">Privacy</a> &nbsp; · &nbsp; <a href="/terms">Terms</a> &nbsp; · &nbsp; <a href="/assets/photos/CREDITS.txt">Photography</a>
+</span>
+</div>
+</div>
+</footer>
 
-    <footer class="footer">
-        <div class="footer-inner">
-            <nav class="footer-links">
-                <a href="/" class="footer-link">Home</a>
-                <a href="/guides/" class="footer-link">Guides</a>
-                <a href="/tools/" class="footer-link">Tools</a>
-                <a href="/about" class="footer-link">About</a>
-                <a href="/privacy" class="footer-link">Privacy</a>
-                <a href="/terms" class="footer-link">Terms</a>
-            </nav>
-            <p class="footer-copyright">&copy; 2026 StayHustler</p>
-        </div>
-    </footer>
+
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8G7MYD59K"></script>

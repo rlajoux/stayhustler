@@ -18,13 +18,13 @@
         body: JSON.stringify({ page: 'booking', referrer: document.referrer })
       }).catch(() => {});
     </script>
-    
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add your hotel booking – StayHustler</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>">
+
     <meta name="description" content="Enter your hotel booking details so we can personalize your upgrade request.">
-    
+
     <!-- Open Graph -->
     <meta property="og:title" content="Add your hotel booking – StayHustler">
     <meta property="og:description" content="Enter your hotel booking details to get personalized upgrade advice.">
@@ -32,376 +32,118 @@
     <meta property="og:url" content="https://stayhustler.com/booking.html">
     <meta property="og:image" content="https://stayhustler.com/og-image.png">
     <meta property="og:site_name" content="StayHustler">
-    
+
     <!-- Canonical URL -->
     <link rel="canonical" href="https://stayhustler.com/booking.html">
-    
+
     <!-- Robots meta -->
     <meta name="robots" content="noindex, nofollow">
 
 
 
-    <style>
-        :root {
-            --color-bg: #faf9f7;
-            --color-bg-warm: #f5f3ef;
-            --color-text: #2d2a26;
-            --color-text-muted: #6b6560;
-            --color-accent: #c9a962;
-            --color-accent-hover: #b8963f;
-            --color-border: #e8e4de;
-            --color-white: #ffffff;
-            
-            --font-serif: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
-            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-            
-            --space-xs: 0.5rem;
-            --space-sm: 1rem;
-            --space-md: 1.5rem;
-            --space-lg: 2.5rem;
-            --space-xl: 4rem;
-            
-            --max-width: 720px;
-            --radius: 6px;
-            --radius-lg: 10px;
-            --shadow-soft: 0 2px 16px rgba(45, 42, 38, 0.06);
-            --shadow-hover: 0 4px 24px rgba(45, 42, 38, 0.1);
-            --transition: 0.2s ease;
-        }
-        
-        *, *::before, *::after {
-            box-sizing: border-box;
-        }
-        
-        html {
-            height: 100%;
-        }
-        
-        body {
-            margin: 0;
-            min-height: 100%;
-            font-family: var(--font-sans);
-            font-size: 1rem;
-            line-height: 1.6;
-            color: var(--color-text);
-            background-color: var(--color-bg);
-            -webkit-font-smoothing: antialiased;
-        }
-        
-        h1, h2, h3 {
-            font-family: var(--font-serif);
-            font-weight: 400;
-            line-height: 1.25;
-            margin: 0;
-        }
-        
-        p {
-            margin: 0;
-        }
-        
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-        
-        /* Header */
-        .header {
-            padding: var(--space-md);
-            border-bottom: 1px solid var(--color-border);
-        }
-        
-        .header-inner {
-            max-width: var(--max-width);
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .logo {
-            font-family: var(--font-serif);
-            font-size: 1.25rem;
-            letter-spacing: -0.01em;
-            color: var(--color-text);
-        }
-        
-        .back-link {
-            font-size: 0.9rem;
-            color: var(--color-text-muted);
-            transition: color var(--transition);
-        }
-        
-        .back-link:hover,
-        .back-link:focus {
-            color: var(--color-text);
-        }
-        
-        /* Main */
-        main {
-            padding: var(--space-lg) var(--space-md) var(--space-xl);
-        }
-        
-        .container {
-            width: 100%;
-            max-width: var(--max-width);
-            margin: 0 auto;
-        }
-        
-        /* Page Header */
-        .page-header {
-            text-align: center;
-            margin-bottom: var(--space-lg);
-        }
-        
-        .page-header h1 {
-            font-size: clamp(1.75rem, 4vw, 2.25rem);
-            margin-bottom: var(--space-sm);
-            color: var(--color-text);
-        }
-        
-        .page-subheadline {
-            font-size: 1.05rem;
-            color: var(--color-text-muted);
-            max-width: 480px;
-            margin: 0 auto;
-        }
-        
-        /* Form Sections */
-        .form-section {
-            background: var(--color-white);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-lg);
-            padding: var(--space-md);
-            margin-bottom: var(--space-md);
-            box-shadow: var(--shadow-soft);
-        }
-        
-        .form-section-title {
-            font-size: 1.1rem;
-            margin-bottom: var(--space-sm);
-            color: var(--color-text);
-        }
-        
-        .form-section-helper {
-            font-size: 0.9rem;
-            color: var(--color-text-muted);
-            margin-bottom: var(--space-md);
-        }
-        
-        /* Booking Notice */
-        .booking-notice {
-            background: var(--color-bg-warm);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius);
-            padding: var(--space-sm) var(--space-md);
-            margin-bottom: var(--space-lg);
-        }
 
-        .booking-notice-title {
-            font-family: var(--font-serif);
-            font-size: 0.95rem;
-            color: var(--color-text);
-            margin-bottom: var(--space-xs);
-        }
-
-        .booking-notice-body {
-            font-size: 0.85rem;
-            color: var(--color-text-muted);
-            line-height: 1.5;
-        }
-
-        /* Form Fields */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: var(--space-md);
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: var(--space-md);
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .form-label {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--color-text);
-            margin-bottom: var(--space-xs);
-        }
-        
-        .form-label .required {
-            color: var(--color-accent);
-            margin-left: 2px;
-        }
-        
-        .form-input,
-        .form-select {
-            padding: 0.875rem 1rem;
-            font-family: var(--font-sans);
-            font-size: 1rem;
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius);
-            background: var(--color-white);
-            color: var(--color-text);
-            transition: border-color var(--transition), box-shadow var(--transition);
-            width: 100%;
-        }
-        
-        .form-input:focus,
-        .form-select:focus {
-            outline: none;
-            border-color: var(--color-accent);
-            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.15);
-        }
-        
-        .form-input::placeholder {
-            color: var(--color-text-muted);
-        }
-        
-        .form-select {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b6560' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            padding-right: 2.5rem;
-        }
-
-        .field-hint {
-            font-size: 0.8rem;
-            color: var(--color-text-muted);
-            margin-top: var(--space-xs);
-        }
-
-        /* Trust Note */
-        .trust-note {
-            text-align: center;
-            font-size: 0.8rem;
-            line-height: 1.45;
-            color: var(--color-text-muted);
-            margin: var(--space-md) 0;
-            max-width: 320px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        /* CTA Button */
-        .cta-container {
-            margin-top: var(--space-lg);
-        }
-        
-        .btn-primary {
-            display: block;
-            width: 100%;
-            padding: 1rem 1.75rem;
-            font-family: var(--font-sans);
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--color-white);
-            background: var(--color-text);
-            border: none;
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: all var(--transition);
-        }
-        
-        .btn-primary:hover:not(:disabled) {
-            background: #1a1816;
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-hover);
-        }
-        
-        .btn-primary:focus {
-            outline: 2px solid var(--color-accent);
-            outline-offset: 2px;
-        }
-        
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        /* Desktop Layout */
-        @media (min-width: 600px) {
-            .form-section {
-                padding: var(--space-lg);
-            }
-            
-            .form-row {
-                grid-template-columns: 1fr 1fr;
-            }
-            
-            .btn-primary {
-                width: auto;
-                min-width: 200px;
-                margin: 0 auto;
-                display: block;
-            }
-            
-            .cta-container {
-                text-align: center;
-            }
-        }
-    </style>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/assets/site.css">
 </head>
-<body>
-    <header class="header">
-        <div class="header-inner">
-            <a href="index.html" class="logo">StayHustler</a>
-            <a href="index.html" class="back-link">Back</a>
-        </div>
-    </header>
+<body class="flow-page">
+    <a href="#main-content" class="skip-link">Skip to content</a>
+<header class="site-header">
+<div class="site-nav">
+<a class="brand" href="/">
+<span class="brand-mark">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<path d="M5 21V3h14v18M3 21h18M9 7h1m4 0h1M9 11h1m4 0h1m-5 10v-5h4v5"/>
+</svg>
+</span>StayHustler</a>
+<nav class="desktop-nav" aria-label="Main navigation">
+<a href="/">Hotel requests</a>
+<a href="/guides/">Travel guides</a>
+<a href="/tools/">Free tools</a>
+</nav>
+<div class="nav-actions">
+<span class="nav-currency">Prices in USD</span>
+<a href="mailto:support@stayhustler.com">Help</a>
+<a class="outline-btn" href="/booking">Create a request</a>
+</div>
+<details class="mobile-nav">
+<summary aria-label="Open navigation">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<path d="M4 6h16M4 12h16M4 18h16"/>
+</svg>
+</summary>
+<nav aria-label="Mobile navigation">
+<a href="/">Hotel requests</a>
+<a href="/guides/">Travel guides</a>
+<a href="/tools/">Free tools</a>
+<a href="/about">About us</a>
+<a href="mailto:support@stayhustler.com">Get help</a>
+</nav>
+</details>
+</div>
+</header>
 
-    <main>
+    <main id="main-content">
         <div class="container">
+<ol class="steps" aria-label="Request progress">
+<li aria-current="step">
+<span class="step-number">1</span>Your booking</li>
+<li>
+<span class="step-number">2</span>Preferences</li>
+<li>
+<span class="step-number">3</span>Review</li>
+<li>
+<span class="step-number">4</span>Payment</li>
+</ol>
             <header class="page-header">
                 <h1>Add your hotel booking</h1>
                 <p class="page-subheadline">We use this to tailor hotel-appropriate advice. We don't contact the hotel.</p>
             </header>
+<div class="journey-layout">
+<div class="journey-main">
 
             <div class="booking-notice">
                 <p class="booking-notice-title">Best used after you book</p>
                 <p class="booking-notice-body">This works best once your hotel is booked. If you're still planning, come back after booking.</p>
             </div>
 
-            <form class="form-section" id="booking-form">
+            <form class="form-section panel" id="booking-form">
                 <h2 class="form-section-title">Booking details</h2>
-                
+
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="hotel-name" class="form-label">Hotel name <span class="required">*</span></label>
+                        <label for="hotel-name" class="form-label">Hotel name <span class="required">*</span>
+</label>
                         <input type="text" id="hotel-name" class="form-input" placeholder="e.g., The Ritz-Carlton" required>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="city" class="form-label">City <span class="required">*</span></label>
+                        <label for="city" class="form-label">City <span class="required">*</span>
+</label>
                         <input type="text" id="city" class="form-input" placeholder="e.g., Paris" required>
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="check-in" class="form-label">Check-in date <span class="required">*</span></label>
+                            <label for="check-in" class="form-label">Check-in date <span class="required">*</span>
+</label>
                             <input type="date" id="check-in" class="form-input" required>
                         </div>
                         <div class="form-group">
-                            <label for="check-out" class="form-label">Check-out date <span class="required">*</span></label>
+                            <label for="check-out" class="form-label">Check-out date <span class="required">*</span>
+</label>
                             <input type="date" id="check-out" class="form-input" required>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="room-type" class="form-label">Room type booked</label>
                         <input type="text" id="room-type" class="form-input" placeholder="e.g., Deluxe King (optional)" aria-describedby="room-type-hint">
                         <p class="field-hint" id="room-type-hint">Upgrade decisions depend on what category you already booked.</p>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="booking-channel" class="form-label">Booking channel <span class="required">*</span></label>
+                        <label for="booking-channel" class="form-label">Booking channel <span class="required">*</span>
+</label>
                         <select id="booking-channel" class="form-select" required aria-describedby="booking-channel-hint">
                             <option value="">Select how you booked</option>
                             <option value="direct">Direct with hotel</option>
@@ -410,7 +152,7 @@
                         </select>
                         <p class="field-hint" id="booking-channel-hint">Hotels often prioritize requests differently based on booking source.</p>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="hotel-type" class="form-label">Hotel type (optional)</label>
                         <select id="hotel-type" class="form-select" aria-describedby="hotel-type-hint">
@@ -429,7 +171,70 @@
                 </div>
             </form>
         </div>
+<aside class="journey-side">
+<section class="panel trip-summary">
+<img src="/assets/photos/room.jpg" alt="" width="1000" height="666">
+<div class="trip-summary-body">
+<span class="tag">Made for your stay</span>
+<h2>Your hotel request package</h2>
+<p>The right words, ready when you need them.</p>
+<ul class="check-list">
+<li>A personalised email request</li>
+<li>Advice on when to send it</li>
+<li>A polite script for check-in</li>
+<li>Saved request and email delivery</li>
+</ul>
+<div class="summary-total">
+<div>One stay<small>One payment. No subscription.</small>
+</div>
+<strong>$7<small>USD</small>
+</strong>
+</div>
+</div>
+</section>
+<div class="side-help">
+<strong>You stay in control</strong>You review and send your request. Your hotel decides what is available.<br>
+<a href="mailto:support@stayhustler.com">Need a hand? Contact us</a>
+</div>
+</aside>
+</div>
+</div>
     </main>
+<footer class="site-footer">
+<div class="wrap">
+<div class="footer-top">
+<div>
+<a class="brand" href="/">
+<span class="brand-mark">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<path d="M5 21V3h14v18M3 21h18M9 7h1m4 0h1M9 11h1m4 0h1m-5 10v-5h4v5"/>
+</svg>
+</span>StayHustler</a>
+<p>A little preparation for a better hotel stay.<br>Your request. Your conversation.</p>
+</div>
+<div class="footer-menu">
+<div>
+<strong>Plan your request</strong>
+<a href="/booking">Create a request</a>
+<a href="/guides/">Travel guides</a>
+<a href="/tools/">Free tools</a>
+</div>
+<div>
+<strong>StayHustler</strong>
+<a href="/about">About us</a>
+<a href="mailto:support@stayhustler.com">Contact &amp; support</a>
+<a href="/#faq">Common questions</a>
+</div>
+</div>
+</div>
+<div class="footer-bottom">
+<span>© 2026 StayHustler · Hotel benefits are subject to availability and hotel policy.</span>
+<span>
+<a href="/privacy">Privacy</a> &nbsp; · &nbsp; <a href="/terms">Terms</a> &nbsp; · &nbsp; <a href="/assets/photos/CREDITS.txt">Photography</a>
+</span>
+</div>
+</div>
+</footer>
 
     <script>
         const form = document.getElementById('booking-form');
@@ -467,5 +272,6 @@
         });
         validateDates();
     </script>
+<script src="/assets/request-choice.js"></script>
 </body>
 </html>
