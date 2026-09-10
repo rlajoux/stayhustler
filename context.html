@@ -318,15 +318,21 @@
 
                 <div class="form-section">
                     <div class="form-group">
-                        <label for="loyalty-status" class="form-label">Loyalty status</label>
-                        <select id="loyalty-status" class="form-select">
-                            <option value="">Select (optional)</option>
-                            <option value="none">None</option>
-                            <option value="member">Member (no tier)</option>
-                            <option value="silver">Silver / mid-tier</option>
-                            <option value="gold">Gold / top-tier</option>
+                        <label for="loyalty-programme" class="form-label">Hotel loyalty programme</label>
+                        <select id="loyalty-programme" class="form-select" aria-describedby="loyalty-selection-note">
+                            <option value="">Select programme (optional)</option>
+                            <option value="none">No membership</option>
                         </select>
-                        <p class="form-helper">If you're unsure, choose 'Member' or 'None'.</p>
+                        <p class="form-helper" id="loyalty-selection-note">Choose your actual programme and tier. No account connection or membership number is needed.</p>
+                    </div>
+                    <div class="form-group" id="loyalty-tier-group" hidden>
+                        <label for="loyalty-tier" class="form-label">Membership tier <span class="required">*</span></label>
+                        <select id="loyalty-tier" class="form-select" disabled></select>
+                    </div>
+                    <div id="loyalty-benefits" class="loyalty-benefits" aria-live="polite" hidden></div>
+                    <div id="loyalty-confirmation" class="loyalty-confirmation" hidden>
+                        <label><input type="checkbox" id="loyalty-hotel-confirmed"><span id="loyalty-confirmation-label"></span></label>
+                        <p class="form-helper">Confirm participation to include your selected status in the request. If unsure, leave this unticked; the request will not claim loyalty benefits.</p>
                     </div>
 
                     <div class="form-group">
@@ -439,6 +445,8 @@
     <div aria-live="polite" id="aria-live" style="position: absolute; left: -9999px;">
 </div>
 
+    <script src="/assets/loyalty.js"></script>
+    <script src="/assets/loyalty-form.js"></script>
     <script>
         const form = document.getElementById('context-form');
         const submitBtn = document.getElementById('submit-btn');
@@ -594,9 +602,11 @@
             const hasAskPreference = Array.from(askPreferenceInputs).some(input => input.checked);
             const hasRequestType = Array.from(requestTypeInputs).some(input => input.checked);
 
-            const isValid = hasLengthOfStay && hasArrivalDay && hasCheckinTime && hasAskPreference && hasRequestType;
+            const isValid = hasLengthOfStay && hasArrivalDay && hasCheckinTime && hasAskPreference && hasRequestType && StayHustlerLoyaltyForm.valid();
             submitBtn.disabled = !isValid;
         }
+
+        form.addEventListener('change', checkFormValidity);
 
         // Request type change handler (for analytics)
         requestTypeInputs.forEach(input => {
@@ -661,7 +671,7 @@
                 lengthOfStay: finalLengthOfStay,
                 arrivalDay: finalArrivalDay,
                 checkinTime: checkinTime.value,
-                loyaltyStatus: document.getElementById('loyalty-status').value,
+                ...StayHustlerLoyaltyForm.selection(),
                 occasion: document.getElementById('occasion').value,
                 flexibility: legacyFlexibility, // Backward compatibility
                 askPreference: document.querySelector('input[name="ask-preference"]:checked')?.value || '',
@@ -679,13 +689,14 @@
         // Initialize immediately (script is at bottom of body, DOM is ready)
         (function init() {
             const saved = StayHustler.read('context');
-            for (const [key, id] of [['checkinTime','checkin-time'], ['loyaltyStatus','loyalty-status'], ['occasion','occasion']]) {
+            for (const [key, id] of [['checkinTime','checkin-time'], ['occasion','occasion']]) {
                 if (typeof saved[key] === 'string') document.getElementById(id).value = saved[key];
             }
             for (const [key, name] of [['requestType','request-type'], ['askPreference','ask-preference']]) {
                 document.querySelectorAll(`input[name="${name}"]`).forEach(input => { if (saved[key] === input.value) input.checked = true; });
             }
             initDerivedFields();
+            StayHustlerLoyaltyForm.refresh();
             checkFormValidity();
         })();
     </script>

@@ -1211,6 +1211,29 @@ input:focus,select:focus,textarea:focus {
     margin-bottom: 0;
 }
 
+.loyalty-benefits {
+    margin: 18px 0;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #f4f7ff;
+}
+
+.loyalty-eyebrow,.loyalty-condition { font-size: 12px; font-weight: 700; color: var(--blue); }
+.loyalty-benefits h3 { margin: 4px 0 10px; font-size: 18px; }
+.loyalty-eligibility,.loyalty-benefits details { font-size: 13px; line-height: 1.55; }
+.loyalty-benefit-list { margin: 16px 0; }
+.loyalty-benefit-list>div { padding: 12px 0; border-top: 1px solid var(--line); }
+.loyalty-benefit-list dt { font-size: 13px; font-weight: 700; }
+.loyalty-benefit-list dd { margin: 4px 0 0; font-size: 13px; line-height: 1.5; }
+.loyalty-benefit-list dd span { display: block; }
+.loyalty-benefits summary { cursor: pointer; font-weight: 700; }
+.loyalty-benefits details p { margin-top: 10px; }
+.loyalty-other-perks { margin-bottom: 12px; }
+.loyalty-confirmation { margin: 18px 0 24px; }
+.loyalty-confirmation label { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; font-weight: 600; }
+.loyalty-confirmation input { width: 18px; height: 18px; margin-top: 1px; flex-shrink: 0; accent-color: var(--blue); }
+
 .request-type-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;

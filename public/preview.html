@@ -246,17 +246,21 @@
         </div>
     </div>
 
+    <script src="/assets/loyalty.js"></script>
     <script>
         const booking = StayHustler.read('booking');
         const context = StayHustler.read('context');
         const labels = { upgrade: 'Room upgrade request', late_checkout: 'Late checkout request', breakfast_lounge: 'Breakfast or lounge access request', better_view: 'Better view or quieter room request', credit_spa_fb: 'Spa or dining credit request', any_upgrade: 'Flexible hotel enhancement request' };
         document.getElementById('badge-text').textContent = labels[context.requestType] || labels.upgrade;
-        const items = [booking.hotel, booking.city, booking.checkin && booking.checkout ? `${booking.checkin} to ${booking.checkout}` : '', context.askPreference ? `Ask by: ${context.askPreference === 'inperson' ? 'in person' : context.askPreference}` : '', context.loyaltyStatus ? `Loyalty: ${context.loyaltyStatus}` : '', context.occasion && context.occasion !== 'none' ? `Occasion: ${context.occasion}` : ''].filter(Boolean);
+        const loyalty = StayHustlerLoyalty.describe(context, booking);
+        const loyaltySummary = loyalty ? `Selected status: ${loyalty.label}${loyalty.includeStatus ? '' : ' (not included in request; tier or hotel participation unconfirmed)'}` : '';
+        const items = [booking.hotel, booking.city, booking.checkin && booking.checkout ? `${booking.checkin} to ${booking.checkout}` : '', context.askPreference ? `Ask by: ${context.askPreference === 'inperson' ? 'in person' : context.askPreference}` : '', loyaltySummary, context.occasion && context.occasion !== 'none' ? `Occasion: ${context.occasion}` : ''].filter(Boolean);
         document.getElementById('summary-list').replaceChildren(...items.map(text => { const li = document.createElement('li'); li.textContent = text; return li; }));
-        const complete = booking.hotel && booking.city && booking.checkin && booking.checkout && context.requestType;
+        const legacyLoyalty = context.loyaltyProgramme === undefined && (context.loyaltyStatus || context.loyalty) && (context.loyaltyStatus || context.loyalty) !== 'none';
+        const complete = booking.hotel && booking.city && booking.checkin && booking.checkout && context.requestType && !legacyLoyalty && StayHustlerLoyalty.selectionErrors(context).length === 0;
         if (!complete) document.getElementById('missing-notice').classList.add('visible');
         for (const id of ['unlock-btn','sticky-unlock-btn']) {
-            document.getElementById(id).addEventListener('click', () => { location.href = complete ? 'payment.html' : 'booking.html'; });
+            document.getElementById(id).addEventListener('click', () => { location.href = complete ? 'payment.html' : legacyLoyalty || StayHustlerLoyalty.selectionErrors(context).length ? 'context.html' : 'booking.html'; });
         }
         const observer = new IntersectionObserver(entries => {
             document.getElementById('sticky-bar').classList.toggle('visible', !entries[0].isIntersecting);

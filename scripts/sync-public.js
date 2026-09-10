@@ -19,7 +19,7 @@ function sync(folder) {
 }
 sync('');
 // The authenticated results page is served by the API and shares the site design.
-for (const name of ['site.css', 'favicon.svg']) {
+for (const name of ['site.css', 'favicon.svg', 'loyalty.js']) {
     const source = path.join(root, 'public/assets', name);
     const target = path.join(root, 'api/assets', name);
     const bytes = fs.readFileSync(source);
